@@ -1,7 +1,11 @@
+import extract.ApkExtractor;
 import org.apache.commons.cli.*;
 
 public class MenuMaster {
 
+    private static final String PROGRAM_NAME = System.getProperty("sun.java.command").split(" ")[0];
+    private static final int EXIT_SUCCESS = 0;
+    private static final int EXIT_ERROR = -1;
     private static CommandLineParser cmdParser = new DefaultParser();
     private static HelpFormatter formatter = new HelpFormatter();
     private static Options cmdOptions = new Options();
@@ -26,29 +30,44 @@ public class MenuMaster {
         cmdOptions.addOption(help);
     }
 
-    public static void processArgs(String[] args) throws ParseException {
+    public static int processArgs(String[] args) throws ParseException {
 
         CommandLine cmd = cmdParser.parse(cmdOptions, args);
         if (cmd.hasOption("extract")) {
 
-            System.out.println("extract");
+            String extractedArg = cmd.getOptionValue("extract");
+
+            if (extractedArg == null) {
+                formatter.printHelp(PROGRAM_NAME, cmdOptions, true);
+            }
+            boolean result = new ApkExtractor(extractedArg).extract();
+            if (!result) {
+
+                return EXIT_ERROR;
+            }
+
         } else if (cmd.hasOption("reduce")) {
 
             System.out.println("reduce");
         } else {
 
-            formatter.printHelp("Hello", cmdOptions, true);
+            formatter.printHelp(PROGRAM_NAME, cmdOptions, true);
         }
+
+        return EXIT_SUCCESS;
     }
 
     public static void main(String[] args) {
 
         try {
 
-            MenuMaster.processArgs(args);
+            System.exit(
+                    MenuMaster.processArgs(args)
+            );
         } catch (ParseException pe) {
 
             pe.printStackTrace();
+            System.exit(EXIT_ERROR);
         }
     }
 }
