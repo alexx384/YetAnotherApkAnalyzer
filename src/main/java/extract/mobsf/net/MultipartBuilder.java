@@ -15,24 +15,15 @@ public class MultipartBuilder {
         boundary = UUID.randomUUID().toString();
     }
 
-    public MultipartBuilder addFile(String name, Path filePath) throws FileNotFoundException {
+    public MultipartBuilder addFile(String name, Path filePath) {
         String filename = filePath.getFileName().toString();
         String contentType = "application/octet-stream";
         String partHeader =
                 "--" + boundary + "\r\n" +
-                        "Content-Disposition: form-data; name=" + name + "; filename=\"" + filename + "\"\r\n" +
+                        "Content-Disposition: form-data; name=\"" + name + "\"; filename=\"" + filename + "\"\r\n" +
                         "Content-Type: " + contentType + "\r\n\r\n";
-        Part headPart = new Part();
-        headPart.type = Part.TYPE.BYTE;
-        headPart.value = partHeader.getBytes(StandardCharsets.UTF_8);
-        Part bodyPart = new Part();
-        bodyPart.type = Part.TYPE.FILE;
-        bodyPart.file = filePath.toFile();
-//        partsList.add(
-//                new ByteArrayInputStream(partHeader.getBytes(StandardCharsets.UTF_8))
-//        );
-        partsList.add(headPart);
-        partsList.add(bodyPart);
+        partsList.add(new Part(partHeader.getBytes(StandardCharsets.UTF_8)));
+        partsList.add(new Part(filePath.toFile()));
         return this;
     }
 
@@ -41,43 +32,22 @@ public class MultipartBuilder {
             throw new IllegalStateException("Must have at least one part to build multipart message.");
         }
         addFinalBoundaryPart();
-        return HttpRequest.BodyPublishers.ofByteArrays(PartsIterator::new);
-//        return HttpRequest.BodyPublishers.ofInputStream(
-//                () -> new SequenceInputStream(Collections.enumeration(partsList))
-//        );
+        return HttpRequest.BodyPublishers.ofByteArrays(() -> new PartsIterator(partsList));
     }
 
     public String getBoundary() {
         return boundary;
     }
 
-    private void addFinalBoundaryPart() {
-        String finalBoundary = "--" + boundary + "--";
-//        partsList.add(
-//                new ByteArrayInputStream(finalBoundary.getBytes(StandardCharsets.UTF_8))
-//        );
-        Part part = new Part();
-        part.type = Part.TYPE.BYTE;
-        part.value = finalBoundary.getBytes(StandardCharsets.UTF_8);
-        partsList.add(part);
-    }
+    public static class PartsIterator implements Iterator<byte[]> {
+        private static final int DEFAULT_BUFFER_SIZE = 8192;
 
-    static class Part {
-        public enum TYPE {
-            BYTE, FILE
-        }
-        TYPE type;
-        byte[] value;
-        File file;
-    }
-
-    public class PartsIterator implements Iterator<byte[]> {
+        private byte[] buf = new byte[DEFAULT_BUFFER_SIZE];
+        private boolean isNotDone = false;
         private Iterator<Part> iter;
         private InputStream stream;
-        private boolean isNotDone = false;
-        private byte[] buf = new byte[8192];
 
-        PartsIterator() {
+        PartsIterator(List<Part> partsList) {
             iter = partsList.iterator();
         }
 
@@ -91,10 +61,10 @@ public class MultipartBuilder {
 
         private byte[] readByteChunk() {
             try {
-                int r = stream.read(buf);
-                if (r > 0) {
-                    byte[] actualBytes = new byte[r];
-                    System.arraycopy(buf, 0, actualBytes, 0, r);
+                int readed = stream.read(buf, 0, DEFAULT_BUFFER_SIZE);
+                if (readed > 0) {
+                    byte[] actualBytes = new byte[readed];
+                    System.arraycopy(buf, 0, actualBytes, 0, readed);
                     return actualBytes;
                 } else {
                     stream.close();
@@ -103,16 +73,14 @@ public class MultipartBuilder {
                     return "\r\n".getBytes(StandardCharsets.UTF_8);
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                System.out.println(e.getMessage());
                 return null;
             }
         }
 
         @Override
         public byte[] next() {
-            if (isNotDone) {
-                return readByteChunk();
-            } else {
+            if (!isNotDone) {
                 Part elem = iter.next();
                 if (Part.TYPE.BYTE.equals(elem.type)) {
                     return elem.value;
@@ -120,12 +88,41 @@ public class MultipartBuilder {
                     try {
                         stream = new FileInputStream(elem.file);
                     } catch (FileNotFoundException e) {
-                        e.printStackTrace();
+                        System.out.println(e.getMessage());
                     }
                     isNotDone = true;
                     return readByteChunk();
                 }
+            } else {
+                return readByteChunk();
             }
         }
+    }
+
+    private void addFinalBoundaryPart() {
+        String finalBoundary = "--" + boundary + "--";
+        partsList.add(
+                new Part(finalBoundary.getBytes(StandardCharsets.UTF_8))
+        );
+    }
+
+    static class Part {
+        public enum TYPE {
+            BYTE, FILE
+        }
+
+        Part(byte[] value) {
+            this.type = TYPE.BYTE;
+            this.value = value;
+        }
+
+        Part(File file) {
+            this.type = TYPE.FILE;
+            this.file = file;
+        }
+
+        TYPE type;
+        byte[] value;
+        File file;
     }
 }

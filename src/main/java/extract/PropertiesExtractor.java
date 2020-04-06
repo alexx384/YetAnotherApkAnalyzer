@@ -1,6 +1,7 @@
 package extract;
 
-import extract.mobsf.MobSfExtractor;
+import extract.mobsf.MobSfApkProperty;
+import extract.mobsf.MobSfManager;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -63,18 +64,19 @@ public class PropertiesExtractor {
         if (!checkResultFile(resultPath)) {
             return false;
         }
-        MobSfExtractor mobSfExtractor = MobSfExtractor.build(this.mobsfAddress, this.mobsfApiKey);
-        if (mobSfExtractor == null) {
+        MobSfManager mobSfManager = MobSfManager.build(this.mobsfAddress, this.mobsfApiKey);
+        if (mobSfManager == null) {
             return false;
         }
 
         PropertiesWriter writer = new PropertiesWriter(resultPath);
 
-        boolean mobsfResult = mobSfExtractor.extract(apkPath, writer);
-        if (!mobsfResult) {
+        ApkProperty mobSfApkProperty = mobSfManager.extract(apkPath);
+        if (mobSfApkProperty == null) {
             return false;
         }
 
+        writer.addProperty(mobSfApkProperty);
         // TODO: add extractors
 //        writer.setTestKey1(12);
 //        writer.setTestKey2(15);

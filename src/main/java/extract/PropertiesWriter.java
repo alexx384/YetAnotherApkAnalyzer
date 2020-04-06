@@ -1,52 +1,40 @@
 package extract;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class PropertiesWriter {
 
-    enum Property {
-        TEST_KEY1(0),
-        TEST_KEY2(1);
-
-        private final int idx;
-
-        Property(int idx) {
-            this.idx = idx;
-        }
-    }
-
+    private List<ApkProperty> apkProperties;
     private final Path outputPath;
-    private int[] properties = new int[Property.values().length];
 
     public PropertiesWriter(Path outputPath) {
 
         this.outputPath = outputPath;
+        apkProperties = new ArrayList<>();
     }
 
-    public void setTestKey1(int value) {
-        properties[Property.TEST_KEY1.idx] = value;
-    }
-
-    public void setTestKey2(int value) {
-        properties[Property.TEST_KEY2.idx] = value;
+    public void addProperty(ApkProperty property) {
+        apkProperties.add(property);
     }
 
     public boolean flushProperties() {
-
         try (FileWriter fileWriter = new FileWriter(outputPath.toFile());
              BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)) {
+            Iterator<ApkProperty> iterator = apkProperties.iterator();
 
-            for (int i = 0; i < properties.length - 1; i++) {
-
-                bufferedWriter.write(properties[i] + ", ");
+            ApkProperty property = iterator.next();
+            bufferedWriter.write(property.getCSVRepresentation());
+            while (iterator.hasNext()) {
+                bufferedWriter.write(',');
+                property = iterator.next();
+                bufferedWriter.write(property.getCSVRepresentation());
             }
-            bufferedWriter.write(properties[properties.length - 1] + "\n");
         } catch (IOException e) {
-
-            e.printStackTrace();
+            System.out.println(e.getMessage());
             return false;
         }
 

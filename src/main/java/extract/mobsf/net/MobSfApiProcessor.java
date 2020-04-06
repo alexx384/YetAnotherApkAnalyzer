@@ -2,18 +2,19 @@ package extract.mobsf.net;
 
 import org.json.JSONObject;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-import java.util.Arrays;
 
 public class MobSfApiProcessor {
     private static final String PATH_UPLOAD_FILE = "/api/v1/upload";
+    private static final String PATH_SCAN_FILE = "/api/v1/scan";
+    private static final String PATH_DELETE_FILE = "/api/v1/delete_scan";
 
     private final String serverUrl;
     private final String mobsfApiKey;
@@ -23,10 +24,10 @@ public class MobSfApiProcessor {
         this.mobsfApiKey = mobsfApiKey;
     }
 
-    public String uploadFile(Path filePath) throws FileNotFoundException {
+    public String uploadFile(Path filePath) {
         HttpClient httpClient = HttpClient.newHttpClient();
         MultipartBuilder formBuilder = new MultipartBuilder()
-                .addFile("\"file\"", filePath);
+                .addFile("file", filePath);
         try {
             HttpRequest httpRequest = HttpRequest
                     .newBuilder(
@@ -37,18 +38,17 @@ public class MobSfApiProcessor {
                     .POST(formBuilder.build())
                     .build();
 
-            HttpResponse<byte[]> response =
+            HttpResponse<String> response =
                     httpClient.send(
                             httpRequest,
-                            HttpResponse.BodyHandlers.ofByteArray()
+                            HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8)
                     );
 
             if (response.statusCode() != 200) {
-                System.out.println(new String(response.body()));
                 return null;
             }
 
-            JSONObject obj = new JSONObject(new String(response.body()));
+            JSONObject obj = new JSONObject(response.body());
             return obj.getString("hash");
         } catch (URISyntaxException | IOException | InterruptedException e) {
             System.out.println(e.getMessage());
@@ -56,15 +56,61 @@ public class MobSfApiProcessor {
         }
     }
 
-    public static void main(String[] args) throws FileNotFoundException {
-        MobSfApiProcessor processor = new MobSfApiProcessor("http://localhost:8000",
-                "a661aead976959736b8bea938df95752f9ecca6d18fdc4051eb83ab0b8c02108"
-        );
-//        MobSfApiProcessor processor = new MobSfApiProcessor("http://localhost:8001",
-//                "a661aead976959736b8bea938df95752f9ecca6d18fdc4051eb83ab0b8c02108"
-//        );
-//        Path apkPath = Path.of("testFiles/hello.txt");
-        Path apkPath = Path.of("testFiles/k9mail-release.apk");
-        System.out.println(processor.uploadFile(apkPath));
+    public JSONObject scanFile(String fileName, String hash, String scanType) {
+        HttpClient httpClient = HttpClient.newHttpClient();
+        try {
+            HttpRequest httpRequest = HttpRequest
+                    .newBuilder(
+                            new URI(serverUrl + PATH_SCAN_FILE)
+                    )
+                    .header("Authorization", mobsfApiKey)
+                    .header("Content-Type", "application/x-www-form-urlencoded")
+                    .POST(HttpRequest.BodyPublishers.ofString(
+                            "scan_type=" + scanType + "&file_name=" + fileName + "&hash=" + hash)
+                    )
+                    .build();
+
+            HttpResponse<String> response =
+                    httpClient.send(
+                            httpRequest,
+                            HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8)
+                    );
+
+            if (response.statusCode() != 200) {
+                return null;
+            }
+
+            return new JSONObject(response.body());
+        } catch (URISyntaxException | IOException | InterruptedException e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
+    public boolean deleteScanResult(String hash) {
+        HttpClient httpClient = HttpClient.newHttpClient();
+        try {
+            HttpRequest httpRequest = HttpRequest
+                    .newBuilder(
+                            new URI(serverUrl + PATH_DELETE_FILE)
+                    )
+                    .header("Authorization", mobsfApiKey)
+                    .header("Content-Type", "application/x-www-form-urlencoded")
+                    .POST(HttpRequest.BodyPublishers.ofString(
+                            "hash=" + hash
+                    ))
+                    .build();
+
+            HttpResponse<String> response =
+                    httpClient.send(
+                            httpRequest,
+                            HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8)
+                    );
+
+            return response.statusCode() == 200;
+        } catch (URISyntaxException | IOException | InterruptedException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
     }
 }
