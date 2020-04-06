@@ -22,3 +22,13 @@ gradle
 ### IDE ###
 # Intellij IDEA
 .idea
+
+### Custom test files ###
+# Apk files to test
+testFiles
+
+# CSV file with extracted parameters
+result.csv
+
+# Jar artifact
+out
