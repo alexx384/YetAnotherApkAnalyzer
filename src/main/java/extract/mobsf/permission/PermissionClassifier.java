@@ -1,20 +1,37 @@
 package extract.mobsf.permission;
 
+import java.io.File;
+import java.sql.*;
+
 public class PermissionClassifier {
     private static final String DB_DISK_PATH_PREFIX = "jdbc:sqlite:";
-    private static final String DEFAULT_DB_PATH = "db/permission.db";
+    private static final String DEFAULT_DB_PATH = System.getProperty("user.dir") + File.separator +
+            "db" + File.separator + "permission.db";
 
-    private final String dbPath;
+    private final Connection dbConnection;
 
-    public PermissionClassifier(String dbPathOnDisk) {
-        this.dbPath = DB_DISK_PATH_PREFIX + dbPathOnDisk;
+    public PermissionClassifier(String dbPathOnDisk) throws SQLException {
+        String dbPath = DB_DISK_PATH_PREFIX + dbPathOnDisk;
+
+        dbConnection = DriverManager.getConnection(dbPath);
     }
 
-    public PermissionClassifier() {
-        this(DB_DISK_PATH_PREFIX + DEFAULT_DB_PATH);
+    public PermissionClassifier() throws SQLException {
+        this(DEFAULT_DB_PATH);
     }
 
-    public static void main(String[] args) {
+    public int getProtectionGroupByName(String permissionName) throws SQLException {
+        String query = "SELECT protection FROM permissions WHERE name = \"" + permissionName + "\"";
+        int result;
+        try (Statement stmt = dbConnection.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
+            if (rs.next()) {
+                result = rs.getInt("protection");
+            } else {
+                throw new SQLException("Could not get protection field of the permission");
+            }
+        }
 
+        return result;
     }
 }
