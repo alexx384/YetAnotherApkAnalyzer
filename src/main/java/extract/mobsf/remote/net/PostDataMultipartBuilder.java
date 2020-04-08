@@ -1,21 +1,24 @@
-package extract.mobsf.net;
+package extract.mobsf.remote.net;
 
 import java.io.*;
 import java.net.http.HttpRequest;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.UUID;
 
-public class MultipartBuilder {
+public class PostDataMultipartBuilder {
     private final List<Part> partsList;
     private final String boundary;
 
-    public MultipartBuilder() {
+    public PostDataMultipartBuilder() {
         partsList = new ArrayList<>();
         boundary = UUID.randomUUID().toString();
     }
 
-    public MultipartBuilder addFile(String name, Path filePath) {
+    public PostDataMultipartBuilder addFile(String name, Path filePath) {
         String filename = filePath.getFileName().toString();
         String contentType = "application/octet-stream";
         String partHeader =

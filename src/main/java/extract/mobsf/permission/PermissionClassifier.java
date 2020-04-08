@@ -1,6 +1,5 @@
 package extract.mobsf.permission;
 
-import java.io.Closeable;
 import java.io.File;
 import java.sql.*;
 

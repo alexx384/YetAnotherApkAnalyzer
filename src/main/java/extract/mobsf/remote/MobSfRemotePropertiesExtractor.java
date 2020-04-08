@@ -1,13 +1,10 @@
-package extract.mobsf;
-
-import extract.mobsf.net.MobSfApiProcessor;
-import org.json.JSONObject;
+package extract.mobsf.remote;
 
 import java.io.IOException;
 import java.net.Socket;
 import java.nio.file.Path;
 
-public class MobSfManager {
+public class MobSfRemotePropertiesExtractor {
 
     private static final String HTTP_ADDRESS_HEADER = "http://";
     private static final String DEFAULT_SCAN_TYPE = "apk";
@@ -15,7 +12,7 @@ public class MobSfManager {
     private final String mobsfAddress;
     private final String mobsfApiKey;
 
-    private MobSfManager(String mobsfAddress, String mobsfApiKey) {
+    private MobSfRemotePropertiesExtractor(String mobsfAddress, String mobsfApiKey) {
 
         this.mobsfAddress = mobsfAddress;
         this.mobsfApiKey = mobsfApiKey;
@@ -30,7 +27,7 @@ public class MobSfManager {
         }
     }
 
-    public static MobSfManager build(String mobsfAddress, String mobsfApiKey) {
+    public static MobSfRemotePropertiesExtractor build(String mobsfAddress, String mobsfApiKey) {
 
         int delimiterIndex = mobsfAddress.indexOf(':');
         try {
@@ -40,7 +37,7 @@ public class MobSfManager {
                     mobsfAddress.substring(delimiterIndex + 1)
             );
             if (isAddressReachable(ipAddress, port)) {
-                return new MobSfManager(mobsfAddress, mobsfApiKey);
+                return new MobSfRemotePropertiesExtractor(mobsfAddress, mobsfApiKey);
             } else {
                 return null;
             }
@@ -49,8 +46,8 @@ public class MobSfManager {
         }
     }
 
-    public MobSfApkProperty extract(Path apkFilePath) {
-        MobSfApiProcessor processor = new MobSfApiProcessor(
+    public String extract(Path apkFilePath) {
+        MobSfRemoteApiProcessor processor = new MobSfRemoteApiProcessor(
                 HTTP_ADDRESS_HEADER + mobsfAddress,
                 mobsfApiKey
         );
@@ -59,11 +56,6 @@ public class MobSfManager {
             return null;
         }
 
-        JSONObject scanObject = processor.scanFile(apkFilePath.getFileName().toString(), hash, DEFAULT_SCAN_TYPE);
-        if (scanObject == null) {
-            return null;
-        }
-
-        return MobSfApkProperty.extract(scanObject);
+        return processor.scanFile(apkFilePath.getFileName().toString(), hash, DEFAULT_SCAN_TYPE);
     }
 }

@@ -1,5 +1,6 @@
 import extract.PropertiesExtractor;
 import org.apache.commons.cli.*;
+import write.PropertiesWriter;
 
 public class MenuMaster {
 
@@ -64,7 +65,17 @@ public class MenuMaster {
             String mobsfAddress = cmd.getOptionValue("mobsfAddress");
             String mobsfApiKey = cmd.getOptionValue("mobsfApiKey");
 
-            boolean result = new PropertiesExtractor(apkFilePath, resultFilePath, mobsfAddress, mobsfApiKey).extract();
+            PropertiesWriter writer;
+            if (resultFilePath == null) {
+                writer = PropertiesWriter.build();
+            } else {
+                writer = PropertiesWriter.build(resultFilePath);
+            }
+            if (writer == null) {
+                return EXIT_ERROR;
+            }
+
+            boolean result = new PropertiesExtractor(apkFilePath, writer, mobsfAddress, mobsfApiKey).extract();
             if (!result) {
 
                 return EXIT_ERROR;

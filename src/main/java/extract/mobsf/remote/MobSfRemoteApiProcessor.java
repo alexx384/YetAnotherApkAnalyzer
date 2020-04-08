@@ -1,5 +1,6 @@
-package extract.mobsf.net;
+package extract.mobsf.remote;
 
+import extract.mobsf.remote.net.PostDataMultipartBuilder;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -11,7 +12,7 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
-public class MobSfApiProcessor {
+public class MobSfRemoteApiProcessor {
     private static final String PATH_UPLOAD_FILE = "/api/v1/upload";
     private static final String PATH_SCAN_FILE = "/api/v1/scan";
     private static final String PATH_DELETE_FILE = "/api/v1/delete_scan";
@@ -19,14 +20,14 @@ public class MobSfApiProcessor {
     private final String serverUrl;
     private final String mobsfApiKey;
 
-    public MobSfApiProcessor(String serverUrl, String mobsfApiKey) {
+    public MobSfRemoteApiProcessor(String serverUrl, String mobsfApiKey) {
         this.serverUrl = serverUrl;
         this.mobsfApiKey = mobsfApiKey;
     }
 
     public String uploadFile(Path filePath) {
         HttpClient httpClient = HttpClient.newHttpClient();
-        MultipartBuilder formBuilder = new MultipartBuilder()
+        PostDataMultipartBuilder formBuilder = new PostDataMultipartBuilder()
                 .addFile("file", filePath);
         try {
             HttpRequest httpRequest = HttpRequest
@@ -56,7 +57,7 @@ public class MobSfApiProcessor {
         }
     }
 
-    public JSONObject scanFile(String fileName, String hash, String scanType) {
+    public String scanFile(String fileName, String hash, String scanType) {
         HttpClient httpClient = HttpClient.newHttpClient();
         try {
             HttpRequest httpRequest = HttpRequest
@@ -80,7 +81,7 @@ public class MobSfApiProcessor {
                 return null;
             }
 
-            return new JSONObject(response.body());
+            return response.body();
         } catch (URISyntaxException | IOException | InterruptedException e) {
             System.out.println(e.getMessage());
             return null;

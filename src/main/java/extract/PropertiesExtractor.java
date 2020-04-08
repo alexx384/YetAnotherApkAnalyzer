@@ -1,17 +1,17 @@
 package extract;
 
-import extract.mobsf.MobSfApkProperty;
-import extract.mobsf.MobSfManager;
+import extract.mobsf.MobSfApkPropertiesParser;
+import extract.mobsf.remote.MobSfRemotePropertiesExtractor;
+import property.ApkPropertyStorage;
+import write.PropertiesWriter;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 
 public class PropertiesExtractor {
 
-    private static final String DEFAULT_RESULT_FILE_PATH = "result.csv";
     private static final String DEFAULT_APK_FILE_PATH = "app.apk";
     private static final String DEFAULT_MOBSF_ADDRESS = "192.168.1.100:8000";
     private static final String DEFAULT_MOBSF_API_KEY =
@@ -19,11 +19,11 @@ public class PropertiesExtractor {
 
     private static final byte[] APK_MAGIC = new byte[]{0x50, 0x4B, 0x03, 0x04};
     private final String apkFilePath;
-    private final String resultFilePath;
     private final String mobsfAddress;
     private final String mobsfApiKey;
+    private final PropertiesWriter writer;
 
-    public PropertiesExtractor(String apkFilePath, String resultFilePath, String mobsfAddress, String mobsfApiKey) {
+    public PropertiesExtractor(String apkFilePath, PropertiesWriter writer, String mobsfAddress, String mobsfApiKey) {
 
         if (apkFilePath == null) {
             System.out.println("Failed to read apkFilePath. Use default: " + DEFAULT_APK_FILE_PATH);
@@ -32,12 +32,7 @@ public class PropertiesExtractor {
             this.apkFilePath = apkFilePath;
         }
 
-        if (resultFilePath == null) {
-            System.out.println("Failed to read resultFilePath. Use default: " + DEFAULT_RESULT_FILE_PATH);
-            this.resultFilePath = DEFAULT_RESULT_FILE_PATH;
-        } else {
-            this.resultFilePath = resultFilePath;
-        }
+        this.writer = writer;
 
         if (mobsfAddress == null) {
             System.out.println("Failed to read mobsfAddress. Use default: " + DEFAULT_MOBSF_ADDRESS);
@@ -60,28 +55,21 @@ public class PropertiesExtractor {
         if (!checkApkFile(apkPath)) {
             return false;
         }
-        Path resultPath = Path.of(this.resultFilePath);
-        if (!checkResultFile(resultPath)) {
-            return false;
-        }
-        MobSfManager mobSfManager = MobSfManager.build(this.mobsfAddress, this.mobsfApiKey);
-        if (mobSfManager == null) {
+        MobSfRemotePropertiesExtractor mobSfRemotePropertiesExtractor = MobSfRemotePropertiesExtractor.build(this.mobsfAddress, this.mobsfApiKey);
+        if (mobSfRemotePropertiesExtractor == null) {
             return false;
         }
 
-        PropertiesWriter writer = new PropertiesWriter(resultPath);
-
-        ApkProperty mobSfApkProperty = mobSfManager.extract(apkPath);
-        if (mobSfApkProperty == null) {
+        ApkPropertyStorage propertyStorage = new ApkPropertyStorage();
+        if (!MobSfApkPropertiesParser.parseTo(propertyStorage, apkPath, mobsfAddress, mobsfApiKey)) {
             return false;
         }
 
-        writer.addProperty(mobSfApkProperty);
         // TODO: add extractors
 //        writer.setTestKey1(12);
 //        writer.setTestKey2(15);
 
-        return writer.flushProperties();
+        return writer.saveProperties(propertyStorage);
     }
 
     private static boolean checkApkFile(Path apkPath) {
@@ -97,24 +85,5 @@ public class PropertiesExtractor {
         }
 
         return true;
-    }
-
-    private static boolean checkResultFile(Path resultPath) {
-
-        if (Files.exists(resultPath)) {
-            if (!Files.isRegularFile(resultPath)) {
-
-                return false;
-            }
-        } else {
-
-            try {
-                return resultPath.toFile().createNewFile();
-            } catch (IOException e) {
-
-                return false;
-            }
-        }
-        return Files.isWritable(resultPath);
     }
 }

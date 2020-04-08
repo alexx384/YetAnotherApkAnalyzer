@@ -1,4 +1,4 @@
-package extract;
+package property;
 
 public interface SourceApkProperty {
 }
