@@ -1,9 +1,10 @@
 package extract.mobsf.permission;
 
+import java.io.Closeable;
 import java.io.File;
 import java.sql.*;
 
-public class PermissionClassifier {
+public class PermissionClassifier implements AutoCloseable {
     private static final String DB_DISK_PATH_PREFIX = "jdbc:sqlite:";
     private static final String DEFAULT_DB_PATH = System.getProperty("user.dir") + File.separator +
             "db" + File.separator + "permission.db";
@@ -28,10 +29,15 @@ public class PermissionClassifier {
             if (rs.next()) {
                 result = rs.getInt("protection");
             } else {
-                throw new SQLException("Could not get protection field of the permission");
+                throw new SQLException("Could not get protection field of the permission " + permissionName);
             }
         }
 
         return result;
+    }
+
+    @Override
+    public void close() throws Exception {
+        dbConnection.close();
     }
 }

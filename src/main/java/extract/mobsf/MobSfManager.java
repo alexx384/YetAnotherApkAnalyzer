@@ -64,10 +64,6 @@ public class MobSfManager {
             return null;
         }
 
-        if (!processor.deleteScanResult(hash)) {
-            return null;
-        }
-
         return MobSfApkProperty.extract(scanObject);
     }
 }
