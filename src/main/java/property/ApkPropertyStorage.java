@@ -1,6 +1,13 @@
 package property;
 
 public class ApkPropertyStorage implements MobSfApkProperty {
+    private int exportedActivities;
+    private int browsableActivities;
+    private int activities;
+    private int receivers;
+    private int providers;
+    private int services;
+    private int libraries;
     private int targetSDK;
     private int maxSDK;
     private int minSDK;
@@ -19,9 +26,27 @@ public class ApkPropertyStorage implements MobSfApkProperty {
     private int pre23Permission;
     private int unusedPermission;
     private int deprecatedPermission;
+    private int totalPermissions;
+    private int files;
+    private int xmlFiles;
+    private int pngFiles;
+    private int kotlinMetadataFiles;
+    private int versionFiles;
+    private int kotlinBuiltinsFiles;
+    private int proFiles;
+    private int ttfFiles;
+    private int dexFiles;
+    private int gifFiles;
 
     public String getCSVRepresentation() {
-        return targetSDK + ","
+        return exportedActivities + ","
+                + browsableActivities + ","
+                + activities + ","
+                + receivers + ","
+                + providers + ","
+                + services + ","
+                + libraries + ","
+                + targetSDK + ","
                 + maxSDK + ","
                 + minSDK + ","
                 + versionCodeName + ","
@@ -38,7 +63,53 @@ public class ApkPropertyStorage implements MobSfApkProperty {
                 + installerPermission + ","
                 + pre23Permission + ","
                 + unusedPermission + ","
-                + deprecatedPermission;
+                + deprecatedPermission + ","
+                + totalPermissions + ","
+                + files + ","
+                + xmlFiles + ","
+                + pngFiles + ","
+                + kotlinMetadataFiles + ","
+                + versionFiles + ","
+                + kotlinBuiltinsFiles + ","
+                + proFiles + ","
+                + ttfFiles + ","
+                + dexFiles + ","
+                + gifFiles;
+    }
+
+    @Override
+    public void setCountExportedActivities(int exportedActivities) {
+        this.exportedActivities = exportedActivities;
+    }
+
+    @Override
+    public void setCountBrowsableActivities(int browsableActivities) {
+        this.browsableActivities = browsableActivities;
+    }
+
+    @Override
+    public void setCountActivities(int activities) {
+        this.activities = activities;
+    }
+
+    @Override
+    public void setCountReceivers(int receivers) {
+        this.receivers = receivers;
+    }
+
+    @Override
+    public void setCountProviders(int providers) {
+        this.providers = providers;
+    }
+
+    @Override
+    public void setCountServices(int services) {
+        this.services = services;
+    }
+
+    @Override
+    public void setCountLibraries(int libraries) {
+        this.libraries = libraries;
     }
 
     @Override
@@ -129,5 +200,60 @@ public class ApkPropertyStorage implements MobSfApkProperty {
     @Override
     public void setCountDeprecatedPermissions(int deprecatedPermissions) {
         this.deprecatedPermission = deprecatedPermissions;
+    }
+
+    @Override
+    public void setCountTotalPermissions(int totalPermissions) {
+        this.totalPermissions = totalPermissions;
+    }
+
+    @Override
+    public void setCountFiles(int files) {
+        this.files = files;
+    }
+
+    @Override
+    public void setCountXmlFiles(int xmlFiles) {
+        this.xmlFiles = xmlFiles;
+    }
+
+    @Override
+    public void setCountPngFiles(int pngFiles) {
+        this.pngFiles = pngFiles;
+    }
+
+    @Override
+    public void setCountKotlinMetadataFiles(int kotlinMetadataFiles) {
+        this.kotlinMetadataFiles = kotlinMetadataFiles;
+    }
+
+    @Override
+    public void setCountVersionFiles(int versionFiles) {
+        this.versionFiles = versionFiles;
+    }
+
+    @Override
+    public void setCountKotlinBuiltinsFiles(int kotlinBuiltinsFiles) {
+        this.kotlinBuiltinsFiles = kotlinBuiltinsFiles;
+    }
+
+    @Override
+    public void setCountProFiles(int proFiles) {
+        this.proFiles = proFiles;
+    }
+
+    @Override
+    public void setCountTtfFiles(int ttfFiles) {
+        this.ttfFiles = ttfFiles;
+    }
+
+    @Override
+    public void setCountDexFiles(int dexFiles) {
+        this.dexFiles = dexFiles;
+    }
+
+    @Override
+    public void setCountGifFiles(int gifFiles) {
+        this.gifFiles = gifFiles;
     }
 }
