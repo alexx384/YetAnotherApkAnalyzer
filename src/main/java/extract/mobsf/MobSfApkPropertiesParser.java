@@ -21,13 +21,16 @@ public class MobSfApkPropertiesParser {
     private static JSONObject init(Path filePath, String mobsfAddress, String mobsfApiKey) {
         MobSfLocalPropertiesExtractor localExtractor = new MobSfLocalPropertiesExtractor(filePath);
         JSONObject object = localExtractor.getJsonObject();
+
         if (object == null) {
             MobSfRemotePropertiesExtractor remoteExtractor = MobSfRemotePropertiesExtractor
                     .build(mobsfAddress, mobsfApiKey);
-            String strJsonObject = remoteExtractor.extract(filePath);
-            if (strJsonObject != null) {
-                localExtractor.overrideFile(strJsonObject);
-                object = new JSONObject(strJsonObject);
+            if (remoteExtractor != null) {
+                String strJsonObject = remoteExtractor.extract(filePath);
+                if (strJsonObject != null) {
+                    localExtractor.overrideFile(strJsonObject);
+                    object = new JSONObject(strJsonObject);
+                }
             }
         }
         return object;
@@ -36,6 +39,10 @@ public class MobSfApkPropertiesParser {
     public static boolean parseTo(MobSfApkProperty property, Path filePath, String mobsfAddress, String mobsfApiKey)
             throws JSONException {
         JSONObject jsonObject = init(filePath, mobsfAddress, mobsfApiKey);
+        if (jsonObject == null) {
+            return false;
+        }
+
         property.setTargetSDK(jsonObject.getInt("target_sdk"));
         property.setMaxSDK(parseMaxSDK(jsonObject.getString("max_sdk")));
         property.setMinSDK(jsonObject.getInt("min_sdk"));

@@ -2,22 +2,20 @@ package extract.mobsf.local;
 
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class MobSfLocalPropertiesExtractor {
     public static final String JSON_PROPERTIES_EXTENSION = ".json";
+    public static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
 
     private final File jsonPropertiesFile;
-    private final Path jsonPropertiesFilePath;
 
     public MobSfLocalPropertiesExtractor(Path filePath) {
         jsonPropertiesFile = new File(filePath.toString() + JSON_PROPERTIES_EXTENSION);
-        jsonPropertiesFilePath = filePath;
     }
 
     public JSONObject getJsonObject() {
@@ -26,20 +24,18 @@ public class MobSfLocalPropertiesExtractor {
         }
 
         try {
-            String jsonContent = Files.readString(jsonPropertiesFilePath, StandardCharsets.UTF_8);
+            String jsonContent = Files.readString(jsonPropertiesFile.toPath(), DEFAULT_CHARSET);
             return new JSONObject(jsonContent);
         } catch (IOException e) {
             return null;
         }
     }
 
-    public boolean overrideFile(String jsonContent) {
-        try (FileWriter writer = new FileWriter(jsonPropertiesFile)) {
+    public void overrideFile(String jsonContent) {
+        try (Writer writer = new OutputStreamWriter(new FileOutputStream(jsonPropertiesFile), DEFAULT_CHARSET)) {
             writer.write(jsonContent);
         } catch (IOException e) {
-            return false;
+            System.out.println(e.getMessage());
         }
-
-        return true;
     }
 }

@@ -1,7 +1,6 @@
 package extract;
 
 import extract.mobsf.MobSfApkPropertiesParser;
-import extract.mobsf.remote.MobSfRemotePropertiesExtractor;
 import property.ApkPropertyStorage;
 import write.PropertiesWriter;
 
@@ -53,10 +52,6 @@ public class PropertiesExtractor {
 
         Path apkPath = Path.of(this.apkFilePath);
         if (!checkApkFile(apkPath)) {
-            return false;
-        }
-        MobSfRemotePropertiesExtractor mobSfRemotePropertiesExtractor = MobSfRemotePropertiesExtractor.build(this.mobsfAddress, this.mobsfApiKey);
-        if (mobSfRemotePropertiesExtractor == null) {
             return false;
         }
 
