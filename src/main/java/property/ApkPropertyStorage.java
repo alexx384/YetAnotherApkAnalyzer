@@ -1,7 +1,6 @@
 package property;
 
 public class ApkPropertyStorage implements MobSfApkProperty {
-    private int exportedActivities;
     private int browsableActivities;
     private int activities;
     private int receivers;
@@ -27,6 +26,15 @@ public class ApkPropertyStorage implements MobSfApkProperty {
     private int unusedPermission;
     private int deprecatedPermission;
     private int totalPermissions;
+    private int manifestIssues;
+    private int codeIssues;
+    private int codeHighIssues;
+    private int codeWarningIssues;
+    private int codeInfoIssues;
+    private int activitiesWithUrl;
+    private int domains;
+    private int emails;
+    private int firebaseUrls;
     private int files;
     private int xmlFiles;
     private int pngFiles;
@@ -37,6 +45,14 @@ public class ApkPropertyStorage implements MobSfApkProperty {
     private int ttfFiles;
     private int dexFiles;
     private int gifFiles;
+    private int exportedActivities;
+    private int exportedServices;
+    private int exportedReceivers;
+    private int exportedProviders;
+    private int detectedTrackers;
+    private int totalTrackers;
+    private int mobsfAverageCVSS;
+    private int securityScore;
 
     public String getCSVRepresentation() {
         return exportedActivities + ","
@@ -65,6 +81,16 @@ public class ApkPropertyStorage implements MobSfApkProperty {
                 + unusedPermission + ","
                 + deprecatedPermission + ","
                 + totalPermissions + ","
+                + manifestIssues + ","
+                + codeIssues + ","
+                + codeHighIssues + ","
+                + codeWarningIssues + ","
+                + codeInfoIssues + ","
+                + codeWarningIssues + ","
+                + activitiesWithUrl + ","
+                + domains + ","
+                + emails + ","
+                + firebaseUrls + ","
                 + files + ","
                 + xmlFiles + ","
                 + pngFiles + ","
@@ -74,12 +100,14 @@ public class ApkPropertyStorage implements MobSfApkProperty {
                 + proFiles + ","
                 + ttfFiles + ","
                 + dexFiles + ","
-                + gifFiles;
-    }
-
-    @Override
-    public void setCountExportedActivities(int exportedActivities) {
-        this.exportedActivities = exportedActivities;
+                + gifFiles + ","
+                + exportedServices + ","
+                + exportedReceivers + ","
+                + exportedProviders + ","
+                + detectedTrackers + ","
+                + totalTrackers + ","
+                + mobsfAverageCVSS + ","
+                + securityScore;
     }
 
     @Override
@@ -208,6 +236,51 @@ public class ApkPropertyStorage implements MobSfApkProperty {
     }
 
     @Override
+    public void setCountManifestIssues(int manifestIssues) {
+        this.manifestIssues = manifestIssues;
+    }
+
+    @Override
+    public void setCountCodeIssues(int codeIssues) {
+        this.codeIssues = codeIssues;
+    }
+
+    @Override
+    public void setCountCodeHighIssues(int codeHighIssues) {
+        this.codeHighIssues = codeHighIssues;
+    }
+
+    @Override
+    public void setCountCodeWarningIssues(int codeWarningIssues) {
+        this.codeWarningIssues = codeWarningIssues;
+    }
+
+    @Override
+    public void setCountCodeInfoIssues(int codeInfoIssues) {
+        this.codeInfoIssues = codeInfoIssues;
+    }
+
+    @Override
+    public void setCountActivitiesWithUrl(int activitiesWithUrl) {
+        this.activitiesWithUrl = activitiesWithUrl;
+    }
+
+    @Override
+    public void setCountDomains(int domains) {
+        this.domains = domains;
+    }
+
+    @Override
+    public void setCountEmails(int emails) {
+        this.emails = emails;
+    }
+
+    @Override
+    public void setCountFirebaseUrls(int firebaseUrls) {
+        this.firebaseUrls = firebaseUrls;
+    }
+
+    @Override
     public void setCountFiles(int files) {
         this.files = files;
     }
@@ -255,5 +328,45 @@ public class ApkPropertyStorage implements MobSfApkProperty {
     @Override
     public void setCountGifFiles(int gifFiles) {
         this.gifFiles = gifFiles;
+    }
+
+    @Override
+    public void setCountExportedActivities(int exportedActivities) {
+        this.exportedActivities = exportedActivities;
+    }
+
+    @Override
+    public void setCountExportedServices(int exportedServices) {
+        this.exportedServices = exportedServices;
+    }
+
+    @Override
+    public void setCountExportedReceivers(int exportedReceivers) {
+        this.exportedReceivers = exportedReceivers;
+    }
+
+    @Override
+    public void setCountExportedProviders(int exportedProviders) {
+        this.exportedProviders = exportedProviders;
+    }
+
+    @Override
+    public void setCountDetectedTrackers(int detectedTrackers) {
+        this.detectedTrackers = detectedTrackers;
+    }
+
+    @Override
+    public void setCountTotalTrackers(int totalTrackers) {
+        this.totalTrackers = totalTrackers;
+    }
+
+    @Override
+    public void setMobsfAverageCVSS(int mobsfAverageCVSS) {
+        this.mobsfAverageCVSS = mobsfAverageCVSS;
+    }
+
+    @Override
+    public void setSecurityScore(int securityScore) {
+        this.securityScore = securityScore;
     }
 }

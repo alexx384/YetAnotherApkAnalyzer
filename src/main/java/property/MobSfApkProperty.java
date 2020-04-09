@@ -1,8 +1,6 @@
 package property;
 
 public interface MobSfApkProperty {
-    void setCountExportedActivities(int exportedActivities);
-
     void setCountBrowsableActivities(int browsableActivities);
 
     void setCountActivities(int activities);
@@ -53,6 +51,24 @@ public interface MobSfApkProperty {
 
     void setCountTotalPermissions(int totalPermissions);
 
+    void setCountManifestIssues(int manifestIssues);
+
+    void setCountCodeIssues(int codeIssues);
+
+    void setCountCodeHighIssues(int codeHighIssues);
+
+    void setCountCodeWarningIssues(int codeWarningIssues);
+
+    void setCountCodeInfoIssues(int codeInfoIssues);
+
+    void setCountActivitiesWithUrl(int activitiesWithUrl);
+
+    void setCountDomains(int domains);
+
+    void setCountEmails(int emails);
+
+    void setCountFirebaseUrls(int firebaseUrls);
+
     void setCountFiles(int files);
 
     void setCountXmlFiles(int xmlFiles);
@@ -72,4 +88,20 @@ public interface MobSfApkProperty {
     void setCountDexFiles(int dexFiles);
 
     void setCountGifFiles(int gifFiles);
+
+    void setCountExportedActivities(int exportedActivities);
+
+    void setCountExportedServices(int exportedServices);
+
+    void setCountExportedReceivers(int exportedReceivers);
+
+    void setCountExportedProviders(int exportedProviders);
+
+    void setCountDetectedTrackers(int detectedTrackers);
+
+    void setCountTotalTrackers(int totalTrackers);
+
+    void setMobsfAverageCVSS(int mobsfAverageCVSS);
+
+    void setSecurityScore(int securityScore);
 }

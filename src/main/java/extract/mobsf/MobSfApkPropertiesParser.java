@@ -12,7 +12,9 @@ import property.MobSfApkProperty;
 
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 public class MobSfApkPropertiesParser {
     private static final String standardPermissionPrefix = "android.permission.";
@@ -47,8 +49,6 @@ public class MobSfApkPropertiesParser {
             return false;
         }
 
-        property.setCountExportedActivities(
-                getCountExportedActivites(jsonObject.getString("exported_activities")));
         property.setCountBrowsableActivities(
                 getCountBrowsableActivities(jsonObject.getJSONObject("browsable_activities")));
         property.setCountActivities(jsonObject.getJSONArray("activities").length());
@@ -64,22 +64,21 @@ public class MobSfApkPropertiesParser {
         if (!parsePermissionsTo(property, jsonObject.getJSONObject("permissions"))) {
             return false;
         }
+        property.setCountManifestIssues(jsonObject.getJSONArray("manifest_analysis").length());
+        parseCodeIssues(jsonObject.getJSONObject("code_analysis"), property);
+        property.setCountActivitiesWithUrl(jsonObject.getJSONArray("urls").length());
+        property.setCountDomains(getJSONObjectElements(jsonObject.getJSONObject("domains")));
+        property.setCountEmails(jsonObject.getJSONArray("emails").length());
+        property.setCountFirebaseUrls(jsonObject.getJSONArray("firebase_urls").length());
         parseFilesInfo(jsonObject.getJSONArray("files"), property);
-
+        parseExported(jsonObject.getJSONObject("exported_count"), property);
+        parseTrackers(jsonObject.getJSONObject("trackers"), property);
+        property.setMobsfAverageCVSS((int) (jsonObject.getFloat("average_cvss") * 10));
+        property.setSecurityScore(jsonObject.getInt("security_score"));
         return true;
         // Permission provider
         // TODO: And so on
 //        return true;
-    }
-
-    private static int getCountExportedActivites(String jsonArray) {
-        int countCommaSign = 0;
-        for (int i = 0; i < jsonArray.length(); i++) {
-            if (jsonArray.charAt(i) == ',') {
-                countCommaSign++;
-            }
-        }
-        return countCommaSign + 1;
     }
 
     private static int getCountBrowsableActivities(JSONObject jsonObject) {
@@ -152,6 +151,42 @@ public class MobSfApkPropertiesParser {
         }
     }
 
+    private static int getJSONObjectElements(JSONObject jsonObject) {
+        int elements = 0;
+        Iterator<String> elementsIterator = jsonObject.keys();
+        while (elementsIterator.hasNext()) {
+            elementsIterator.next();
+            elements += 1;
+        }
+        return elements;
+    }
+
+    private static void parseCodeIssues(JSONObject jsonObject, MobSfApkProperty property) {
+        int highIssues = 0;
+        int warningIssues = 0;
+        int infoIssues = 0;
+        for (Map.Entry<String, Object> stringObjectEntry : jsonObject.toMap().entrySet()) {
+            HashMap objMap = (HashMap) stringObjectEntry.getValue();
+            String level = (String) objMap.get("level");
+            switch (level) {
+                case "high":
+                    highIssues += 1;
+                    break;
+                case "warning":
+                    warningIssues += 1;
+                    break;
+                case "info":
+                    infoIssues += 1;
+                    break;
+            }
+        }
+
+        property.setCountCodeIssues(highIssues + warningIssues + infoIssues);
+        property.setCountCodeHighIssues(highIssues);
+        property.setCountCodeWarningIssues(warningIssues);
+        property.setCountCodeInfoIssues(infoIssues);
+    }
+
     private static void fileInfo(String filename) {
         for (FileType fileType : enumFileTypes) {
             int fileLength = filename.length();
@@ -180,5 +215,17 @@ public class MobSfApkPropertiesParser {
         property.setCountTtfFiles(countFileTypes[FileType.TTF.ordinal()]);
         property.setCountDexFiles(countFileTypes[FileType.DEX.ordinal()]);
         property.setCountGifFiles(countFileTypes[FileType.GIF.ordinal()]);
+    }
+
+    private static void parseExported(JSONObject jsonObject, MobSfApkProperty property) {
+        property.setCountExportedActivities(jsonObject.getInt("exported_activities"));
+        property.setCountExportedServices(jsonObject.getInt("exported_services"));
+        property.setCountExportedReceivers(jsonObject.getInt("exported_receivers"));
+        property.setCountExportedProviders(jsonObject.getInt("exported_providers"));
+    }
+
+    private static void parseTrackers(JSONObject jsonObject, MobSfApkProperty property) {
+        property.setCountDetectedTrackers(jsonObject.getInt("detected_trackers"));
+        property.setCountTotalTrackers(jsonObject.getInt("total_trackers"));
     }
 }
