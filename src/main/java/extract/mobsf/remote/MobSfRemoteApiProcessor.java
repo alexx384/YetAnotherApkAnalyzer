@@ -11,11 +11,14 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.util.Optional;
 
 public class MobSfRemoteApiProcessor {
     private static final String PATH_UPLOAD_FILE = "/api/v1/upload";
     private static final String PATH_SCAN_FILE = "/api/v1/scan";
     private static final String PATH_DELETE_FILE = "/api/v1/delete_scan";
+    private static final String PATH_GENERATE_DOWNLOADS = "/generate_downloads/?hash=";
+    private static final String GENERATE_DOWNLOADS_POSTFIX = "&file_type=java";
 
     private final String serverUrl;
     private final String mobsfApiKey;
@@ -109,6 +112,44 @@ public class MobSfRemoteApiProcessor {
                     );
 
             return response.statusCode() == 200;
+        } catch (URISyntaxException | IOException | InterruptedException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean downloadFile(String hash, String filePath) {
+        HttpClient httpClient = HttpClient.newHttpClient();
+        try {
+            HttpRequest httpGenerateDownloadRequest = HttpRequest
+                    .newBuilder(
+                            new URI(serverUrl + PATH_GENERATE_DOWNLOADS + hash + GENERATE_DOWNLOADS_POSTFIX)
+                    )
+                    .GET()
+                    .build();
+
+            HttpResponse<Void> generateDownloadsResponse =
+                    httpClient.send(
+                            httpGenerateDownloadRequest,
+                            HttpResponse.BodyHandlers.discarding()
+                    );
+            Optional<String> location = generateDownloadsResponse.headers().firstValue("Location");
+            if (generateDownloadsResponse.statusCode() != 302 || location.isEmpty()) {
+                return false;
+            }
+
+            HttpRequest httpDownloadRequest = HttpRequest
+                    .newBuilder(
+                            new URI(serverUrl + location.get())
+                    )
+                    .GET()
+                    .build();
+            HttpResponse<Path> downloadResponse =
+                    httpClient.send(
+                            httpDownloadRequest,
+                            HttpResponse.BodyHandlers.ofFile(Path.of(filePath))
+                    );
+            return downloadResponse.statusCode() == 200;
         } catch (URISyntaxException | IOException | InterruptedException e) {
             System.out.println(e.getMessage());
             return false;

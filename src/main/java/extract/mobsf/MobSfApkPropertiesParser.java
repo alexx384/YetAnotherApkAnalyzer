@@ -32,7 +32,8 @@ public class MobSfApkPropertiesParser {
             MobSfRemotePropertiesExtractor remoteExtractor = MobSfRemotePropertiesExtractor
                     .build(mobsfAddress, mobsfApiKey);
             if (remoteExtractor != null) {
-                String strJsonObject = remoteExtractor.extract(filePath);
+                String strJsonObject = remoteExtractor.extract(filePath,
+                        "dir." + filePath.getFileName().toString());
                 if (strJsonObject != null) {
                     localExtractor.overrideFile(strJsonObject);
                     object = new JSONObject(strJsonObject);
@@ -226,6 +227,5 @@ public class MobSfApkPropertiesParser {
 
     private static void parseTrackers(JSONObject jsonObject, MobSfApkProperty property) {
         property.setCountDetectedTrackers(jsonObject.getInt("detected_trackers"));
-        property.setCountTotalTrackers(jsonObject.getInt("total_trackers"));
     }
 }

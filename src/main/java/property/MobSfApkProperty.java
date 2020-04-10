@@ -99,8 +99,6 @@ public interface MobSfApkProperty {
 
     void setCountDetectedTrackers(int detectedTrackers);
 
-    void setCountTotalTrackers(int totalTrackers);
-
     void setMobsfAverageCVSS(int mobsfAverageCVSS);
 
     void setSecurityScore(int securityScore);

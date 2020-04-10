@@ -11,11 +11,13 @@ public class MobSfRemotePropertiesExtractor {
 
     private final String mobsfAddress;
     private final String mobsfApiKey;
+    private final ZipExtractor zipExtractor;
 
     private MobSfRemotePropertiesExtractor(String mobsfAddress, String mobsfApiKey) {
 
         this.mobsfAddress = mobsfAddress;
         this.mobsfApiKey = mobsfApiKey;
+        this.zipExtractor = new ZipExtractor();
     }
 
     public static boolean isAddressReachable(String host, int port) {
@@ -46,7 +48,7 @@ public class MobSfRemotePropertiesExtractor {
         }
     }
 
-    public String extract(Path apkFilePath) {
+    public String extract(Path apkFilePath, String sourceDirName) {
         MobSfRemoteApiProcessor processor = new MobSfRemoteApiProcessor(
                 HTTP_ADDRESS_HEADER + mobsfAddress,
                 mobsfApiKey
@@ -56,6 +58,24 @@ public class MobSfRemotePropertiesExtractor {
             return null;
         }
 
-        return processor.scanFile(apkFilePath.getFileName().toString(), hash, DEFAULT_SCAN_TYPE);
+        String resultJsonMessage = processor.scanFile(apkFilePath.getFileName().toString(), hash, DEFAULT_SCAN_TYPE);
+        if (resultJsonMessage == null) {
+            return null;
+        }
+
+        String zipFilePath = "testFiles/" + apkFilePath.getFileName().toString() + ".zip";
+        if (!processor.downloadFile(hash, zipFilePath)) {
+            return null;
+        }
+
+        if (!zipExtractor.extractToFolder(zipFilePath, "testFiles/" + sourceDirName)) {
+            return null;
+        }
+
+        if (processor.deleteScanResult(hash)) {
+            return resultJsonMessage;
+        } else {
+            return null;
+        }
     }
 }

@@ -50,7 +50,6 @@ public class ApkPropertyStorage implements MobSfApkProperty {
     private int exportedReceivers;
     private int exportedProviders;
     private int detectedTrackers;
-    private int totalTrackers;
     private int mobsfAverageCVSS;
     private int securityScore;
 
@@ -105,7 +104,6 @@ public class ApkPropertyStorage implements MobSfApkProperty {
                 + exportedReceivers + ","
                 + exportedProviders + ","
                 + detectedTrackers + ","
-                + totalTrackers + ","
                 + mobsfAverageCVSS + ","
                 + securityScore;
     }
@@ -353,11 +351,6 @@ public class ApkPropertyStorage implements MobSfApkProperty {
     @Override
     public void setCountDetectedTrackers(int detectedTrackers) {
         this.detectedTrackers = detectedTrackers;
-    }
-
-    @Override
-    public void setCountTotalTrackers(int totalTrackers) {
-        this.totalTrackers = totalTrackers;
     }
 
     @Override
