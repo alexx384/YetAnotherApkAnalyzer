@@ -89,6 +89,8 @@ public interface MobSfApkProperty {
 
     void setCountGifFiles(int gifFiles);
 
+    void setCountOtherFiles(int otherFiles);
+
     void setCountExportedActivities(int exportedActivities);
 
     void setCountExportedServices(int exportedServices);

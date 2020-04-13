@@ -10,7 +10,7 @@ import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-public class ZipExtractor {
+class ZipExtractor {
     private static final int BUFFER_SIZE = 4096;
     private final byte[] buffer;
 

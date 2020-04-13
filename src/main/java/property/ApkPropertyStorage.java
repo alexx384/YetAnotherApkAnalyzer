@@ -45,6 +45,7 @@ public class ApkPropertyStorage implements MobSfApkProperty {
     private int ttfFiles;
     private int dexFiles;
     private int gifFiles;
+    private int otherFiles;
     private int exportedActivities;
     private int exportedServices;
     private int exportedReceivers;
@@ -100,6 +101,7 @@ public class ApkPropertyStorage implements MobSfApkProperty {
                 + ttfFiles + ","
                 + dexFiles + ","
                 + gifFiles + ","
+                + otherFiles + ","
                 + exportedServices + ","
                 + exportedReceivers + ","
                 + exportedProviders + ","
@@ -326,6 +328,11 @@ public class ApkPropertyStorage implements MobSfApkProperty {
     @Override
     public void setCountGifFiles(int gifFiles) {
         this.gifFiles = gifFiles;
+    }
+
+    @Override
+    public void setCountOtherFiles(int otherFiles) {
+        this.otherFiles = otherFiles;
     }
 
     @Override

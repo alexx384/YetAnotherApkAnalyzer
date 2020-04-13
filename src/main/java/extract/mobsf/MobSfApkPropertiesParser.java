@@ -199,6 +199,7 @@ public class MobSfApkPropertiesParser {
                 return;
             }
         }
+        MobSfApkPropertiesParser.countFileTypes[FileType.OTHER.ordinal()] += 1;
     }
 
     private static void parseFilesInfo(JSONArray jsonArray, MobSfApkProperty property) {
@@ -216,6 +217,7 @@ public class MobSfApkPropertiesParser {
         property.setCountTtfFiles(countFileTypes[FileType.TTF.ordinal()]);
         property.setCountDexFiles(countFileTypes[FileType.DEX.ordinal()]);
         property.setCountGifFiles(countFileTypes[FileType.GIF.ordinal()]);
+        property.setCountOtherFiles(countFileTypes[FileType.OTHER.ordinal()]);
     }
 
     private static void parseExported(JSONObject jsonObject, MobSfApkProperty property) {

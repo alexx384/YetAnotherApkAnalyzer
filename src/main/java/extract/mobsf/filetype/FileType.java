@@ -9,7 +9,8 @@ public enum FileType {
     PRO("pro"),
     TTF("ttf"),
     DEX("dex"),
-    GIF("gif");
+    GIF("gif"),
+    OTHER("");
 
     public String value;
 
