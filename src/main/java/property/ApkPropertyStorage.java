@@ -1,6 +1,7 @@
 package property;
 
-public class ApkPropertyStorage implements MobSfApkProperty {
+public class ApkPropertyStorage implements MobSfApkProperty, SourceJavaProperty {
+    /* === MobSfApkProperty === */
     private int browsableActivities;
     private int activities;
     private int receivers;
@@ -53,6 +54,8 @@ public class ApkPropertyStorage implements MobSfApkProperty {
     private int detectedTrackers;
     private int mobsfAverageCVSS;
     private int securityScore;
+
+    /* === SourceJavaProperty === */
 
     public String getCSVRepresentation() {
         return exportedActivities + ","
