@@ -6,25 +6,31 @@ enum Terminal {
     /* Terminal symbols */
     TS_UNKNOWN(-1, true),
     TS_PACKAGE(0, true),
-    TS_IMPORT(1, true),
-    TS_PUBLIC(2, true),
-    TS_FINAL(3, true),
-    TS_CLASS(4, true),
-    TS_EXTENDS(5, true),
-    TS_IMPLEMENTS(6, true),
-    TS_OPEN_CURLY_BRACE(7, true),
-    TS_CLOSE_CURLY_BRACE(8, true),
+    TS_IDENTIFIER(1, true),
+    TS_DOT(2, true),
+    TS_SEMICOLON(3, true),
+    TS_IMPORT(4, true),
+    TS_PUBLIC(5, true),
+    TS_FINAL(6, true),
+    TS_CLASS(7, true),
+    TS_EXTENDS(8, true),
+    TS_IMPLEMENTS(9, true),
+    TS_OPEN_CURLY_BRACE(10, true),
+    TS_COMMA(11, true),
+    TS_CLOSE_CURLY_BRACE(12, true),
+    TS_END(13, true),
 
     /* Non-terminal symbols */
     NTS_SOURCE(0, false),
-    NTS_PACKAGE_NAME(1, false),
-    NTS_IMPORT_STATEMENT_START(2, false),
-    NTS_IMPORT_STATEMENT_CONTINUE(3, false),
-    NTS_COMMON_FINAL_STATEMENT(4, false),
+    NTS_PACKAGE_NEXT_NAME(1, false),
+    NTS_IMPORT_NEXT_NAME(2, false),
+    NTS_HEADER_PUBLIC_STATEMENT(3, false),
+    NTS_HEADER_FINAL_STATEMENT(4, false),
     NTS_CLASS_DECLARATION(5, false),
-    NTS_CLASS_EXTENDS(6, false),
-    NTS_CLASS_IMPLEMENTS(7, false),
-    NTS_CLASS_BLOCK(8, false);
+    NTS_IMPORT_STATEMENT(6, false),
+    NTS_CLASS_EXTENDS(7, false),
+    NTS_CLASS_IMPLEMENTS(8, false),
+    NTS_CLASS_BLOCK(9, true);
 
     public final int value;
     public final boolean isTerminal;
@@ -34,6 +40,26 @@ enum Terminal {
         this.isTerminal = isTerminal;
     }
 
+    public static boolean isIdentifierStartCharacter(char character) {
+        return character == '$'
+                || ('A' <= character && character <= 'Z')
+                || character == '_'
+                || ('a' <= character && character <= 'z');
+    }
+
+    public static boolean isIdentifierNextCharacter(char character) {
+        return character == '$'
+                || ('0' <= character && character <= '9')
+                || ('A' <= character && character <= 'Z')
+                || character == '_'
+                || ('a' <= character && character <= 'z');
+    }
+
+    public static boolean isDelimiter(char character) {
+        return character == ' ' || character == '\n' || character == '\t';
+    }
+
+    @SuppressWarnings("StatementWithEmptyBody")
     public static Terminal getTerminal(CharacterIterator iterator) {
         char character = iterator.current();
         while (character == ' ' || character == '\n' || character == '\t') {
@@ -42,14 +68,30 @@ enum Terminal {
 
         Terminal result = Terminal.TS_UNKNOWN;
         switch (character) {
+            case ',': {
+                result = TS_COMMA;
+            } break;
+            case '.': {
+                result = TS_DOT;
+            } break;
+            case ';': {
+                result = TS_SEMICOLON;
+            } break;
             case 'a': {     // abstract, assert
                 char nextCharacter = iterator.next();
                 if (nextCharacter == 'b' && iterator.next() == 's' && iterator.next() == 't' && iterator.next() == 'r'
-                        && iterator.next() == 'a' && iterator.next() == 'c' && iterator.next() == 't') {
+                        && iterator.next() == 'a' && iterator.next() == 'c' && iterator.next() == 't'
+                        && isDelimiter(iterator.next())) {
                     result = TS_UNKNOWN;
+                    iterator.setIndex(iterator.getIndex() - 1);
                 } else if (nextCharacter == 's' && iterator.next() == 's' && iterator.next() == 'e'
-                        && iterator.next() == 'r' && iterator.next() == 't') {
+                        && iterator.next() == 'r' && iterator.next() == 't' && isDelimiter(iterator.next())) {
                     result = TS_UNKNOWN;
+                    iterator.setIndex(iterator.getIndex() - 1);
+                } else if (isIdentifierNextCharacter(iterator.current())) {
+                    while (isIdentifierNextCharacter(iterator.next()));
+                    iterator.setIndex(iterator.getIndex() - 1);
+                    result = TS_IDENTIFIER;
                 }
             } break;
             case 'b': {     // boolean, break, byte
@@ -138,13 +180,11 @@ enum Terminal {
                         }
                     } break;
                     case 'i': {     // finally, final
-                        if (iterator.next() == 'i' && iterator.next() == 'n' && iterator.next() == 'a'
-                                && iterator.next() == 'l') {
+                        if (iterator.next() == 'n' && iterator.next() == 'a' && iterator.next() == 'l') {
                             char nextCharacter = iterator.next();
                             if (nextCharacter == 'l' && iterator.next() == 'y') {
                                 result = TS_UNKNOWN;
-                            } else if (nextCharacter == CharacterIterator.DONE || nextCharacter == ' '
-                                    || nextCharacter == '\n' || nextCharacter == '\t') {
+                            } else if (nextCharacter == CharacterIterator.DONE || isDelimiter(nextCharacter)) {
                                 result = TS_FINAL;
                                 iterator.setIndex(iterator.getIndex() - 1);
                             }
@@ -327,20 +367,29 @@ enum Terminal {
             case '}': {
                 result = TS_CLOSE_CURLY_BRACE;
             } break;
+            case CharacterIterator.DONE: {
+                result = TS_END;
+            } break;
             default: {
-                throw new IllegalArgumentException("Can't parse '" + character + "' at position " + iterator.getIndex());
+                if (isIdentifierStartCharacter(iterator.current())) {
+                    while (isIdentifierNextCharacter(iterator.next()));
+                    iterator.setIndex(iterator.getIndex() - 1);
+                    result = TS_IDENTIFIER;
+                } else {
+                    throw new IllegalArgumentException("Can't parse '" + character + "' at position "
+                            + iterator.getIndex());
+                }
             }
         }
 
-        if (result == Terminal.TS_UNKNOWN) {
-            throw new IllegalArgumentException("Can't parse '" + character + "' at position " + iterator.getIndex());
-        }
-
-        character = iterator.next();
-        if (character == CharacterIterator.DONE || character == ' ' || character == '\n' || character == '\t') {
+        if (Terminal.TS_UNKNOWN.equals(result)) {
+            throw new IllegalArgumentException("Can't parse '" + character + "' at position "
+                    + iterator.getIndex());
+        } else if (Terminal.TS_END.equals(result)) {
             return result;
         } else {
-            throw new IllegalArgumentException("Can't parse '" + character + "' at position " + iterator.getIndex());
+            iterator.setIndex(iterator.getIndex() + 1);
+            return result;
         }
     }
 }
