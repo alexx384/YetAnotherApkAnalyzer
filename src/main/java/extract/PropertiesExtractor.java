@@ -1,6 +1,7 @@
 package extract;
 
 import extract.mobsf.MobSfApkPropertiesParser;
+import extract.source.SourcesParser;
 import property.ApkPropertyStorage;
 import write.PropertiesWriter;
 
@@ -63,6 +64,12 @@ public class PropertiesExtractor {
         // TODO: add extractors
 //        writer.setTestKey1(12);
 //        writer.setTestKey2(15);
+        Path sourcesDir = apkPath.resolveSibling(
+                MobSfApkPropertiesParser.DIR_PREFIX + apkPath.getFileName().toString()
+        );
+        if (!SourcesParser.parseSources(sourcesDir, propertyStorage)) {
+            return false;
+        }
 
         return writer.saveProperties(propertyStorage);
     }

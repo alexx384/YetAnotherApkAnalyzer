@@ -56,6 +56,29 @@ public class ApkPropertyStorage implements MobSfApkProperty, SourceJavaProperty 
     private int securityScore;
 
     /* === SourceJavaProperty === */
+    private int activityImports;
+    private int intentImports;
+    private int intentFilterImports;
+    private int contentResolverImports;
+    private int dataInputStreamImports;
+    private int bufferedReaderImports;
+    private int dataOutputStreamImports;
+    private int inetSocketAddressImports;
+    private int fileImports;
+    private int streamImports;
+    private int telephonyManagerImports;
+    private int serviceImports;
+    private int contextImports;
+    private int packageManagerImports;
+    private int smsManagerImports;
+    private int timerImports;
+    private int bundleImports;
+    private int applicationInfoImports;
+    private int timerTaskImports;
+    private int fileOutputStreamImports;
+    private int networkInfoImports;
+    private int connectivityManagerImports;
+    private int logImports;
 
     public String getCSVRepresentation() {
         return exportedActivities + ","
@@ -110,7 +133,30 @@ public class ApkPropertyStorage implements MobSfApkProperty, SourceJavaProperty 
                 + exportedProviders + ","
                 + detectedTrackers + ","
                 + mobsfAverageCVSS + ","
-                + securityScore;
+                + securityScore + ","
+                + activityImports + ","
+                + intentImports + ","
+                + intentFilterImports + ","
+                + contentResolverImports + ","
+                + dataInputStreamImports + ","
+                + bufferedReaderImports + ","
+                + dataOutputStreamImports + ","
+                + inetSocketAddressImports + ","
+                + fileImports + ","
+                + streamImports + ","
+                + telephonyManagerImports + ","
+                + serviceImports + ","
+                + contextImports + ","
+                + packageManagerImports + ","
+                + smsManagerImports + ","
+                + timerImports + ","
+                + bundleImports + ","
+                + applicationInfoImports + ","
+                + timerTaskImports + ","
+                + fileOutputStreamImports + ","
+                + networkInfoImports + ","
+                + connectivityManagerImports + ","
+                + logImports;
     }
 
     @Override
@@ -371,5 +417,120 @@ public class ApkPropertyStorage implements MobSfApkProperty, SourceJavaProperty 
     @Override
     public void setSecurityScore(int securityScore) {
         this.securityScore = securityScore;
+    }
+
+    @Override
+    public void setCountActivityImports(int activityImports) {
+        this.activityImports = activityImports;
+    }
+
+    @Override
+    public void setCountIntentImports(int intentImports) {
+        this.intentImports = intentImports;
+    }
+
+    @Override
+    public void setCountIntentFilterImports(int intentFilterImports) {
+        this.intentFilterImports = intentFilterImports;
+    }
+
+    @Override
+    public void setCountContentResolverImports(int contentResolverImports) {
+        this.contentResolverImports = contentResolverImports;
+    }
+
+    @Override
+    public void setCountDataInputStreamImports(int dataInputStreamImports) {
+        this.dataInputStreamImports = dataInputStreamImports;
+    }
+
+    @Override
+    public void setCountBufferedReaderImports(int bufferedReaderImports) {
+        this.bufferedReaderImports = bufferedReaderImports;
+    }
+
+    @Override
+    public void setCountDataOutputStreamImports(int dataOutputStreamImports) {
+        this.dataOutputStreamImports = dataOutputStreamImports;
+    }
+
+    @Override
+    public void setCountInetSocketAddressImports(int inetSocketAddressImports) {
+        this.inetSocketAddressImports = inetSocketAddressImports;
+    }
+
+    @Override
+    public void setCountFileImports(int fileImports) {
+        this.fileImports = fileImports;
+    }
+
+    @Override
+    public void setCountStreamImports(int streamImports) {
+        this.streamImports = streamImports;
+    }
+
+    @Override
+    public void setCountTelephonyManagerImports(int telephonyManagerImports) {
+        this.telephonyManagerImports = telephonyManagerImports;
+    }
+
+    @Override
+    public void setCountServiceImports(int serviceImports) {
+        this.serviceImports = serviceImports;
+    }
+
+    @Override
+    public void setCountContextImports(int contextImports) {
+        this.contextImports = contextImports;
+    }
+
+    @Override
+    public void setCountPackageManagerImports(int packageManagerImports) {
+        this.packageManagerImports = packageManagerImports;
+    }
+
+    @Override
+    public void setCountSmsManagerImports(int smsManagerImports) {
+        this.smsManagerImports = smsManagerImports;
+    }
+
+    @Override
+    public void setCountTimerImports(int timerImports) {
+        this.timerImports = timerImports;
+    }
+
+    @Override
+    public void setCountBundleImports(int bundleImports) {
+        this.bundleImports = bundleImports;
+    }
+
+    @Override
+    public void setCountApplicationInfoImports(int applicationInfoImports) {
+        this.applicationInfoImports = applicationInfoImports;
+    }
+
+    @Override
+    public void setCountTimerTaskImports(int timerTaskImports) {
+        this.timerTaskImports = timerTaskImports;
+    }
+
+    @Override
+    public void setCountFileOutputStreamImports(int fileOutputStreamImports) {
+        this.fileOutputStreamImports = fileOutputStreamImports;
+    }
+
+    @Override
+    public void setCountNetworkInfoImports(int networkInfoImports) {
+        this.networkInfoImports = networkInfoImports;
+    }
+
+    @Override
+    public void setCountConnectivityManagerImports(int connectivityManagerImports) {
+        this.connectivityManagerImports = connectivityManagerImports;
+    }
+
+    @Override
+    public void setCountLogImports(int logImports) {
+        this.logImports = logImports;
     }
 }

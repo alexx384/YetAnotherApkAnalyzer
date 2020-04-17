@@ -17,6 +17,8 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class MobSfApkPropertiesParser {
+    public static final String DIR_PREFIX = "dir.";
+
     private static final String standardPermissionPrefix = "android.permission.";
     private static final int permissionPrefixLenght = standardPermissionPrefix.length();
     private static final AndroidPermissionGroup[] enumAndroidPermissions = AndroidPermissionGroup.values();
@@ -33,7 +35,7 @@ public class MobSfApkPropertiesParser {
                     .build(mobsfAddress, mobsfApiKey);
             if (remoteExtractor != null) {
                 String strJsonObject = remoteExtractor.extract(filePath,
-                        "dir." + filePath.getFileName().toString());
+                        DIR_PREFIX + filePath.getFileName().toString());
                 if (strJsonObject != null) {
                     localExtractor.overrideFile(strJsonObject);
                     object = new JSONObject(strJsonObject);
