@@ -4,7 +4,7 @@ import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParserConfiguration;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
-import property.SourceJavaProperty;
+import property.SourceImportJavaProperty;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -125,7 +125,7 @@ class SourceJavaParser {
         }
     }
 
-    public void exportInProperties(SourceJavaProperty property) {
+    public void exportInProperties(SourceImportJavaProperty property) {
         property.setCountActivityImports(values[importActivity]);
         property.setCountIntentImports(values[importIntent]);
         property.setCountIntentFilterImports(values[importIntentFilter]);
