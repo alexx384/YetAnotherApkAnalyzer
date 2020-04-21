@@ -3,16 +3,34 @@ package extract.source;
 public class MutableInteger extends Number implements Comparable<MutableInteger> {
     private int number;
 
+    /**
+     * Initialize object with the value
+     *
+     * @param number start value to initialize
+     */
     public MutableInteger(int number) {
         this.number = number;
     }
 
+    /**
+     * Initialize object with 0 value
+     */
     public MutableInteger() {
         this(0);
     }
 
+    /**
+     * Increase value by 1
+     */
     public void increment() {
         ++number;
+    }
+
+    /**
+     * Set the value to 0
+     */
+    public void clear() {
+        this.number = 0;
     }
 
     @Override
@@ -43,18 +61,5 @@ public class MutableInteger extends Number implements Comparable<MutableInteger>
     @Override
     public int compareTo(MutableInteger o) {
         return Integer.compare(this.number, o.number);
-    }
-
-    public static void main(String[] args) {
-//        Integer i = 2;
-//        Integer r = i;
-//        i += 2;
-//        System.out.println(i);
-//        System.out.println(r);
-        MutableInteger i = new MutableInteger(2);
-        MutableInteger r = i;
-        i.increment();
-        System.out.println(i);
-        System.out.println(r);
     }
 }

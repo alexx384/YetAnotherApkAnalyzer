@@ -7,6 +7,7 @@ import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.VariableDeclarationExpr;
+import com.github.javaparser.ast.nodeTypes.NodeWithBody;
 import com.github.javaparser.ast.stmt.*;
 import property.SourceApiJavaProperty;
 
@@ -26,7 +27,8 @@ public class SourceApiExtractor {
     private static final Set<String> detectMethodSet = Set.of(
             "toLowerCase",
             "strip",
-            "setDataAndType"
+            "setDataAndType",
+            "charAt"
     );
 
     private final Map<String, Map<String, MutableInteger>> detectSignMap;
@@ -38,11 +40,32 @@ public class SourceApiExtractor {
                 Map.entry("String", Map.ofEntries(
                         Map.entry("toLowerCase", new MutableInteger()),
                         Map.entry("strip", new MutableInteger()),
-                        Map.entry("setDataAndType", new MutableInteger())
+                        Map.entry("setDataAndType", new MutableInteger()),
+                        Map.entry("charAt", new MutableInteger())
                 ))
         );
         instanceVariableMapList = new ArrayList<>();
         otherVariableMapList = new ArrayList<>();
+    }
+
+    /**
+     * returns count of method calls of the specific class
+     * if the class and method are stored in {@code detectSignMap} database
+     *
+     * @param methodName method name to count
+     * @param type method
+     * @return count of calls is the record present in database, otherwise returns -1
+     */
+    public int getMethodCallCountOfType(String methodName, String type) {
+        Map<String, MutableInteger> methodMap = detectSignMap.get(type);
+        if (methodMap == null) {
+            return -1;
+        }
+        MutableInteger integer = methodMap.get(methodName);
+        if (integer == null) {
+            return -1;
+        }
+        return integer.intValue();
     }
 
     /**
@@ -64,18 +87,35 @@ public class SourceApiExtractor {
         if (name.isEmpty()) {
             return false;
         }
-        Optional<ClassOrInterfaceDeclaration> optionalDeclaration = cu.getClassByName(name.get());
-        if (optionalDeclaration.isEmpty()) {
+        Optional<TypeDeclaration<?>> optionalTypeDeclaration = cu.getPrimaryType();
+        if (optionalTypeDeclaration.isEmpty()) {
             return false;
         }
-        ClassOrInterfaceDeclaration declaration = optionalDeclaration.get();
-        if (declaration.isInterface()) {
-            extractInterfaceDeclaration(declaration);
-        } else {
-            extractClassDeclaration(declaration);
+        TypeDeclaration<?> typeDeclaration = optionalTypeDeclaration.get();
+        if (typeDeclaration.isClassOrInterfaceDeclaration()) {
+            ClassOrInterfaceDeclaration declaration = typeDeclaration.asClassOrInterfaceDeclaration();
+            if (declaration.isInterface()) {
+                extractInterfaceDeclaration(declaration);
+            } else {
+                extractClassDeclaration(declaration);
+            }
+        } else if (typeDeclaration.isEnumDeclaration()) {
+            EnumDeclaration declaration = typeDeclaration.asEnumDeclaration();
+            extractEnumDeclaration(declaration);
         }
 
         return true;
+    }
+
+    /**
+     * Clears counters value that parsed before
+     */
+    public void clearCounters() {
+        for (Map<String, MutableInteger> methods : detectSignMap.values()) {
+            for (MutableInteger counter : methods.values()) {
+                counter.clear();
+            }
+        }
     }
 
     private void extractClassDeclaration(ClassOrInterfaceDeclaration classDeclaration) {
@@ -84,14 +124,35 @@ public class SourceApiExtractor {
         extractClassFields(classDeclaration.getFields());
 
         for (MethodDeclaration method : classDeclaration.getMethods()) {
-            extractClassMethod(method);
+            extractMethod(method);
         }
         instanceVariableMapList.remove(instanceVariableMapList.size() - 1);
         otherVariableMapList.remove(otherVariableMapList.size() - 1);
     }
 
     private void extractInterfaceDeclaration(ClassOrInterfaceDeclaration interfaceDeclaration) {
+        otherVariableMapList.add(new HashMap<>());
+        for (MethodDeclaration method : interfaceDeclaration.getMethods()) {
+            extractMethod(method);
+        }
+        otherVariableMapList.remove(otherVariableMapList.size() - 1);
+    }
 
+    private void extractEnumDeclaration(EnumDeclaration enumDeclaration) {
+        for (EnumConstantDeclaration constantDeclaration : enumDeclaration.getEntries()) {
+            extractEnumConstantDeclaration(constantDeclaration);
+        }
+    }
+
+    private void extractEnumConstantDeclaration(EnumConstantDeclaration constantDeclaration) {
+        otherVariableMapList.add(new HashMap<>());
+        for (Expression expression : constantDeclaration.getArguments()) {
+            extractExpression(expression);
+        }
+        // TODO: implement me
+//        BodyDeclaration
+//        constantDeclaration.getClassBody()
+        otherVariableMapList.remove(otherVariableMapList.size() - 1);
     }
 
     private void extractClassFields(List<FieldDeclaration> classFields) {
@@ -124,7 +185,7 @@ public class SourceApiExtractor {
         }
     }
 
-    private void extractClassMethod(MethodDeclaration method) {
+    private void extractMethod(MethodDeclaration method) {
         Optional<BlockStmt> optionalBody = method.getBody();
         if (optionalBody.isEmpty()) {
             return;
@@ -162,10 +223,41 @@ public class SourceApiExtractor {
     }
 
     private void extractStatement(Statement statement) {
+        /* Out of scope: breakStatement, continueStatement, emptyStatement, unparsableStatement */
         if (statement.isExpressionStmt()) {
             extractExpression(statement.asExpressionStmt().getExpression());
+        } else if (statement.isBlockStmt()) {
+            extractBody(statement.asBlockStmt());
+        } else if (statement.isIfStmt()) {
+            extractIfStatement(statement.asIfStmt());
+        } else if (statement.isForStmt()) {
+            extractForStatement(statement.asForStmt());
+        } else if (statement.isForEachStmt()) {
+            extractForEachStatement(statement.asForEachStmt());
+        } else if (statement.isDoStmt()) {
+            extractDoWhileStatement(statement.asDoStmt());
+        } else if (statement.isWhileStmt()) {
+            extractDoWhileStatement(statement.asWhileStmt());
         } else if (statement.isTryStmt()) {
             extractTryStatement(statement.asTryStmt());
+        } else if (statement.isAssertStmt()) {
+            extractAssertStatement(statement.asAssertStmt());
+        } else if (statement.isLabeledStmt()) {
+            extractStatement(statement.asLabeledStmt().getStatement());
+        } else if (statement.isReturnStmt()) {
+            statement.asReturnStmt().getExpression().ifPresent(this::extractExpression);
+        } else if (statement.isSwitchStmt()) {
+            extractSwitchStatement(statement.asSwitchStmt());
+        } else if (statement.isSynchronizedStmt()) {
+            extractSynchronizedStatement(statement.asSynchronizedStmt());
+        } else if (statement.isThrowStmt()) {
+            extractExpression(statement.asThrowStmt().getExpression());
+        } else if (statement.isExplicitConstructorInvocationStmt()) {
+            extractExplicitConstructorInvocationStatement(statement.asExplicitConstructorInvocationStmt());
+        } else if (statement.isLocalClassDeclarationStmt()) {
+            extractClassDeclaration(statement.asLocalClassDeclarationStmt().getClassDeclaration());
+        } else if (statement.isYieldStmt()) {
+            extractExpression(statement.asYieldStmt().getExpression());
         }
     }
 
@@ -183,6 +275,37 @@ public class SourceApiExtractor {
                 otherVariableMapList.size() - 1
         );
         putVariablesToMap(variableDeclarationExpr.getVariables(), variablesMap);
+    }
+
+    private void extractIfStatement(IfStmt ifStmt) {
+        otherVariableMapList.add(new HashMap<>());
+        extractExpression(ifStmt.getCondition());
+        extractStatement(ifStmt.getThenStmt());
+        ifStmt.getElseStmt().ifPresent(this::extractStatement);
+        otherVariableMapList.remove(otherVariableMapList.size() - 1);
+    }
+
+    private void extractForStatement(ForStmt forStmt) {
+        otherVariableMapList.add(new HashMap<>());
+        for (Expression expression : forStmt.getInitialization()) {
+            extractVariableDeclaration(expression.asVariableDeclarationExpr());
+        }
+        extractStatement(forStmt.getBody());
+        otherVariableMapList.remove(otherVariableMapList.size() - 1);
+    }
+
+    private void extractForEachStatement(ForEachStmt forEachStmt) {
+        otherVariableMapList.add(new HashMap<>());
+        extractVariableDeclaration(forEachStmt.getVariable());
+        extractStatement(forEachStmt.getBody());
+        otherVariableMapList.remove(otherVariableMapList.size() - 1);
+    }
+
+    @SuppressWarnings("rawtypes")
+    private <T extends NodeWithBody> void extractDoWhileStatement(T stmt) {
+        otherVariableMapList.add(new HashMap<>());
+        extractStatement(stmt.getBody());
+        otherVariableMapList.remove(otherVariableMapList.size() - 1);
     }
 
     private void extractTryStatement(TryStmt tryStmt) {
@@ -205,6 +328,37 @@ public class SourceApiExtractor {
         );
         extractParameter(catchClause.getParameter(), variablesMap);
         extractBody(catchClause.getBody());
+    }
+
+    private void extractAssertStatement(AssertStmt assertStmt) {
+        otherVariableMapList.add(new HashMap<>());
+        extractExpression(assertStmt.getCheck());
+        assertStmt.getMessage().ifPresent(this::extractExpression);
+        otherVariableMapList.remove(otherVariableMapList.size() - 1);
+    }
+
+    private void extractSwitchStatement(SwitchStmt switchStmt) {
+        extractExpression(switchStmt.getSelector());
+        for (SwitchEntry switchEntry : switchStmt.getEntries()) {
+            otherVariableMapList.add(new HashMap<>());
+            for (Statement statement : switchEntry.getStatements()) {
+                extractStatement(statement);
+            }
+            otherVariableMapList.remove(otherVariableMapList.size() - 1);
+        }
+    }
+
+    private void extractSynchronizedStatement(SynchronizedStmt synchronizedStmt) {
+        otherVariableMapList.add(new HashMap<>());
+        extractExpression(synchronizedStmt.getExpression());
+        extractBody(synchronizedStmt.getBody());
+        otherVariableMapList.remove(otherVariableMapList.size() - 1);
+    }
+
+    private void extractExplicitConstructorInvocationStatement(ExplicitConstructorInvocationStmt statement) {
+        for (Expression expression : statement.asExplicitConstructorInvocationStmt().getArguments()) {
+            extractExpression(expression);
+        }
     }
 
     private void extractMethodCallExpression(MethodCallExpr expr) {
