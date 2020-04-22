@@ -1,16 +1,11 @@
 package extract.source;
 
-import com.github.javaparser.JavaParser;
-import com.github.javaparser.ParserConfiguration;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
 import property.SourceImportJavaProperty;
 
-import java.io.IOException;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 class SourceJavaParser {
     private static final Map<String, Integer> importsMap;
@@ -103,16 +98,7 @@ class SourceJavaParser {
         values = new int[totalImportValues];
     }
 
-    public void parseFile(Path filePath) throws IOException {
-        ParserConfiguration configuration = new ParserConfiguration();
-        configuration.setAttributeComments(false);
-        JavaParser parser = new JavaParser(configuration);
-        Optional<CompilationUnit> optionalCU = parser.parse(filePath).getResult();
-        if (optionalCU.isEmpty()) {
-            System.out.println("empty");
-            return;
-        }
-        CompilationUnit cu = optionalCU.get();
+    public void extractInfo(CompilationUnit cu) {
         processImports(cu.getImports());
     }
 
@@ -150,19 +136,4 @@ class SourceJavaParser {
         property.setCountConnectivityManagerImports(values[importConnectivityManager]);
         property.setCountLogImports(values[importLog]);
     }
-
-//    public static void main(String[] args) throws IOException {
-//        PropertiesWriter writer = PropertiesWriter.build("test.csv");
-//        if (writer == null) {
-//            System.out.println("Very bad");
-//            return;
-//        }
-//        ApkPropertyStorage storage = new ApkPropertyStorage();
-//        SourceJavaParser parser = new SourceJavaParser();
-//        parser.parseFile(Path.of("testFiles/dir.k9mail-release.apk/androidx/navigation/NavController.java"));
-//        parser.exportInProperties(storage);
-//
-//        writer.saveProperties(storage);
-//        System.out.println("All is done");
-//    }
 }

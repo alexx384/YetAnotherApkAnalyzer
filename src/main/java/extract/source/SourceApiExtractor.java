@@ -3,10 +3,7 @@ package extract.source;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.*;
-import com.github.javaparser.ast.expr.Expression;
-import com.github.javaparser.ast.expr.FieldAccessExpr;
-import com.github.javaparser.ast.expr.MethodCallExpr;
-import com.github.javaparser.ast.expr.VariableDeclarationExpr;
+import com.github.javaparser.ast.expr.*;
 import com.github.javaparser.ast.nodeTypes.NodeWithBody;
 import com.github.javaparser.ast.stmt.*;
 import property.SourceApiJavaProperty;
@@ -76,35 +73,25 @@ public class SourceApiExtractor {
      * 2. instance variables permitted to invoke without this is out of scope.
      *
      * @param cu Compilation unit of java file
-     * @return true - if the compilation unit not null and contains class or interface
-     *          declaration, otherwise - false
      */
-    public boolean extractInfo(CompilationUnit cu) {
+    public void extractInfo(CompilationUnit cu) {
         if (cu == null) {
-            return false;
+            return;
         }
         Optional<String> name = cu.getPrimaryTypeName();
         if (name.isEmpty()) {
-            return false;
+            return;
         }
         Optional<TypeDeclaration<?>> optionalTypeDeclaration = cu.getPrimaryType();
         if (optionalTypeDeclaration.isEmpty()) {
-            return false;
+            return;
         }
         TypeDeclaration<?> typeDeclaration = optionalTypeDeclaration.get();
         if (typeDeclaration.isClassOrInterfaceDeclaration()) {
-            ClassOrInterfaceDeclaration declaration = typeDeclaration.asClassOrInterfaceDeclaration();
-            if (declaration.isInterface()) {
-                extractInterfaceDeclaration(declaration);
-            } else {
-                extractClassDeclaration(declaration);
-            }
+            extractClassOrInterfaceDeclaration(typeDeclaration.asClassOrInterfaceDeclaration());
         } else if (typeDeclaration.isEnumDeclaration()) {
-            EnumDeclaration declaration = typeDeclaration.asEnumDeclaration();
-            extractEnumDeclaration(declaration);
+            extractEnumDeclaration(typeDeclaration.asEnumDeclaration());
         }
-
-        return true;
     }
 
     /**
@@ -118,16 +105,38 @@ public class SourceApiExtractor {
         }
     }
 
+    private void extractClassOrInterfaceDeclaration(ClassOrInterfaceDeclaration declaration) {
+        if (declaration.isInterface()) {
+            extractInterfaceDeclaration(declaration);
+        } else {
+            extractClassDeclaration(declaration);
+        }
+    }
+
     private void extractClassDeclaration(ClassOrInterfaceDeclaration classDeclaration) {
         instanceVariableMapList.add(new HashMap<>());
         otherVariableMapList.add(new HashMap<>());
-        extractClassFields(classDeclaration.getFields());
-
-        for (MethodDeclaration method : classDeclaration.getMethods()) {
-            extractMethod(method);
+        for (BodyDeclaration<?> declaration : classDeclaration.getMembers()) {
+            extractBodyDeclaration(declaration);
         }
-        instanceVariableMapList.remove(instanceVariableMapList.size() - 1);
         otherVariableMapList.remove(otherVariableMapList.size() - 1);
+        instanceVariableMapList.remove(instanceVariableMapList.size() - 1);
+    }
+
+    private void extractBodyDeclaration(BodyDeclaration<?> bodyDeclaration) {
+        if (bodyDeclaration.isMethodDeclaration()) {
+            extractMethod(bodyDeclaration.asMethodDeclaration());
+        } else if (bodyDeclaration.isClassOrInterfaceDeclaration()) {
+            extractClassOrInterfaceDeclaration(bodyDeclaration.asClassOrInterfaceDeclaration());
+        } else if (bodyDeclaration.isEnumDeclaration()) {
+            extractEnumDeclaration(bodyDeclaration.asEnumDeclaration());
+        } else if (bodyDeclaration.isConstructorDeclaration()) {
+            extractConstructor(bodyDeclaration.asConstructorDeclaration());
+        } else if (bodyDeclaration.isFieldDeclaration()) {
+            extractClassField(bodyDeclaration.asFieldDeclaration());
+        } else if (bodyDeclaration.isInitializerDeclaration()) {
+            extractInitializerDeclaration(bodyDeclaration.asInitializerDeclaration());
+        }
     }
 
     private void extractInterfaceDeclaration(ClassOrInterfaceDeclaration interfaceDeclaration) {
@@ -139,38 +148,45 @@ public class SourceApiExtractor {
     }
 
     private void extractEnumDeclaration(EnumDeclaration enumDeclaration) {
+        instanceVariableMapList.add(new HashMap<>());
+        otherVariableMapList.add(new HashMap<>());
+        for (BodyDeclaration<?> declaration : enumDeclaration.getMembers()) {
+            extractBodyDeclaration(declaration);
+        }
         for (EnumConstantDeclaration constantDeclaration : enumDeclaration.getEntries()) {
             extractEnumConstantDeclaration(constantDeclaration);
         }
+        otherVariableMapList.remove(otherVariableMapList.size() - 1);
+        instanceVariableMapList.remove(instanceVariableMapList.size() - 1);
     }
 
     private void extractEnumConstantDeclaration(EnumConstantDeclaration constantDeclaration) {
         otherVariableMapList.add(new HashMap<>());
-        for (Expression expression : constantDeclaration.getArguments()) {
-            extractExpression(expression);
+        for (BodyDeclaration<?> bodyDeclaration : constantDeclaration.getClassBody()) {
+            if (bodyDeclaration.isMethodDeclaration()) {
+                extractMethod(bodyDeclaration.asMethodDeclaration());
+            }
         }
-        // TODO: implement me
-//        BodyDeclaration
-//        constantDeclaration.getClassBody()
         otherVariableMapList.remove(otherVariableMapList.size() - 1);
     }
 
-    private void extractClassFields(List<FieldDeclaration> classFields) {
-        Map<String, Map<String, MutableInteger>> instanceVariableMap = instanceVariableMapList.get(
-                instanceVariableMapList.size() - 1
-        );
-        Map<String, Map<String, MutableInteger>> classVariableMap = otherVariableMapList.get(
-                otherVariableMapList.size() - 1
-        );
-        for (FieldDeclaration field : classFields) {
-
-            NodeList<VariableDeclarator> variables = field.getVariables();
-            if (field.isStatic()) {
-                putVariablesToMap(variables, classVariableMap);
-            } else {
-                putVariablesToMap(variables, instanceVariableMap);
-            }
+    private void extractClassField(FieldDeclaration fieldDeclaration) {
+        NodeList<VariableDeclarator> variables = fieldDeclaration.getVariables();
+        if (fieldDeclaration.isStatic()) {
+            Map<String, Map<String, MutableInteger>> classVariableMap = otherVariableMapList.get(
+                    otherVariableMapList.size() - 1
+            );
+            putVariablesToMap(variables, classVariableMap);
+        } else {
+            Map<String, Map<String, MutableInteger>> instanceVariableMap = instanceVariableMapList.get(
+                    instanceVariableMapList.size() - 1
+            );
+            putVariablesToMap(variables, instanceVariableMap);
         }
+    }
+
+    private void extractInitializerDeclaration(InitializerDeclaration initializerDeclaration) {
+        extractBody(initializerDeclaration.getBody());
     }
 
     private void putVariablesToMap(List<VariableDeclarator> variables,
@@ -182,7 +198,12 @@ public class SourceApiExtractor {
             if (methodsInvocationMap != null) {
                 variablesMap.put(variable.getNameAsString(), methodsInvocationMap);
             }
+            variable.getInitializer().ifPresent(this::extractExpression);
         }
+    }
+
+    private void extractConstructor(ConstructorDeclaration constructorDeclaration) {
+        extractBody(constructorDeclaration.getBody());
     }
 
     private void extractMethod(MethodDeclaration method) {
@@ -264,9 +285,12 @@ public class SourceApiExtractor {
     private void extractExpression(Expression expression) {
         if (expression.isVariableDeclarationExpr()) {
             extractVariableDeclaration(expression.asVariableDeclarationExpr());
-        }
-        for (MethodCallExpr methodCallExpr : expression.findAll(MethodCallExpr.class)) {
-            extractMethodCallExpression(methodCallExpr);
+        } else if (expression.isLambdaExpr()) {
+            extractLambdaExpression(expression.asLambdaExpr());
+        } else {
+            for (MethodCallExpr methodCallExpr : expression.findAll(MethodCallExpr.class)) {
+                extractMethodCallExpression(methodCallExpr);
+            }
         }
     }
 
@@ -275,6 +299,18 @@ public class SourceApiExtractor {
                 otherVariableMapList.size() - 1
         );
         putVariablesToMap(variableDeclarationExpr.getVariables(), variablesMap);
+    }
+
+    private void extractLambdaExpression(LambdaExpr lambdaExpression) {
+        otherVariableMapList.add(new HashMap<>());
+        extractParameters(lambdaExpression.getParameters());
+        Statement body = lambdaExpression.getBody();
+        if (body.isExpressionStmt()) {
+            extractExpression(body.asExpressionStmt().getExpression());
+        } else {
+            extractBody(body.asBlockStmt());
+        }
+        otherVariableMapList.remove(otherVariableMapList.size() - 1);
     }
 
     private void extractIfStatement(IfStmt ifStmt) {

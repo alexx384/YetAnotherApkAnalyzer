@@ -10,7 +10,7 @@ public class SourcesParser {
         SourceJavaParser javaParser = new SourceJavaParser();
         SourceApiExtractor apiExtractor = new SourceApiExtractor();
         try {
-            Files.walkFileTree(directoryPath, new SourceJavaFileVisitor(javaParser));
+            Files.walkFileTree(directoryPath, new SourceJavaFileVisitor(javaParser, apiExtractor));
         } catch (IOException e) {
             return false;
         }
