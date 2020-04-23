@@ -55,7 +55,7 @@ public class ApkPropertyStorage implements MobSfApkProperty, SourceJavaProperty 
     private int mobsfAverageCVSS;
     private int securityScore;
 
-    /* === SourceJavaProperty === */
+    /* === SourceImportJavaProperty === */
     private int activityImports;
     private int intentImports;
     private int intentFilterImports;
@@ -79,6 +79,23 @@ public class ApkPropertyStorage implements MobSfApkProperty, SourceJavaProperty 
     private int networkInfoImports;
     private int connectivityManagerImports;
     private int logImports;
+
+    /* === SourceApiJavaProperty === */
+    private int intentAddFlags;
+    private int intentSetFlags;
+    private int intentSetDataAndType;
+    private int intentPutExtra;
+    private int dataInputStreamWriteBytes;
+    private int bufferedReaderWriteBytes;
+    private int stringBuilderAppend;
+    private int stringBuilderIndexOf;
+    private int stringBuilderSubstring;
+    private int stringBufferAppend;
+    private int stringBufferIndexOf;
+    private int stringBufferSubstring;
+    private int contentResolverQuery;
+    private int contentResolverInsert;
+    private int contentResolverUpdate;
 
     public String getCSVRepresentation() {
         return exportedActivities + ","
@@ -156,7 +173,22 @@ public class ApkPropertyStorage implements MobSfApkProperty, SourceJavaProperty 
                 + fileOutputStreamImports + ","
                 + networkInfoImports + ","
                 + connectivityManagerImports + ","
-                + logImports;
+                + logImports + ","
+                + intentAddFlags + ","
+                + intentSetFlags + ","
+                + intentSetDataAndType + ","
+                + intentPutExtra + ","
+                + dataInputStreamWriteBytes + ","
+                + bufferedReaderWriteBytes + ","
+                + stringBuilderAppend + ","
+                + stringBuilderIndexOf + ","
+                + stringBuilderSubstring + ","
+                + stringBufferAppend + ","
+                + stringBufferIndexOf + ","
+                + stringBufferSubstring + ","
+                + contentResolverQuery + ","
+                + contentResolverInsert + ","
+                + contentResolverUpdate;
     }
 
     @Override
@@ -532,5 +564,80 @@ public class ApkPropertyStorage implements MobSfApkProperty, SourceJavaProperty 
     @Override
     public void setCountLogImports(int logImports) {
         this.logImports = logImports;
+    }
+
+    @Override
+    public void setCountIntentAddFlags(int intentAddFlags) {
+        this.intentAddFlags = intentAddFlags;
+    }
+
+    @Override
+    public void setCountIntentSetFlags(int intentSetFlags) {
+        this.intentSetFlags = intentSetFlags;
+    }
+
+    @Override
+    public void setCountIntentSetDataAndType(int intentSetDataAndType) {
+        this.intentSetDataAndType = intentSetDataAndType;
+    }
+
+    @Override
+    public void setCountIntentPutExtra(int intentPutExtra) {
+        this.intentPutExtra = intentPutExtra;
+    }
+
+    @Override
+    public void setCountDataInputStreamWriteBytes(int dataInputStreamWriteBytes) {
+        this.dataInputStreamWriteBytes = dataInputStreamWriteBytes;
+    }
+
+    @Override
+    public void setCountBufferedReaderWriteBytes(int bufferedReaderWriteBytes) {
+        this.bufferedReaderWriteBytes = bufferedReaderWriteBytes;
+    }
+
+    @Override
+    public void setCountStringBuilderAppend(int stringBuilderAppend) {
+        this.stringBuilderAppend = stringBuilderAppend;
+    }
+
+    @Override
+    public void setCountStringBuilderIndexOf(int stringBuilderIndexOf) {
+        this.stringBuilderIndexOf = stringBuilderIndexOf;
+    }
+
+    @Override
+    public void setCountStringBuilderSubstring(int stringBuilderSubstring) {
+        this.stringBuilderSubstring = stringBuilderSubstring;
+    }
+
+    @Override
+    public void setCountStringBufferAppend(int stringBufferAppend) {
+        this.stringBufferAppend = stringBufferAppend;
+    }
+
+    @Override
+    public void setCountStringBufferIndexOf(int stringBufferIndexOf) {
+        this.stringBufferIndexOf = stringBufferIndexOf;
+    }
+
+    @Override
+    public void setCountStringBufferSubstring(int stringBufferSubstring) {
+        this.stringBufferSubstring = stringBufferSubstring;
+    }
+
+    @Override
+    public void setCountContentResolverQuery(int contentResolverQuery) {
+        this.contentResolverQuery = contentResolverQuery;
+    }
+
+    @Override
+    public void setCountContentResolverInsert(int contentResolverInsert) {
+        this.contentResolverInsert = contentResolverInsert;
+    }
+
+    @Override
+    public void setCountContentResolverUpdate(int contentResolverUpdate) {
+        this.contentResolverUpdate = contentResolverUpdate;
     }
 }

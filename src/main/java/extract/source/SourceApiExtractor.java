@@ -12,20 +12,18 @@ import java.util.*;
 
 public class SourceApiExtractor {
 
-    //    private static final Map<String, Map<String, MutableInteger>> detectSignMap = Map.ofEntries(
-//            Map.entry("Intent", Map.ofEntries(
-//                    Map.entry("addFlags", new MutableInteger()),
-//                    Map.entry("setFlags", new MutableInteger()),
-//                    Map.entry("setDataAndType", new MutableInteger()),
-//                    Map.entry("putExtra", new MutableInteger())
-//            ))
-//    );
-
     private static final Set<String> detectMethodSet = Set.of(
-            "toLowerCase",
-            "strip",
+            "setFlags",
+            "addFlags",
             "setDataAndType",
-            "charAt"
+            "putExtra",
+            "writeBytes",
+            "append",
+            "indexOf",
+            "substring",
+            "query",
+            "insert",
+            "update"
     );
 
     private final Map<String, Map<String, MutableInteger>> detectSignMap;
@@ -34,11 +32,32 @@ public class SourceApiExtractor {
 
     public SourceApiExtractor() {
         detectSignMap = Map.ofEntries(
-                Map.entry("String", Map.ofEntries(
-                        Map.entry("toLowerCase", new MutableInteger()),
-                        Map.entry("strip", new MutableInteger()),
+                Map.entry("Intent", Map.ofEntries(
+                        Map.entry("addFlags", new MutableInteger()),
+                        Map.entry("setFlags", new MutableInteger()),
                         Map.entry("setDataAndType", new MutableInteger()),
-                        Map.entry("charAt", new MutableInteger())
+                        Map.entry("putExtra", new MutableInteger())
+                )),
+                Map.entry("DataInputStream", Map.ofEntries(
+                        Map.entry("writeBytes", new MutableInteger())
+                )),
+                Map.entry("BufferedReader", Map.ofEntries(
+                        Map.entry("writeBytes", new MutableInteger())
+                )),
+                Map.entry("StringBuilder", Map.ofEntries(
+                        Map.entry("append", new MutableInteger()),
+                        Map.entry("indexOf", new MutableInteger()),
+                        Map.entry("substring", new MutableInteger())
+                )),
+                Map.entry("StringBuffer", Map.ofEntries(
+                        Map.entry("append", new MutableInteger()),
+                        Map.entry("indexOf", new MutableInteger()),
+                        Map.entry("substring", new MutableInteger())
+                )),
+                Map.entry("ContentResolver", Map.ofEntries(
+                        Map.entry("query", new MutableInteger()),
+                        Map.entry("insert", new MutableInteger()),
+                        Map.entry("update", new MutableInteger())
                 ))
         );
         instanceVariableMapList = new ArrayList<>();
@@ -49,11 +68,11 @@ public class SourceApiExtractor {
      * returns count of method calls of the specific class
      * if the class and method are stored in {@code detectSignMap} database
      *
+     * @param type       method
      * @param methodName method name to count
-     * @param type method
      * @return count of calls is the record present in database, otherwise returns -1
      */
-    public int getMethodCallCountOfType(String methodName, String type) {
+    public int getMethodCallCountOfType(String type, String methodName) {
         Map<String, MutableInteger> methodMap = detectSignMap.get(type);
         if (methodMap == null) {
             return -1;
@@ -324,7 +343,9 @@ public class SourceApiExtractor {
     private void extractForStatement(ForStmt forStmt) {
         otherVariableMapList.add(new HashMap<>());
         for (Expression expression : forStmt.getInitialization()) {
-            extractVariableDeclaration(expression.asVariableDeclarationExpr());
+            if (expression.isVariableDeclarationExpr()) {
+                extractVariableDeclaration(expression.asVariableDeclarationExpr());
+            }
         }
         extractStatement(forStmt.getBody());
         otherVariableMapList.remove(otherVariableMapList.size() - 1);
@@ -443,7 +464,20 @@ public class SourceApiExtractor {
     }
 
     public void exportInProperties(SourceApiJavaProperty property) {
-        // TODO: implement me
-        System.out.println(detectSignMap);
+        property.setCountIntentAddFlags(getMethodCallCountOfType("Intent", "addFlags"));
+        property.setCountIntentSetFlags(getMethodCallCountOfType("Intent", "setFlags"));
+        property.setCountIntentSetDataAndType(getMethodCallCountOfType("Intent", "setDataAndType"));
+        property.setCountIntentPutExtra(getMethodCallCountOfType("Intent", "putExtra"));
+        property.setCountDataInputStreamWriteBytes(getMethodCallCountOfType("DataInputStream", "writeBytes"));
+        property.setCountBufferedReaderWriteBytes(getMethodCallCountOfType("BufferedReader", "writeBytes"));
+        property.setCountStringBuilderAppend(getMethodCallCountOfType("StringBuilder", "append"));
+        property.setCountStringBuilderIndexOf(getMethodCallCountOfType("StringBuilder", "indexOf"));
+        property.setCountStringBuilderSubstring(getMethodCallCountOfType("StringBuilder", "substring"));
+        property.setCountStringBufferAppend(getMethodCallCountOfType("StringBuffer", "append"));
+        property.setCountStringBufferIndexOf(getMethodCallCountOfType("StringBuffer", "indexOf"));
+        property.setCountStringBufferSubstring(getMethodCallCountOfType("StringBuffer", "substring"));
+        property.setCountContentResolverQuery(getMethodCallCountOfType("ContentResolver", "query"));
+        property.setCountContentResolverInsert(getMethodCallCountOfType("ContentResolver", "insert"));
+        property.setCountContentResolverUpdate(getMethodCallCountOfType("ContentResolver", "update"));
     }
 }
