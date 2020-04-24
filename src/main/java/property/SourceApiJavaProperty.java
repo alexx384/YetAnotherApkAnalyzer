@@ -51,8 +51,6 @@ public interface SourceApiJavaProperty {
 
     void setCountStringStrip(int stringStrip);
 
-    void setCountStringSetDataAndType(int stringSetDataAndType);
-
     void setCountStringCharAt(int stringCharAt);
 
     void setCountFileConstructor(int fileConstructor);

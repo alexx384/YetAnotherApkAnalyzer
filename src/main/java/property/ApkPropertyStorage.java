@@ -106,7 +106,6 @@ public class ApkPropertyStorage implements MobSfApkProperty, SourceJavaProperty 
     private int stringConstructor;
     private int stringToLowerCase;
     private int stringStrip;
-    private int stringSetDataAndType;
     private int stringCharAt;
     private int fileConstructor;
     private int streamConstructor;
@@ -213,7 +212,6 @@ public class ApkPropertyStorage implements MobSfApkProperty, SourceJavaProperty 
                 + stringConstructor + ","
                 + stringToLowerCase + ","
                 + stringStrip + ","
-                + stringSetDataAndType + ","
                 + stringCharAt + ","
                 + fileConstructor + ","
                 + streamConstructor;
@@ -717,11 +715,6 @@ public class ApkPropertyStorage implements MobSfApkProperty, SourceJavaProperty 
     @Override
     public void setCountStringStrip(int stringStrip) {
         this.stringStrip = stringStrip;
-    }
-
-    @Override
-    public void setCountStringSetDataAndType(int stringSetDataAndType) {
-        this.stringSetDataAndType = stringSetDataAndType;
     }
 
     @Override

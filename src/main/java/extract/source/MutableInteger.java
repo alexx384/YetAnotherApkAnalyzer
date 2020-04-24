@@ -27,6 +27,15 @@ public class MutableInteger extends Number implements Comparable<MutableInteger>
     }
 
     /**
+     * Add value to the current number
+     *
+     * @param value - value to add
+     */
+    public void add(int value) {
+        number += value;
+    }
+
+    /**
      * Set the value to 0
      */
     public void clear() {
