@@ -96,6 +96,20 @@ public class ApkPropertyStorage implements MobSfApkProperty, SourceJavaProperty 
     private int contentResolverQuery;
     private int contentResolverInsert;
     private int contentResolverUpdate;
+    private int intentConstructor;
+    private int intentFilterConstructor;
+    private int dataInputStreamConstructor;
+    private int dataOutputStreamConstructor;
+    private int bufferedReaderConstructor;
+    private int stringBuilderConstructor;
+    private int stringBufferConstructor;
+    private int stringConstructor;
+    private int stringToLowerCase;
+    private int stringStrip;
+    private int stringSetDataAndType;
+    private int stringCharAt;
+    private int fileConstructor;
+    private int streamConstructor;
 
     public String getCSVRepresentation() {
         return exportedActivities + ","
@@ -188,7 +202,21 @@ public class ApkPropertyStorage implements MobSfApkProperty, SourceJavaProperty 
                 + stringBufferSubstring + ","
                 + contentResolverQuery + ","
                 + contentResolverInsert + ","
-                + contentResolverUpdate;
+                + contentResolverUpdate + ","
+                + intentConstructor + ","
+                + intentFilterConstructor + ","
+                + dataInputStreamConstructor + ","
+                + dataOutputStreamConstructor + ","
+                + bufferedReaderConstructor + ","
+                + stringBuilderConstructor + ","
+                + stringBufferConstructor + ","
+                + stringConstructor + ","
+                + stringToLowerCase + ","
+                + stringStrip + ","
+                + stringSetDataAndType + ","
+                + stringCharAt + ","
+                + fileConstructor + ","
+                + streamConstructor;
     }
 
     @Override
@@ -639,5 +667,75 @@ public class ApkPropertyStorage implements MobSfApkProperty, SourceJavaProperty 
     @Override
     public void setCountContentResolverUpdate(int contentResolverUpdate) {
         this.contentResolverUpdate = contentResolverUpdate;
+    }
+
+    @Override
+    public void setCountIntentConstructor(int intentConstructor) {
+        this.intentConstructor = intentConstructor;
+    }
+
+    @Override
+    public void setCountIntentFilterConstructor(int intentFilterConstructor) {
+        this.intentFilterConstructor = intentFilterConstructor;
+    }
+
+    @Override
+    public void setCountDataInputStreamConstructor(int dataInputStreamConstructor) {
+        this.dataInputStreamConstructor = dataInputStreamConstructor;
+    }
+
+    @Override
+    public void setCountDataOutputStreamConstructor(int dataOutputStreamConstructor) {
+        this.dataOutputStreamConstructor = dataOutputStreamConstructor;
+    }
+
+    @Override
+    public void setCountBufferedReaderConstructor(int bufferedReaderConstructor) {
+        this.bufferedReaderConstructor = bufferedReaderConstructor;
+    }
+
+    @Override
+    public void setCountStringBuilderConstructor(int stringBuilderConstructor) {
+        this.stringBuilderConstructor = stringBuilderConstructor;
+    }
+
+    @Override
+    public void setCountStringBufferConstructor(int stringBufferConstructor) {
+        this.stringBufferConstructor = stringBufferConstructor;
+    }
+
+    @Override
+    public void setCountStringConstructor(int stringConstructor) {
+        this.stringConstructor = stringConstructor;
+    }
+
+    @Override
+    public void setCountStringToLowerCase(int stringToLowerCase) {
+        this.stringToLowerCase = stringToLowerCase;
+    }
+
+    @Override
+    public void setCountStringStrip(int stringStrip) {
+        this.stringStrip = stringStrip;
+    }
+
+    @Override
+    public void setCountStringSetDataAndType(int stringSetDataAndType) {
+        this.stringSetDataAndType = stringSetDataAndType;
+    }
+
+    @Override
+    public void setCountStringCharAt(int stringCharAt) {
+        this.stringCharAt = stringCharAt;
+    }
+
+    @Override
+    public void setCountFileConstructor(int fileConstructor) {
+        this.fileConstructor = fileConstructor;
+    }
+
+    @Override
+    public void setCountStreamConstructor(int streamConstructor) {
+        this.streamConstructor = streamConstructor;
     }
 }

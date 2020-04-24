@@ -12,6 +12,7 @@ import java.util.*;
 
 public class SourceApiExtractor {
 
+    private static final String CONSTRUCTOR = "<init>";
     private static final Set<String> detectMethodSet = Set.of(
             "setFlags",
             "addFlags",
@@ -23,7 +24,10 @@ public class SourceApiExtractor {
             "substring",
             "query",
             "insert",
-            "update"
+            "update",
+            "toLowerCase",
+            "strip",
+            "charAt"
     );
 
     private final Map<String, Map<String, MutableInteger>> detectSignMap;
@@ -36,28 +40,52 @@ public class SourceApiExtractor {
                         Map.entry("addFlags", new MutableInteger()),
                         Map.entry("setFlags", new MutableInteger()),
                         Map.entry("setDataAndType", new MutableInteger()),
-                        Map.entry("putExtra", new MutableInteger())
+                        Map.entry("putExtra", new MutableInteger()),
+                        Map.entry(CONSTRUCTOR, new MutableInteger())
+                )),
+                Map.entry("IntentFilter", Map.ofEntries(
+                        Map.entry(CONSTRUCTOR, new MutableInteger())
                 )),
                 Map.entry("DataInputStream", Map.ofEntries(
-                        Map.entry("writeBytes", new MutableInteger())
+                        Map.entry("writeBytes", new MutableInteger()),
+                        Map.entry(CONSTRUCTOR, new MutableInteger())
+                )),
+                Map.entry("DataOutputStream", Map.ofEntries(
+                        Map.entry(CONSTRUCTOR, new MutableInteger())
                 )),
                 Map.entry("BufferedReader", Map.ofEntries(
-                        Map.entry("writeBytes", new MutableInteger())
+                        Map.entry("writeBytes", new MutableInteger()),
+                        Map.entry(CONSTRUCTOR, new MutableInteger())
                 )),
                 Map.entry("StringBuilder", Map.ofEntries(
                         Map.entry("append", new MutableInteger()),
                         Map.entry("indexOf", new MutableInteger()),
-                        Map.entry("substring", new MutableInteger())
+                        Map.entry("substring", new MutableInteger()),
+                        Map.entry(CONSTRUCTOR, new MutableInteger())
                 )),
                 Map.entry("StringBuffer", Map.ofEntries(
                         Map.entry("append", new MutableInteger()),
                         Map.entry("indexOf", new MutableInteger()),
-                        Map.entry("substring", new MutableInteger())
+                        Map.entry("substring", new MutableInteger()),
+                        Map.entry(CONSTRUCTOR, new MutableInteger())
                 )),
                 Map.entry("ContentResolver", Map.ofEntries(
                         Map.entry("query", new MutableInteger()),
                         Map.entry("insert", new MutableInteger()),
                         Map.entry("update", new MutableInteger())
+                )),
+                Map.entry("String", Map.ofEntries(
+                        Map.entry("toLowerCase", new MutableInteger()),
+                        Map.entry("strip", new MutableInteger()),
+                        Map.entry("setDataAndType", new MutableInteger()),
+                        Map.entry("charAt", new MutableInteger()),
+                        Map.entry(CONSTRUCTOR, new MutableInteger())
+                )),
+                Map.entry("File", Map.ofEntries(
+                        Map.entry(CONSTRUCTOR, new MutableInteger())
+                )),
+                Map.entry("Stream", Map.ofEntries(
+                        Map.entry(CONSTRUCTOR, new MutableInteger())
                 ))
         );
         instanceVariableMapList = new ArrayList<>();
@@ -84,6 +112,8 @@ public class SourceApiExtractor {
         return integer.intValue();
     }
 
+    private int testPrevFileValue = 0;
+
     /**
      * Extracts information about api calls from CompilationUnit of java file
      * The extraction is mostly based on how Jadx decompiler generates code.
@@ -108,6 +138,11 @@ public class SourceApiExtractor {
         TypeDeclaration<?> typeDeclaration = optionalTypeDeclaration.get();
         if (typeDeclaration.isClassOrInterfaceDeclaration()) {
             extractClassOrInterfaceDeclaration(typeDeclaration.asClassOrInterfaceDeclaration());
+            int value = getMethodCallCountOfType("File", CONSTRUCTOR);
+            if (value > testPrevFileValue) {
+                System.out.println(cu.getPrimaryTypeName().get() + " - " +  (value - testPrevFileValue));
+                testPrevFileValue = value;
+            }
         } else if (typeDeclaration.isEnumDeclaration()) {
             extractEnumDeclaration(typeDeclaration.asEnumDeclaration());
         }
@@ -306,6 +341,8 @@ public class SourceApiExtractor {
             extractVariableDeclaration(expression.asVariableDeclarationExpr());
         } else if (expression.isLambdaExpr()) {
             extractLambdaExpression(expression.asLambdaExpr());
+        } else if (expression.isObjectCreationExpr()) {
+            extractObjectCreationExpression(expression.asObjectCreationExpr());
         } else {
             for (MethodCallExpr methodCallExpr : expression.findAll(MethodCallExpr.class)) {
                 extractMethodCallExpression(methodCallExpr);
@@ -330,6 +367,18 @@ public class SourceApiExtractor {
             extractBody(body.asBlockStmt());
         }
         otherVariableMapList.remove(otherVariableMapList.size() - 1);
+    }
+
+    private void extractObjectCreationExpression(ObjectCreationExpr expr) {
+        String type = expr.getTypeAsString();
+        Map<String, MutableInteger> methods = detectSignMap.get(type);
+        if (methods == null) {
+            return;
+        }
+        MutableInteger counter = methods.get(CONSTRUCTOR);
+        if (counter != null) {
+            counter.increment();
+        }
     }
 
     private void extractIfStatement(IfStmt ifStmt) {
@@ -462,22 +511,36 @@ public class SourceApiExtractor {
         }
         return false;
     }
-
+    
     public void exportInProperties(SourceApiJavaProperty property) {
         property.setCountIntentAddFlags(getMethodCallCountOfType("Intent", "addFlags"));
         property.setCountIntentSetFlags(getMethodCallCountOfType("Intent", "setFlags"));
         property.setCountIntentSetDataAndType(getMethodCallCountOfType("Intent", "setDataAndType"));
         property.setCountIntentPutExtra(getMethodCallCountOfType("Intent", "putExtra"));
+        property.setCountIntentConstructor(getMethodCallCountOfType("Intent", CONSTRUCTOR));
+        property.setCountIntentFilterConstructor(getMethodCallCountOfType("IntentFilter", CONSTRUCTOR));
         property.setCountDataInputStreamWriteBytes(getMethodCallCountOfType("DataInputStream", "writeBytes"));
+        property.setCountDataInputStreamConstructor(getMethodCallCountOfType("DataInputStream", CONSTRUCTOR));
+        property.setCountDataOutputStreamConstructor(getMethodCallCountOfType("DataOutputStream", CONSTRUCTOR));
         property.setCountBufferedReaderWriteBytes(getMethodCallCountOfType("BufferedReader", "writeBytes"));
+        property.setCountBufferedReaderConstructor(getMethodCallCountOfType("BufferedReader", CONSTRUCTOR));
         property.setCountStringBuilderAppend(getMethodCallCountOfType("StringBuilder", "append"));
         property.setCountStringBuilderIndexOf(getMethodCallCountOfType("StringBuilder", "indexOf"));
         property.setCountStringBuilderSubstring(getMethodCallCountOfType("StringBuilder", "substring"));
+        property.setCountStringBuilderConstructor(getMethodCallCountOfType("StringBuilder", CONSTRUCTOR));
         property.setCountStringBufferAppend(getMethodCallCountOfType("StringBuffer", "append"));
         property.setCountStringBufferIndexOf(getMethodCallCountOfType("StringBuffer", "indexOf"));
         property.setCountStringBufferSubstring(getMethodCallCountOfType("StringBuffer", "substring"));
+        property.setCountStringBufferConstructor(getMethodCallCountOfType("StringBuffer", CONSTRUCTOR));
         property.setCountContentResolverQuery(getMethodCallCountOfType("ContentResolver", "query"));
         property.setCountContentResolverInsert(getMethodCallCountOfType("ContentResolver", "insert"));
         property.setCountContentResolverUpdate(getMethodCallCountOfType("ContentResolver", "update"));
+        property.setCountStringConstructor(getMethodCallCountOfType("String", CONSTRUCTOR));
+        property.setCountStringToLowerCase(getMethodCallCountOfType("String", "toLowerCase"));
+        property.setCountStringStrip(getMethodCallCountOfType("String", "strip"));
+        property.setCountStringSetDataAndType(getMethodCallCountOfType("String", "setDataAndType"));
+        property.setCountStringCharAt(getMethodCallCountOfType("String", "charAt"));
+        property.setCountFileConstructor(getMethodCallCountOfType("File", CONSTRUCTOR));
+        property.setCountStreamConstructor(getMethodCallCountOfType("Stream", CONSTRUCTOR));
     }
 }

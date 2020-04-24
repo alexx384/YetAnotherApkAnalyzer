@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Optional;
 
-class TestApiExtractor {
+class TestSourceApiExtractor {
 
     private static final SourceApiExtractor extractor = new SourceApiExtractor();
     private static Path whileStatementPath;
@@ -26,24 +26,27 @@ class TestApiExtractor {
     private static Path lambdaExpressionPath;
     private static Path ternaryExpressionPath;
     private static Path annotationMethodPath;
+    private static Path constructorDeclarationPath;
     private static JavaParser parser;
 
     @BeforeAll
     static void init() {
-        whileStatementPath = Path.of(TestApiExtractor.class.getResource("WhileStatement.java").getFile());
-        doStatementPath = Path.of(TestApiExtractor.class.getResource("DoStatement.java").getFile());
-        ifStatementPath = Path.of(TestApiExtractor.class.getResource("IfStatement.java").getFile());
-        assertStatementPath = Path.of(TestApiExtractor.class.getResource("AssertStatement.java").getFile());
-        switchStatementPath = Path.of(TestApiExtractor.class.getResource("SwitchStatement.java").getFile());
-        enumStatementPath = Path.of(TestApiExtractor.class.getResource("EnumStatement.java").getFile());
-        innerClassStatementPath = Path.of(TestApiExtractor.class.getResource("InnerClassStatement.java").
-                getFile());
-        blockStatementPath = Path.of(TestApiExtractor.class.getResource("BlockStatement.java").getFile());
-        lambdaExpressionPath = Path.of(TestApiExtractor.class.getResource("LambdaExpression.java").
-                getFile());
-        ternaryExpressionPath = Path.of(TestApiExtractor.class.getResource("TernaryExpression.java").getFile());
-        annotationMethodPath = Path.of(TestApiExtractor.class.getResource("AnnotationMethod.java").
-                getFile());
+        whileStatementPath = Path.of(TestSourceApiExtractor.class.getResource("WhileStatement.java").getFile());
+        doStatementPath = Path.of(TestSourceApiExtractor.class.getResource("DoStatement.java").getFile());
+        ifStatementPath = Path.of(TestSourceApiExtractor.class.getResource("IfStatement.java").getFile());
+        assertStatementPath = Path.of(TestSourceApiExtractor.class.getResource("AssertStatement.java").getFile());
+        switchStatementPath = Path.of(TestSourceApiExtractor.class.getResource("SwitchStatement.java").getFile());
+        enumStatementPath = Path.of(TestSourceApiExtractor.class.getResource("EnumStatement.java").getFile());
+        innerClassStatementPath = Path.of(TestSourceApiExtractor.class.getResource("InnerClassStatement.java")
+                .getFile());
+        blockStatementPath = Path.of(TestSourceApiExtractor.class.getResource("BlockStatement.java").getFile());
+        lambdaExpressionPath = Path.of(TestSourceApiExtractor.class.getResource("LambdaExpression.java")
+                .getFile());
+        ternaryExpressionPath = Path.of(TestSourceApiExtractor.class.getResource("TernaryExpression.java").getFile());
+        annotationMethodPath = Path.of(TestSourceApiExtractor.class.getResource("AnnotationMethod.java")
+                .getFile());
+        constructorDeclarationPath = Path.of(TestSourceApiExtractor.class.getResource("ConstructorDeclaration.java")
+                .getFile());
         ParserConfiguration parserConfiguration = new ParserConfiguration();
         parserConfiguration.setAttributeComments(false);
         parser = new JavaParser(parserConfiguration);
@@ -73,7 +76,7 @@ class TestApiExtractor {
         CompilationUnit cu = getCuFromPath(whileStatementPath);
         assertNotNull(cu);
         extractor.extractInfo(cu);
-        assertEquals(1, extractor.getMethodCallCountOfType("charAt", "String"));
+        assertEquals(1, extractor.getMethodCallCountOfType("String", "charAt"));
     }
 
     @Test
@@ -81,7 +84,7 @@ class TestApiExtractor {
         CompilationUnit cu = getCuFromPath(doStatementPath);
         assertNotNull(cu);
         extractor.extractInfo(cu);
-        assertEquals(1, extractor.getMethodCallCountOfType("charAt", "String"));
+        assertEquals(1, extractor.getMethodCallCountOfType("String", "charAt"));
     }
 
     @Test
@@ -89,7 +92,7 @@ class TestApiExtractor {
         CompilationUnit cu = getCuFromPath(ifStatementPath);
         assertNotNull(cu);
         extractor.extractInfo(cu);
-        assertEquals(3, extractor.getMethodCallCountOfType("charAt", "String"));
+        assertEquals(3, extractor.getMethodCallCountOfType("String", "charAt"));
     }
 
     @Test
@@ -97,7 +100,7 @@ class TestApiExtractor {
         CompilationUnit cu = getCuFromPath(assertStatementPath);
         assertNotNull(cu);
         extractor.extractInfo(cu);
-        assertEquals(1, extractor.getMethodCallCountOfType("charAt", "String"));
+        assertEquals(1, extractor.getMethodCallCountOfType("String", "charAt"));
     }
 
     @Test
@@ -105,7 +108,7 @@ class TestApiExtractor {
         CompilationUnit cu = getCuFromPath(switchStatementPath);
         assertNotNull(cu);
         extractor.extractInfo(cu);
-        assertEquals(4, extractor.getMethodCallCountOfType("charAt", "String"));
+        assertEquals(4, extractor.getMethodCallCountOfType("String", "charAt"));
     }
 
     @Test
@@ -113,7 +116,7 @@ class TestApiExtractor {
         CompilationUnit cu = getCuFromPath(enumStatementPath);
         assertNotNull(cu);
         extractor.extractInfo(cu);
-        assertEquals(3, extractor.getMethodCallCountOfType("toLowerCase", "String"));
+        assertEquals(3, extractor.getMethodCallCountOfType("String", "toLowerCase"));
     }
 
     @Test
@@ -121,7 +124,7 @@ class TestApiExtractor {
         CompilationUnit cu = getCuFromPath(innerClassStatementPath);
         assertNotNull(cu);
         extractor.extractInfo(cu);
-        assertEquals(1, extractor.getMethodCallCountOfType("toLowerCase", "String"));
+        assertEquals(1, extractor.getMethodCallCountOfType("String", "toLowerCase"));
     }
 
     @Test
@@ -129,7 +132,7 @@ class TestApiExtractor {
         CompilationUnit cu = getCuFromPath(blockStatementPath);
         assertNotNull(cu);
         extractor.extractInfo(cu);
-        assertEquals(2, extractor.getMethodCallCountOfType("toLowerCase", "String"));
+        assertEquals(2, extractor.getMethodCallCountOfType("String", "toLowerCase"));
     }
 
     @Test
@@ -137,7 +140,7 @@ class TestApiExtractor {
         CompilationUnit cu = getCuFromPath(lambdaExpressionPath);
         assertNotNull(cu);
         extractor.extractInfo(cu);
-        assertEquals(1, extractor.getMethodCallCountOfType("toLowerCase", "String"));
+        assertEquals(1, extractor.getMethodCallCountOfType("String", "toLowerCase"));
     }
 
     @Test
@@ -145,7 +148,7 @@ class TestApiExtractor {
         CompilationUnit cu = getCuFromPath(ternaryExpressionPath);
         assertNotNull(cu);
         extractor.extractInfo(cu);
-        assertEquals(1, extractor.getMethodCallCountOfType("toLowerCase", "String"));
+        assertEquals(1, extractor.getMethodCallCountOfType("String", "toLowerCase"));
     }
 
     @Test
@@ -153,6 +156,14 @@ class TestApiExtractor {
         CompilationUnit cu = getCuFromPath(annotationMethodPath);
         assertNotNull(cu);
         extractor.extractInfo(cu);
-        assertEquals(1, extractor.getMethodCallCountOfType("toLowerCase", "String"));
+        assertEquals(1, extractor.getMethodCallCountOfType("String", "toLowerCase"));
+    }
+
+    @Test
+    void testConstructorDeclaration() {
+        CompilationUnit cu = getCuFromPath(constructorDeclarationPath);
+        assertNotNull(cu);
+        extractor.extractInfo(cu);
+        assertEquals(1, extractor.getMethodCallCountOfType("String", "<init>"));
     }
 }
