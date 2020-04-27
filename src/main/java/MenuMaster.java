@@ -45,6 +45,18 @@ public class MenuMaster {
                 .argName("apiKey")
                 .desc("set REST api key of MobSF")
                 .build();
+        Option pythonPath = Option.builder()
+                .longOpt("pythonPath")
+                .hasArg()
+                .argName("venv/bin/python")
+                .desc("path to python interpreter")
+                .build();
+        Option androwarnPath = Option.builder()
+                .longOpt("androwarnPath")
+                .hasArg()
+                .argName("androwarn/androwarn.py")
+                .desc("path to Androwarn framework startup file")
+                .build();
 
         cmdOptions.addOption(extract);
         cmdOptions.addOption(reduce);
@@ -53,6 +65,8 @@ public class MenuMaster {
         cmdOptions.addOption(resultFilePath);
         cmdOptions.addOption(mobsfAddress);
         cmdOptions.addOption(mobsfApiKey);
+        cmdOptions.addOption(pythonPath);
+        cmdOptions.addOption(androwarnPath);
     }
 
     public static int processArgs(String[] args) throws ParseException {
@@ -64,6 +78,8 @@ public class MenuMaster {
             String resultFilePath = cmd.getOptionValue("resultFilePath");
             String mobsfAddress = cmd.getOptionValue("mobsfAddress");
             String mobsfApiKey = cmd.getOptionValue("mobsfApiKey");
+            String pythonPath = cmd.getOptionValue("pythonPath");
+            String androwarnPath = cmd.getOptionValue("androwarnPath");
 
             PropertiesWriter writer;
             if (resultFilePath == null) {
@@ -75,9 +91,10 @@ public class MenuMaster {
                 return EXIT_ERROR;
             }
 
-            boolean result = new PropertiesExtractor(apkFilePath, writer, mobsfAddress, mobsfApiKey).extract();
+            boolean result = new PropertiesExtractor(
+                    apkFilePath, writer, mobsfAddress, mobsfApiKey, pythonPath, androwarnPath
+            ).extract();
             if (!result) {
-
                 return EXIT_ERROR;
             }
 
@@ -95,7 +112,6 @@ public class MenuMaster {
     public static void main(String[] args) {
 
         try {
-
             System.exit(
                     MenuMaster.processArgs(args)
             );

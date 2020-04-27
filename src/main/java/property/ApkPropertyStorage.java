@@ -1,6 +1,6 @@
 package property;
 
-public class ApkPropertyStorage implements MobSfApkProperty, SourceJavaProperty {
+public class ApkPropertyStorage implements MobSfApkProperty, SourceJavaProperty, AndrowarnApkProperty {
     /* === MobSfApkProperty === */
     private int browsableActivities;
     private int activities;
@@ -110,6 +110,20 @@ public class ApkPropertyStorage implements MobSfApkProperty, SourceJavaProperty 
     private int fileConstructor;
     private int streamConstructor;
 
+    /* === AndrowarnApkProperty */
+    private int telephonyIdentifiersLeakage;
+    private int deviseSettingsHarvesting;
+    private int locationLookup;
+    private int connectionInterfacesExfiltration;
+    private int telephonyServicesAbuse;
+    private int audioVideoEavesdroping;
+    private int suspiciousConnectionEstablishment;
+    private int pimDataLeakage;
+    private int codeExecution;
+    private int classesList;
+    private int internalClassesList;
+    private int intentsSent;
+
     public String getCSVRepresentation() {
         return exportedActivities + ","
                 + browsableActivities + ","
@@ -214,7 +228,19 @@ public class ApkPropertyStorage implements MobSfApkProperty, SourceJavaProperty 
                 + stringStrip + ","
                 + stringCharAt + ","
                 + fileConstructor + ","
-                + streamConstructor;
+                + streamConstructor + ","
+                + telephonyIdentifiersLeakage + ","
+                + deviseSettingsHarvesting + ","
+                + locationLookup + ","
+                + connectionInterfacesExfiltration + ","
+                + telephonyServicesAbuse + ","
+                + audioVideoEavesdroping + ","
+                + suspiciousConnectionEstablishment + ","
+                + pimDataLeakage + ","
+                + codeExecution + ","
+                + classesList + ","
+                + internalClassesList + ","
+                + intentsSent;
     }
 
     @Override
@@ -730,5 +756,54 @@ public class ApkPropertyStorage implements MobSfApkProperty, SourceJavaProperty 
     @Override
     public void setCountStreamConstructor(int streamConstructor) {
         this.streamConstructor = streamConstructor;
+    }
+
+    @Override
+    public void setCountTelephonyIdentifiersLeakage(int telephonyIdentifiersLeakage) {
+        this.telephonyIdentifiersLeakage = telephonyIdentifiersLeakage;
+    }
+    @Override
+    public void setCountDeviseSettingsHarvesting(int deviseSettingsHarvesting) {
+        this.deviseSettingsHarvesting = deviseSettingsHarvesting;
+    }
+    @Override
+    public void setCountLocationLookup(int locationLookup) {
+        this.locationLookup = locationLookup;
+    }
+    @Override
+    public void setCountConnectionInterfacesExfiltration(int connectionInterfacesExfiltration) {
+        this.connectionInterfacesExfiltration = connectionInterfacesExfiltration;
+    }
+    @Override
+    public void setCountTelephonyServicesAbuse(int telephonyServicesAbuse) {
+        this.telephonyServicesAbuse = telephonyServicesAbuse;
+    }
+    @Override
+    public void setCountAudioVideoEavesdroping(int audioVideoEavesdroping) {
+        this.audioVideoEavesdroping = audioVideoEavesdroping;
+    }
+    @Override
+    public void setCountSuspiciousConnectionEstablishment(int suspiciousConnectionEstablishment) {
+        this.suspiciousConnectionEstablishment = suspiciousConnectionEstablishment;
+    }
+    @Override
+    public void setCountPimDataLeakage(int pimDataLeakage) {
+        this.pimDataLeakage = pimDataLeakage;
+    }
+    @Override
+    public void setCountCodeExecution(int codeExecution) {
+        this.codeExecution = codeExecution;
+    }
+    @Override
+    public void setCountClassesList(int classesList) {
+        this.classesList = classesList;
+    }
+    @Override
+    public void setCountInternalClassesList(int internalClassesList) {
+        this.internalClassesList = internalClassesList;
+    }
+    @Override
+    public void setCountIntentsSent(int intentsSent) {
+        this.intentsSent = intentsSent;
     }
 }

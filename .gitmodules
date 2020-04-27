@@ -1,0 +1,3 @@
+[submodule "androwarn"]
+	path = androwarn
+	url = https://github.com/maaaaz/androwarn

@@ -32,3 +32,6 @@ result.csv
 
 # Jar artifact
 out
+
+### Python virtual environment ###
+venv
