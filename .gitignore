@@ -33,5 +33,9 @@ result.csv
 # Jar artifact
 out
 
-### Python virtual environment ###
+### Python files ###
+# Virtual environment
 venv
+
+# Pycache
+**/__pycache__/

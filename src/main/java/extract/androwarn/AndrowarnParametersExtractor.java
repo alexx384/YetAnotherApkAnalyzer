@@ -54,10 +54,7 @@ public class AndrowarnParametersExtractor {
      * @return object of type AndrowarnParametersExtractor if succeeded to run Androwarn, otherwise - null
      */
     public static AndrowarnParametersExtractor build(String pythonPath, String androwarnPath) {
-        ProcessBuilder pb = new ProcessBuilder(pythonPath, androwarnPath,
-                "-i", "androwarn/e6bf42edc7badf0c67074b085d245feb.apk",
-                "-v", "3",
-                "-r", "json");
+        ProcessBuilder pb = new ProcessBuilder(pythonPath, androwarnPath, "-h");
         Process p;
         try {
             p = pb.start();
