@@ -11,7 +11,6 @@ public class ApkPropertyStorage implements MobSfApkProperty, SourceJavaProperty,
     private int targetSDK;
     private int maxSDK;
     private int minSDK;
-    private int versionCodeName;
     private int versionCode;
     private int dangerousPermission;
     private int signaturePermission;
@@ -135,7 +134,6 @@ public class ApkPropertyStorage implements MobSfApkProperty, SourceJavaProperty,
                 + targetSDK + ","
                 + maxSDK + ","
                 + minSDK + ","
-                + versionCodeName + ","
                 + versionCode + ","
                 + dangerousPermission + ","
                 + signaturePermission + ","
@@ -286,11 +284,6 @@ public class ApkPropertyStorage implements MobSfApkProperty, SourceJavaProperty,
     @Override
     public void setMinSDK(int minSDK) {
         this.minSDK = minSDK;
-    }
-
-    @Override
-    public void setVersionCodeName(int versionCodeName) {
-        this.versionCodeName = versionCodeName;
     }
 
     @Override

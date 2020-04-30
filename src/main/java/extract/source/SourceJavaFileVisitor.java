@@ -26,8 +26,8 @@ class SourceJavaFileVisitor extends SimpleFileVisitor<Path> {
         JavaParser parser = new JavaParser(configuration);
         Optional<CompilationUnit> optionalCU = parser.parse(filePath).getResult();
         if (optionalCU.isEmpty()) {
-            System.out.println("empty");
-            throw new NullPointerException("Compilation unit is null");
+            System.err.println("Warning could not compile " + filePath);
+            return null;
         }
         return optionalCU.get();
     }
@@ -38,8 +38,10 @@ class SourceJavaFileVisitor extends SimpleFileVisitor<Path> {
     {
         if (file.toString().endsWith(".java")) {
             CompilationUnit cu = parseFile(file);
-            javaParser.extractInfo(cu);
-            apiExtractor.extractInfo(cu);
+            if (cu != null) {
+                javaParser.extractInfo(cu);
+                apiExtractor.extractInfo(cu);
+            }
         }
         return FileVisitResult.CONTINUE;
     }

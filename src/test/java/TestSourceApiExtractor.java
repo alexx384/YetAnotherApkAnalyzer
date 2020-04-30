@@ -164,6 +164,6 @@ class TestSourceApiExtractor {
         CompilationUnit cu = getCuFromPath(constructorDeclarationPath);
         assertNotNull(cu);
         extractor.extractInfo(cu);
-        assertEquals(1, extractor.getMethodCallCountOfType("String", "<init>"));
+        assertEquals(1, extractor.getConstructorCallCountOfType("String"));
     }
 }

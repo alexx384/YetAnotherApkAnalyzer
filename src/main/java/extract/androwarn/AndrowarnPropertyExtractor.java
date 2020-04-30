@@ -11,7 +11,7 @@ import java.nio.file.Path;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 
-public class AndrowarnParametersExtractor {
+public class AndrowarnPropertyExtractor {
     private static final int ANALYSIS_RESULTS_IDX = 1;
     private static final String ANALYSIS_RESULTS = "analysis_results";
     private static final String TELEPHONY_IDENTIFIERS_LEAKAGE = "telephony_identifiers_leakage";
@@ -53,7 +53,7 @@ public class AndrowarnParametersExtractor {
      * @param androwarnPath path to androwarn.py
      * @return object of type AndrowarnParametersExtractor if succeeded to run Androwarn, otherwise - null
      */
-    public static AndrowarnParametersExtractor build(String pythonPath, String androwarnPath) {
+    public static AndrowarnPropertyExtractor build(String pythonPath, String androwarnPath) {
         ProcessBuilder pb = new ProcessBuilder(pythonPath, androwarnPath, "-h");
         Process p;
         try {
@@ -68,10 +68,10 @@ public class AndrowarnParametersExtractor {
         } catch (InterruptedException e) {
             return null;
         }
-        return new AndrowarnParametersExtractor(pythonPath, androwarnPath);
+        return new AndrowarnPropertyExtractor(pythonPath, androwarnPath);
     }
 
-    private AndrowarnParametersExtractor(String pythonPath, String androwarnPath) {
+    private AndrowarnPropertyExtractor(String pythonPath, String androwarnPath) {
         this.pythonPath = pythonPath;
         this.androwarnPath = androwarnPath;
     }

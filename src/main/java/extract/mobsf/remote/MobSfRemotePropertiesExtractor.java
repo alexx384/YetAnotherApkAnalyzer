@@ -64,12 +64,12 @@ public class MobSfRemotePropertiesExtractor {
             return null;
         }
 
-        String zipFilePath = "testFiles/" + apkFilePath.getFileName().toString() + ".zip";
+        String zipFilePath = apkFilePath.getFileName().toString() + ".zip";
         if (!processor.downloadFile(hash, zipFilePath)) {
             return null;
         }
 
-        if (!zipExtractor.extractToFolder(zipFilePath, "testFiles/" + sourceDirName)) {
+        if (!zipExtractor.extractToFolder(zipFilePath, sourceDirName)) {
             return null;
         } else {
             try {

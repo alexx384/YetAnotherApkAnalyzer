@@ -72,12 +72,11 @@ public class SourceApiExtractor {
     }
 
     /**
-     * returns count of method calls of the specific class
-     * if the class and method are stored in {@code detectSignMap} database
+     * Returns count of method calls of the specific type
      *
-     * @param type       method
+     * @param type       class name
      * @param methodName method name to count
-     * @return count of calls is the record present in database, otherwise returns -1
+     * @return count of calls is we are track them, otherwise returns -1
      */
     public int getMethodCallCountOfType(String type, String methodName) {
         Map<String, MutableInteger> methodMap = apiClassMethodMap.get(type);
@@ -85,6 +84,20 @@ public class SourceApiExtractor {
             return -1;
         }
         MutableInteger integer = methodMap.get(methodName);
+        if (integer == null) {
+            return -1;
+        }
+        return integer.intValue();
+    }
+
+    /**
+     * Returns count of constructor calls of the specific type
+     *
+     * @param type class name
+     * @return count of calls is we are track them, otherwise returns -1
+     */
+    public int getConstructorCallCountOfType(String type) {
+        MutableInteger integer = apiClassConstructorMap.get(type);
         if (integer == null) {
             return -1;
         }

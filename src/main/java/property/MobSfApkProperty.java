@@ -19,8 +19,6 @@ public interface MobSfApkProperty {
 
     void setMinSDK(int minSDK);
 
-    void setVersionCodeName(int versionCodeName);
-
     void setVersionCode(int versionCode);
 
     void setCountDangerousPermissions(int dangerousPermissions);

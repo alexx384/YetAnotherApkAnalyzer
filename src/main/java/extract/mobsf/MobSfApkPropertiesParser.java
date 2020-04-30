@@ -45,8 +45,8 @@ public class MobSfApkPropertiesParser {
         return object;
     }
 
-    public static boolean parseTo(MobSfApkProperty property, Path filePath, String mobsfAddress, String mobsfApiKey)
-            throws JSONException {
+    public static boolean parseTo(MobSfApkProperty property, Path filePath, String mobsfAddress, String mobsfApiKey,
+                                  String permissionDbPath) throws JSONException {
         JSONObject jsonObject = init(filePath, mobsfAddress, mobsfApiKey);
         if (jsonObject == null) {
             return false;
@@ -62,9 +62,8 @@ public class MobSfApkPropertiesParser {
         property.setTargetSDK(jsonObject.getInt("target_sdk"));
         property.setMaxSDK(parseMaxSDK(jsonObject.getString("max_sdk")));
         property.setMinSDK(jsonObject.getInt("min_sdk"));
-        property.setVersionCodeName((int) (jsonObject.getFloat("version_name") * 1000));
         property.setVersionCode(jsonObject.getInt("version_code"));
-        if (!parsePermissionsTo(property, jsonObject.getJSONObject("permissions"))) {
+        if (!parsePermissionsTo(permissionDbPath, property, jsonObject.getJSONObject("permissions"))) {
             return false;
         }
         property.setCountManifestIssues(jsonObject.getJSONArray("manifest_analysis").length());
@@ -101,8 +100,9 @@ public class MobSfApkPropertiesParser {
         }
     }
 
-    private static boolean parsePermissionsTo(MobSfApkProperty property, JSONObject androidPermissions) {
-        try (PermissionClassifier classifier = new PermissionClassifier()) {
+    private static boolean parsePermissionsTo(String permissionDbPath, MobSfApkProperty property,
+                                              JSONObject androidPermissions) {
+        try (PermissionClassifier classifier = new PermissionClassifier(permissionDbPath)) {
             Arrays.fill(permissionGroupElements, 0);
 
             int totalPermissions = 0;
@@ -150,6 +150,7 @@ public class MobSfApkPropertiesParser {
             property.setCountTotalPermissions(totalPermissions);
             return true;
         } catch (Exception e) {
+            System.err.println(e.getMessage());
             return false;
         }
     }

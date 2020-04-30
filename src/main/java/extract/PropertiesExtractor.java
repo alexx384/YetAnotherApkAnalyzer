@@ -1,13 +1,15 @@
 package extract;
 
-import extract.androwarn.AndrowarnParametersExtractor;
+import extract.androwarn.AndrowarnPropertyExtractor;
 import extract.mobsf.MobSfApkPropertiesParser;
 import extract.mobsf.local.MobSfLocalPropertiesExtractor;
 import extract.source.SourcesParser;
 import property.ApkPropertyStorage;
 import write.PropertiesWriter;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -18,78 +20,99 @@ import java.util.Arrays;
 
 public class PropertiesExtractor {
 
-    private static final String DEFAULT_APK_FILE_PATH = "app.apk";
-    private static final String DEFAULT_MOBSF_ADDRESS = "192.168.1.100:8000";
-    private static final String DEFAULT_MOBSF_API_KEY =
-            "a661aead976959736b8bea938df95752f9ecca6d18fdc4051eb83ab0b8c02108";
     private static final String DEFAULT_PYTHON_PATH = "python";
     private static final String DEFAULT_ANDROWARN_PATH = "androwarn/androwarn.py";
 
     private static final byte[] APK_MAGIC = new byte[]{0x50, 0x4B, 0x03, 0x04};
-    private final String apkFilePath;
     private final String mobsfAddress;
     private final String mobsfApiKey;
-    private final String pythonPath;
-    private final String androwarnPath;
     private final PropertiesWriter writer;
+    private final AndrowarnPropertyExtractor androwarnPropertyExtractor;
+    private final String permissionDbPath;
 
-    public PropertiesExtractor(String apkFilePath, PropertiesWriter writer, String mobsfAddress, String mobsfApiKey,
-                               String pythonPath, String androwarnPath) {
-
-        if (apkFilePath == null) {
-            System.out.println("Failed to read apkFilePath. Use default: " + DEFAULT_APK_FILE_PATH);
-            this.apkFilePath = DEFAULT_APK_FILE_PATH;
-        } else {
-            this.apkFilePath = apkFilePath;
-        }
-
-        this.writer = writer;
-
-        if (mobsfAddress == null) {
-            System.out.println("Failed to read mobsfAddress. Use default: " + DEFAULT_MOBSF_ADDRESS);
-            this.mobsfAddress = DEFAULT_MOBSF_ADDRESS;
-        } else {
-            this.mobsfAddress = mobsfAddress;
-        }
-
-        if (mobsfApiKey == null) {
-            System.out.println("Failed to read mobsfApiKey. Use default: " + DEFAULT_MOBSF_API_KEY);
-            this.mobsfApiKey = DEFAULT_MOBSF_API_KEY;
-        } else {
-            this.mobsfApiKey = mobsfApiKey;
-        }
-
+    public static PropertiesExtractor build(PropertiesWriter writer, String mobsfAddress, String mobsfApiKey,
+                                     String pythonPath, String androwarnPath, String permissionDbPath) {
         if (pythonPath == null) {
             System.out.println("Failed to read pythonPath. Use default: " + DEFAULT_PYTHON_PATH);
-            this.pythonPath = DEFAULT_PYTHON_PATH;
-        } else {
-            this.pythonPath = pythonPath;
+            pythonPath = DEFAULT_PYTHON_PATH;
         }
-
         if (androwarnPath == null) {
             System.out.println("Failed to read androwarnPath. Use default: " + DEFAULT_ANDROWARN_PATH);
-            this.androwarnPath = DEFAULT_ANDROWARN_PATH;
+            androwarnPath = DEFAULT_ANDROWARN_PATH;
+        }
+        AndrowarnPropertyExtractor androwarnPropertyExtractor = AndrowarnPropertyExtractor
+                .build(pythonPath, androwarnPath);
+        if (androwarnPropertyExtractor == null) {
+            System.err.println("Failed to create AndrowarnParametersExtractor. This happens due to incorrect python " +
+                    "path or could not run androwarn");
+            return null;
+        }
+        if (writer == null) {
+            System.err.println("The PropertiesWriter object is null");
+            return null;
+        }
+        if (mobsfAddress == null) {
+            System.err.println("The MobSf ip address is null");
+            return null;
+        }
+        if (mobsfApiKey == null) {
+            System.err.println("The MobSf ip key is null");
+            return null;
+        }
+        if (permissionDbPath == null) {
+            System.err.println("The permissionDB path is null");
+        }
+        return new PropertiesExtractor(writer, mobsfAddress, mobsfApiKey, androwarnPropertyExtractor, permissionDbPath);
+    }
+
+    public PropertiesExtractor(PropertiesWriter writer, String mobsfAddress, String mobsfApiKey,
+                               AndrowarnPropertyExtractor androwarnPropertyExtractor, String permissionDbPath) {
+        this.writer = writer;
+        this.mobsfAddress = mobsfAddress;
+        this.mobsfApiKey = mobsfApiKey;
+        this.androwarnPropertyExtractor = androwarnPropertyExtractor;
+        this.permissionDbPath = permissionDbPath;
+    }
+
+    public boolean extract(String apkFileObject) {
+        Path apkPathObject = Path.of(apkFileObject);
+        if (!Files.exists(apkPathObject)) {
+            return false;
+        }
+        if (Files.isDirectory(Path.of(apkFileObject))) {
+            return extractDirectory(apkFileObject);
         } else {
-            this.androwarnPath = androwarnPath;
+            return extractApkFile(apkFileObject);
         }
     }
 
-    public boolean extract() {
-        Path apkPath = Path.of(this.apkFilePath);
-        if (!checkApkFile(apkPath)) {
-            System.err.println("Failed to check apk path");
+    private boolean extractDirectory(String apkDirPath) {
+        FilenameFilter filenameFilter = (dir, name) ->
+                !Files.isDirectory(
+                        Path.of(dir.getPath() + File.separatorChar + name)
+                ) && name.endsWith(".apk");
+        boolean result = true;
+        File[] files = new File(apkDirPath).listFiles(filenameFilter);
+        if (files == null) {
+            System.err.println("Failed to access directory " + apkDirPath +
+                    ". This possibly happens due to I/O error occurs");
             return false;
         }
-        AndrowarnParametersExtractor androwarnParametersExtractor = AndrowarnParametersExtractor
-                .build(pythonPath, androwarnPath);
-        if (androwarnParametersExtractor == null) {
-            System.err.println("Failed to create AndrowarnParametersExtractor. This happens due to incorrect python " +
-                    "path or could not run androwarn");
+        for (File file : files) {
+            result &= extractApkFile(file.getPath());
+        }
+        return result;
+    }
+
+    private boolean extractApkFile(String apkFilePath) {
+        Path apkPath = Path.of(apkFilePath);
+        if (!checkApkFile(apkPath)) {
+            System.err.println("Failed apk file: " + apkFilePath);
             return false;
         }
 
         ApkPropertyStorage propertyStorage = new ApkPropertyStorage();
-        if (!MobSfApkPropertiesParser.parseTo(propertyStorage, apkPath, mobsfAddress, mobsfApiKey)) {
+        if (!MobSfApkPropertiesParser.parseTo(propertyStorage, apkPath, mobsfAddress, mobsfApiKey, permissionDbPath)) {
             System.err.println("Could not get scan parameters from MobSf");
             return false;
         }
@@ -102,7 +125,7 @@ public class PropertiesExtractor {
             return false;
         }
 
-        if (!androwarnParametersExtractor.processApk(apkFilePath, propertyStorage)) {
+        if (!androwarnPropertyExtractor.processApk(apkFilePath, propertyStorage)) {
             System.err.println("Error: Androwarn could not process apk");
             return false;
         }
@@ -112,6 +135,7 @@ public class PropertiesExtractor {
             return false;
         }
         cleanUp(apkFilePath + MobSfLocalPropertiesExtractor.JSON_PROPERTIES_EXTENSION, sourcesDir);
+        System.out.println("[+]" + apkFilePath);
         return true;
     }
 
