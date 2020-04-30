@@ -12,62 +12,44 @@ import java.util.*;
 
 public class SourceApiExtractor {
 
-    private static final String CONSTRUCTOR = "<init>";
-    private static final Set<String> detectMethodSet = Set.of(
-            "setFlags",
-            "addFlags",
-            "setDataAndType",
-            "putExtra",
-            "writeBytes",
-            "append",
-            "indexOf",
-            "substring",
-            "query",
-            "insert",
-            "update",
-            "toLowerCase",
-            "strip",
-            "charAt"
-    );
-
-    private final Map<String, Map<String, MutableInteger>> detectSignMap;
+    private final Map<String, Map<String, MutableInteger>> apiClassMethodMap;
+    private final Set<String> apiMethodNameSet;
     private final List<Map<String, Map<String, MutableInteger>>> instanceVariableMapList;
     private final List<Map<String, Map<String, MutableInteger>>> otherVariableMapList;
+    private final Map<String, MutableInteger> apiClassConstructorMap;
 
     public SourceApiExtractor() {
-        detectSignMap = Map.ofEntries(
+        apiClassConstructorMap = Map.ofEntries(
+                Map.entry("Intent", new MutableInteger()),
+                Map.entry("IntentFilter", new MutableInteger()),
+                Map.entry("DataInputStream", new MutableInteger()),
+                Map.entry("DataOutputStream", new MutableInteger()),
+                Map.entry("BufferedReader", new MutableInteger()),
+                Map.entry("StringBuilder", new MutableInteger()),
+                Map.entry("StringBuffer", new MutableInteger()),
+                Map.entry("File", new MutableInteger()),
+                Map.entry("Stream", new MutableInteger()),
+                Map.entry("String", new MutableInteger())
+        );
+        apiClassMethodMap = Map.ofEntries(
                 Map.entry("Intent", Map.ofEntries(
                         Map.entry("addFlags", new MutableInteger()),
                         Map.entry("setFlags", new MutableInteger()),
                         Map.entry("setDataAndType", new MutableInteger()),
-                        Map.entry("putExtra", new MutableInteger()),
-                        Map.entry(CONSTRUCTOR, new MutableInteger())
-                )),
-                Map.entry("IntentFilter", Map.ofEntries(
-                        Map.entry(CONSTRUCTOR, new MutableInteger())
-                )),
-                Map.entry("DataInputStream", Map.ofEntries(
-                        Map.entry("writeBytes", new MutableInteger()),
-                        Map.entry(CONSTRUCTOR, new MutableInteger())
+                        Map.entry("putExtra", new MutableInteger())
                 )),
                 Map.entry("DataOutputStream", Map.ofEntries(
-                        Map.entry(CONSTRUCTOR, new MutableInteger())
-                )),
-                Map.entry("BufferedReader", Map.ofEntries(
-                        Map.entry("writeBytes", new MutableInteger()),
-                        Map.entry(CONSTRUCTOR, new MutableInteger())
+                        Map.entry("writeBytes", new MutableInteger())
                 )),
                 Map.entry("StringBuilder", Map.ofEntries(
                         Map.entry("append", new MutableInteger()),
                         Map.entry("indexOf", new MutableInteger()),
-                        Map.entry("substring", new MutableInteger()),
-                        Map.entry(CONSTRUCTOR, new MutableInteger())
+                        Map.entry("substring", new MutableInteger())
                 )),
                 Map.entry("StringBuffer", Map.ofEntries(
                         Map.entry("append", new MutableInteger()),
                         Map.entry("indexOf", new MutableInteger()),
-                        Map.entry("substring", new MutableInteger()),
-                        Map.entry(CONSTRUCTOR, new MutableInteger())
+                        Map.entry("substring", new MutableInteger())
                 )),
                 Map.entry("ContentResolver", Map.ofEntries(
                         Map.entry("query", new MutableInteger()),
@@ -76,18 +58,15 @@ public class SourceApiExtractor {
                 )),
                 Map.entry("String", Map.ofEntries(
                         Map.entry("toLowerCase", new MutableInteger()),
-                        Map.entry("strip", new MutableInteger()),
-                        Map.entry("setDataAndType", new MutableInteger()),
-                        Map.entry("charAt", new MutableInteger()),
-                        Map.entry(CONSTRUCTOR, new MutableInteger())
-                )),
-                Map.entry("File", Map.ofEntries(
-                        Map.entry(CONSTRUCTOR, new MutableInteger())
-                )),
-                Map.entry("Stream", Map.ofEntries(
-                        Map.entry(CONSTRUCTOR, new MutableInteger())
+                        Map.entry("trim", new MutableInteger()),
+                        Map.entry("toUpperCase", new MutableInteger()),
+                        Map.entry("charAt", new MutableInteger())
                 ))
         );
+        apiMethodNameSet = new HashSet<>(Math.max((int) (apiClassMethodMap.size()/.75f) + 1, 16));
+        for (Map<String, MutableInteger> value : apiClassMethodMap.values()) {
+            apiMethodNameSet.addAll(value.keySet());
+        }
         instanceVariableMapList = new ArrayList<>();
         otherVariableMapList = new ArrayList<>();
     }
@@ -101,7 +80,7 @@ public class SourceApiExtractor {
      * @return count of calls is the record present in database, otherwise returns -1
      */
     public int getMethodCallCountOfType(String type, String methodName) {
-        Map<String, MutableInteger> methodMap = detectSignMap.get(type);
+        Map<String, MutableInteger> methodMap = apiClassMethodMap.get(type);
         if (methodMap == null) {
             return -1;
         }
@@ -145,7 +124,7 @@ public class SourceApiExtractor {
      * Clears counters value that parsed before
      */
     public void clearCounters() {
-        for (Map<String, MutableInteger> methods : detectSignMap.values()) {
+        for (Map<String, MutableInteger> methods : apiClassMethodMap.values()) {
             for (MutableInteger counter : methods.values()) {
                 counter.clear();
             }
@@ -305,7 +284,7 @@ public class SourceApiExtractor {
         for (VariableDeclarator variable : variables) {
 
             String type = variable.getTypeAsString();
-            Map<String, MutableInteger> methodsInvocationMap = detectSignMap.get(type);
+            Map<String, MutableInteger> methodsInvocationMap = apiClassMethodMap.get(type);
             if (methodsInvocationMap != null) {
                 variablesMap.put(variable.getNameAsString(), methodsInvocationMap);
             }
@@ -315,7 +294,7 @@ public class SourceApiExtractor {
 
     private void extractParameter(Parameter parameter, Map<String, Map<String, MutableInteger>> variablesMap) {
         String type = parameter.getTypeAsString();
-        Map<String, MutableInteger> methodsInvocationMap = detectSignMap.get(type);
+        Map<String, MutableInteger> methodsInvocationMap = apiClassMethodMap.get(type);
         if (methodsInvocationMap != null) {
             variablesMap.put(parameter.getNameAsString(), methodsInvocationMap);
         }
@@ -465,11 +444,7 @@ public class SourceApiExtractor {
         }
         expr.getScope().ifPresent(this::extractExpression);
         String type = expr.getTypeAsString();
-        Map<String, MutableInteger> methods = detectSignMap.get(type);
-        if (methods == null) {
-            return;
-        }
-        MutableInteger counter = methods.get(CONSTRUCTOR);
+        MutableInteger counter = apiClassConstructorMap.get(type);
         if (counter != null) {
             counter.increment();
         }
@@ -485,7 +460,7 @@ public class SourceApiExtractor {
             extractExpression(argument);
         }
         expr.getScope().ifPresent(this::extractExpression);
-        if (!detectMethodSet.contains(methodName)) {
+        if (!apiMethodNameSet.contains(methodName)) {
             return;
         }
         Optional<Expression> optionalMethodScopeExpression = expr.getScope();
@@ -523,11 +498,7 @@ public class SourceApiExtractor {
             return;
         }
         String type = arrayCreationExpr.getElementType().asString();
-        Map<String, MutableInteger> methods = detectSignMap.get(type);
-        if (methods == null) {
-            return;
-        }
-        MutableInteger counter = methods.get(CONSTRUCTOR);
+        MutableInteger counter = apiClassConstructorMap.get(type);
         if (counter == null) {
             return;
         }
@@ -590,29 +561,29 @@ public class SourceApiExtractor {
         property.setCountIntentSetFlags(getMethodCallCountOfType("Intent", "setFlags"));
         property.setCountIntentSetDataAndType(getMethodCallCountOfType("Intent", "setDataAndType"));
         property.setCountIntentPutExtra(getMethodCallCountOfType("Intent", "putExtra"));
-        property.setCountIntentConstructor(getMethodCallCountOfType("Intent", CONSTRUCTOR));
-        property.setCountIntentFilterConstructor(getMethodCallCountOfType("IntentFilter", CONSTRUCTOR));
-        property.setCountDataInputStreamWriteBytes(getMethodCallCountOfType("DataInputStream", "writeBytes"));
-        property.setCountDataInputStreamConstructor(getMethodCallCountOfType("DataInputStream", CONSTRUCTOR));
-        property.setCountDataOutputStreamConstructor(getMethodCallCountOfType("DataOutputStream", CONSTRUCTOR));
-        property.setCountBufferedReaderWriteBytes(getMethodCallCountOfType("BufferedReader", "writeBytes"));
-        property.setCountBufferedReaderConstructor(getMethodCallCountOfType("BufferedReader", CONSTRUCTOR));
+        property.setCountIntentConstructor(apiClassConstructorMap.get("Intent").intValue());
+        property.setCountIntentFilterConstructor(apiClassConstructorMap.get("IntentFilter").intValue());
+        property.setCountDataInputStreamConstructor(apiClassConstructorMap.get("DataInputStream").intValue());
+        property.setCountDataOutputStreamWriteBytes(getMethodCallCountOfType("DataOutputStream", "writeBytes"));
+        property.setCountDataOutputStreamConstructor(apiClassConstructorMap.get("DataOutputStream").intValue());
+        property.setCountBufferedReaderConstructor(apiClassConstructorMap.get("BufferedReader").intValue());
         property.setCountStringBuilderAppend(getMethodCallCountOfType("StringBuilder", "append"));
         property.setCountStringBuilderIndexOf(getMethodCallCountOfType("StringBuilder", "indexOf"));
         property.setCountStringBuilderSubstring(getMethodCallCountOfType("StringBuilder", "substring"));
-        property.setCountStringBuilderConstructor(getMethodCallCountOfType("StringBuilder", CONSTRUCTOR));
+        property.setCountStringBuilderConstructor(apiClassConstructorMap.get("StringBuilder").intValue());
         property.setCountStringBufferAppend(getMethodCallCountOfType("StringBuffer", "append"));
         property.setCountStringBufferIndexOf(getMethodCallCountOfType("StringBuffer", "indexOf"));
         property.setCountStringBufferSubstring(getMethodCallCountOfType("StringBuffer", "substring"));
-        property.setCountStringBufferConstructor(getMethodCallCountOfType("StringBuffer", CONSTRUCTOR));
+        property.setCountStringBufferConstructor(apiClassConstructorMap.get("StringBuffer").intValue());
         property.setCountContentResolverQuery(getMethodCallCountOfType("ContentResolver", "query"));
         property.setCountContentResolverInsert(getMethodCallCountOfType("ContentResolver", "insert"));
         property.setCountContentResolverUpdate(getMethodCallCountOfType("ContentResolver", "update"));
-        property.setCountStringConstructor(getMethodCallCountOfType("String", CONSTRUCTOR));
+        property.setCountStringConstructor(apiClassConstructorMap.get("String").intValue());
         property.setCountStringToLowerCase(getMethodCallCountOfType("String", "toLowerCase"));
-        property.setCountStringStrip(getMethodCallCountOfType("String", "strip"));
+        property.setCountStringToUpperCase(getMethodCallCountOfType("String", "toUpperCase"));
+        property.setCountStringTrim(getMethodCallCountOfType("String", "trim"));
         property.setCountStringCharAt(getMethodCallCountOfType("String", "charAt"));
-        property.setCountFileConstructor(getMethodCallCountOfType("File", CONSTRUCTOR));
-        property.setCountStreamConstructor(getMethodCallCountOfType("Stream", CONSTRUCTOR));
+        property.setCountFileConstructor(apiClassConstructorMap.get("File").intValue());
+        property.setCountStreamConstructor(apiClassConstructorMap.get("Stream").intValue());
     }
 }

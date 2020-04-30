@@ -9,9 +9,7 @@ public interface SourceApiJavaProperty {
 
     void setCountIntentPutExtra(int intentPutExtra);
 
-    void setCountDataInputStreamWriteBytes(int dataInputStreamWriteBytes);
-
-    void setCountBufferedReaderWriteBytes(int bufferedReaderWriteBytes);
+    void setCountDataOutputStreamWriteBytes(int dataOutputStreamWriteBytes);
 
     void setCountStringBuilderAppend(int stringBuilderAppend);
 
@@ -49,7 +47,9 @@ public interface SourceApiJavaProperty {
 
     void setCountStringToLowerCase(int stringToLowerCase);
 
-    void setCountStringStrip(int stringStrip);
+    void setCountStringToUpperCase(int stringToUpperCase);
+
+    void setCountStringTrim(int stringTrim);
 
     void setCountStringCharAt(int stringCharAt);
 

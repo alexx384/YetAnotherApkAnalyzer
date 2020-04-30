@@ -2,6 +2,7 @@ package extract.mobsf.remote;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class MobSfRemotePropertiesExtractor {
@@ -70,6 +71,12 @@ public class MobSfRemotePropertiesExtractor {
 
         if (!zipExtractor.extractToFolder(zipFilePath, "testFiles/" + sourceDirName)) {
             return null;
+        } else {
+            try {
+                Files.delete(Path.of(zipFilePath));
+            } catch (IOException e) {
+                System.err.println(e.getMessage());
+            }
         }
 
         if (processor.deleteScanResult(hash)) {

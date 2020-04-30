@@ -2,13 +2,18 @@ package extract;
 
 import extract.androwarn.AndrowarnParametersExtractor;
 import extract.mobsf.MobSfApkPropertiesParser;
+import extract.mobsf.local.MobSfLocalPropertiesExtractor;
 import extract.source.SourcesParser;
 import property.ApkPropertyStorage;
 import write.PropertiesWriter;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
 
 public class PropertiesExtractor {
@@ -70,7 +75,6 @@ public class PropertiesExtractor {
     }
 
     public boolean extract() {
-
         Path apkPath = Path.of(this.apkFilePath);
         if (!checkApkFile(apkPath)) {
             System.err.println("Failed to check apk path");
@@ -103,7 +107,33 @@ public class PropertiesExtractor {
             return false;
         }
 
-        return writer.saveProperties(propertyStorage);
+        if (!writer.saveProperties(propertyStorage)) {
+            System.err.println("Error: could not save properties");
+            return false;
+        }
+        cleanUp(apkFilePath + MobSfLocalPropertiesExtractor.JSON_PROPERTIES_EXTENSION, sourcesDir);
+        return true;
+    }
+
+    private static void cleanUp(String jsonReport, Path sourceFilesDir) {
+        try {
+            Files.delete(Path.of(jsonReport));
+            Files.walkFileTree(sourceFilesDir, new SimpleFileVisitor<>() {
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    Files.delete(file);
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                    Files.delete(dir);
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     private static boolean checkApkFile(Path apkPath) {

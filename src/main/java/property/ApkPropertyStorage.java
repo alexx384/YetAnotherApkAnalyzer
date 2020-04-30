@@ -86,7 +86,6 @@ public class ApkPropertyStorage implements MobSfApkProperty, SourceJavaProperty,
     private int intentSetDataAndType;
     private int intentPutExtra;
     private int dataInputStreamWriteBytes;
-    private int bufferedReaderWriteBytes;
     private int stringBuilderAppend;
     private int stringBuilderIndexOf;
     private int stringBuilderSubstring;
@@ -105,6 +104,7 @@ public class ApkPropertyStorage implements MobSfApkProperty, SourceJavaProperty,
     private int stringBufferConstructor;
     private int stringConstructor;
     private int stringToLowerCase;
+    private int stringToUpperCase;
     private int stringStrip;
     private int stringCharAt;
     private int fileConstructor;
@@ -206,7 +206,6 @@ public class ApkPropertyStorage implements MobSfApkProperty, SourceJavaProperty,
                 + intentSetDataAndType + ","
                 + intentPutExtra + ","
                 + dataInputStreamWriteBytes + ","
-                + bufferedReaderWriteBytes + ","
                 + stringBuilderAppend + ","
                 + stringBuilderIndexOf + ","
                 + stringBuilderSubstring + ","
@@ -225,6 +224,7 @@ public class ApkPropertyStorage implements MobSfApkProperty, SourceJavaProperty,
                 + stringBufferConstructor + ","
                 + stringConstructor + ","
                 + stringToLowerCase + ","
+                + stringToUpperCase + ","
                 + stringStrip + ","
                 + stringCharAt + ","
                 + fileConstructor + ","
@@ -639,13 +639,8 @@ public class ApkPropertyStorage implements MobSfApkProperty, SourceJavaProperty,
     }
 
     @Override
-    public void setCountDataInputStreamWriteBytes(int dataInputStreamWriteBytes) {
-        this.dataInputStreamWriteBytes = dataInputStreamWriteBytes;
-    }
-
-    @Override
-    public void setCountBufferedReaderWriteBytes(int bufferedReaderWriteBytes) {
-        this.bufferedReaderWriteBytes = bufferedReaderWriteBytes;
+    public void setCountDataOutputStreamWriteBytes(int dataOutputStreamWriteBytes) {
+        this.dataInputStreamWriteBytes = dataOutputStreamWriteBytes;
     }
 
     @Override
@@ -739,8 +734,13 @@ public class ApkPropertyStorage implements MobSfApkProperty, SourceJavaProperty,
     }
 
     @Override
-    public void setCountStringStrip(int stringStrip) {
-        this.stringStrip = stringStrip;
+    public void setCountStringToUpperCase(int stringToUpperCase) {
+        this.stringToUpperCase = stringToUpperCase;
+    }
+
+    @Override
+    public void setCountStringTrim(int stringTrim) {
+        this.stringStrip = stringTrim;
     }
 
     @Override
