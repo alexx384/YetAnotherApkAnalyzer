@@ -1,5 +1,6 @@
 package extract.mobsf.local;
 
+import extract.mobsf.MobSfApkPropertiesParser;
 import org.json.JSONObject;
 
 import java.io.*;
@@ -12,10 +13,12 @@ public class MobSfLocalPropertiesExtractor {
     public static final String JSON_PROPERTIES_EXTENSION = ".json";
     public static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
 
+    private final Path filePath;
     private final File jsonPropertiesFile;
 
     public MobSfLocalPropertiesExtractor(Path filePath) {
-        jsonPropertiesFile = new File(filePath.toString() + JSON_PROPERTIES_EXTENSION);
+        this.filePath = filePath;
+        jsonPropertiesFile = new File(filePath.getFileName().toString() + JSON_PROPERTIES_EXTENSION);
     }
 
     public JSONObject getJsonObject() {
@@ -31,11 +34,8 @@ public class MobSfLocalPropertiesExtractor {
         }
     }
 
-    public void overrideFile(String jsonContent) {
-        try (Writer writer = new OutputStreamWriter(new FileOutputStream(jsonPropertiesFile), DEFAULT_CHARSET)) {
-            writer.write(jsonContent);
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-        }
+    public boolean isSourceDirNotPresent() {
+        String dirName = MobSfApkPropertiesParser.DIR_PREFIX + filePath.getFileName().toString();
+        return !Files.isDirectory(Path.of(dirName));
     }
 }

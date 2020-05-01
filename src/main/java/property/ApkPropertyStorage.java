@@ -108,6 +108,36 @@ public class ApkPropertyStorage implements MobSfApkProperty, SourceJavaProperty,
     private int stringCharAt;
     private int fileConstructor;
     private int streamConstructor;
+    private int enums;
+    private int interfaces;
+    private int classes;
+    private int bodyDeclarations;
+    private int enumConstants;
+    private int methods;
+    private int bodies;
+    private int classFields;
+    private int parameters;
+    private int statements;
+    private int expressions;
+    private int ifStatements;
+    private int forStatements;
+    private int forEachStatements;
+    private int doWhileStatements;
+    private int tryStatements;
+    private int assertStatements;
+    private int switchStatements;
+    private int synchronizedStatements;
+    private int constructorInvocationStatements;
+    private int variableStatements;
+    private int lambdaExpressions;
+    private int objectCreationExpressions;
+    private int fieldAccessExpressions;
+    private int arrayCreationExpressions;
+    private int assignExpressions;
+    private int binaryExpressions;
+    private int conditionalExpressions;
+    private int catchExpressions;
+    private int arrayInitializedObjectss;
 
     /* === AndrowarnApkProperty */
     private int telephonyIdentifiersLeakage;
@@ -227,6 +257,36 @@ public class ApkPropertyStorage implements MobSfApkProperty, SourceJavaProperty,
                 + stringCharAt + ","
                 + fileConstructor + ","
                 + streamConstructor + ","
+                + enums + ","
+                + interfaces + ","
+                + classes + ","
+                + bodyDeclarations + ","
+                + enumConstants + ","
+                + methods + ","
+                + bodies + ","
+                + classFields + ","
+                + parameters + ","
+                + statements + ","
+                + expressions + ","
+                + ifStatements + ","
+                + forStatements + ","
+                + forEachStatements + ","
+                + doWhileStatements + ","
+                + tryStatements + ","
+                + assertStatements + ","
+                + switchStatements + ","
+                + synchronizedStatements + ","
+                + constructorInvocationStatements + ","
+                + variableStatements + ","
+                + lambdaExpressions + ","
+                + objectCreationExpressions + ","
+                + fieldAccessExpressions + ","
+                + arrayCreationExpressions + ","
+                + assignExpressions + ","
+                + binaryExpressions + ","
+                + conditionalExpressions + ","
+                + catchExpressions + ","
+                + arrayInitializedObjectss + ","
                 + telephonyIdentifiersLeakage + ","
                 + deviseSettingsHarvesting + ","
                 + locationLookup + ","
@@ -752,49 +812,210 @@ public class ApkPropertyStorage implements MobSfApkProperty, SourceJavaProperty,
     }
 
     @Override
+    public void setCountEnum(int enums) {
+        this.enums = enums;
+    }
+
+    @Override
+    public void setCountInterface(int interfaces) {
+        this.interfaces = interfaces;
+    }
+
+    @Override
+    public void setCountClass(int classes) {
+        this.classes = classes;
+    }
+
+    @Override
+    public void setCountBodyDeclaration(int bodyDeclarations) {
+        this.bodyDeclarations = bodyDeclarations;
+    }
+
+    @Override
+    public void setCountEnumConstant(int enumConstants) {
+        this.enumConstants = enumConstants;
+    }
+
+    @Override
+    public void setCountMethod(int methods) {
+        this.methods = methods;
+    }
+
+    @Override
+    public void setCountBody(int bodies) {
+        this.bodies = bodies;
+    }
+
+    @Override
+    public void setCountClassField(int classFields) {
+        this.classFields = classFields;
+    }
+
+    @Override
+    public void setCountParameter(int parameters) {
+        this.parameters = parameters;
+    }
+
+    @Override
+    public void setCountStatement(int statements) {
+        this.statements = statements;
+    }
+
+    @Override
+    public void setCountExpression(int expressions) {
+        this.expressions = expressions;
+    }
+
+    @Override
+    public void setCountIfStatement(int ifStatements) {
+        this.ifStatements = ifStatements;
+    }
+
+    @Override
+    public void setCountForStatement(int forStatements) {
+        this.forStatements = forStatements;
+    }
+
+    @Override
+    public void setCountForEachStatement(int forEachStatements) {
+        this.forEachStatements = forEachStatements;
+    }
+
+    @Override
+    public void setCountDoWhileStatement(int doWhileStatements) {
+        this.doWhileStatements = doWhileStatements;
+    }
+
+    @Override
+    public void setCountTryStatement(int tryStatements) {
+        this.tryStatements = tryStatements;
+    }
+
+    @Override
+    public void setCountAssertStatement(int assertStatements) {
+        this.assertStatements = assertStatements;
+    }
+
+    @Override
+    public void setCountSwitchStatement(int switchStatements) {
+        this.switchStatements = switchStatements;
+    }
+
+    @Override
+    public void setCountSynchronizedStatement(int synchronizedStatements) {
+        this.synchronizedStatements = synchronizedStatements;
+    }
+
+    @Override
+    public void setCountConstructorInvocationStatement(int constructorInvocationStatements) {
+        this.constructorInvocationStatements = constructorInvocationStatements;
+    }
+
+    @Override
+    public void setCountVariableStatement(int variableStatements) {
+        this.variableStatements = variableStatements;
+    }
+
+    @Override
+    public void setCountLambdaExpression(int lambdaExpressions) {
+        this.lambdaExpressions = lambdaExpressions;
+    }
+
+    @Override
+    public void setCountObjectCreationExpression(int objectCreationExpressions) {
+        this.objectCreationExpressions = objectCreationExpressions;
+    }
+
+    @Override
+    public void setCountFieldAccessExpression(int fieldAccessExpressions) {
+        this.fieldAccessExpressions = fieldAccessExpressions;
+    }
+
+    @Override
+    public void setCountArrayCreationExpression(int arrayCreationExpressions) {
+        this.arrayCreationExpressions = arrayCreationExpressions;
+    }
+
+    @Override
+    public void setCountAssignExpression(int assignExpressions) {
+        this.assignExpressions = assignExpressions;
+    }
+
+    @Override
+    public void setCountBinaryExpression(int binaryExpressions) {
+        this.binaryExpressions = binaryExpressions;
+    }
+
+    @Override
+    public void setCountConditionalExpression(int conditionalExpressions) {
+        this.conditionalExpressions = conditionalExpressions;
+    }
+
+    @Override
+    public void setCountCatchExpression(int catchExpressions) {
+        this.catchExpressions = catchExpressions;
+    }
+
+    @Override
+    public void setCountArrayInitializedObjects(int arrayInitializedObjectss) {
+        this.arrayInitializedObjectss = arrayInitializedObjectss;
+    }
+
+    @Override
     public void setCountTelephonyIdentifiersLeakage(int telephonyIdentifiersLeakage) {
         this.telephonyIdentifiersLeakage = telephonyIdentifiersLeakage;
     }
+
     @Override
     public void setCountDeviseSettingsHarvesting(int deviseSettingsHarvesting) {
         this.deviseSettingsHarvesting = deviseSettingsHarvesting;
     }
+
     @Override
     public void setCountLocationLookup(int locationLookup) {
         this.locationLookup = locationLookup;
     }
+
     @Override
     public void setCountConnectionInterfacesExfiltration(int connectionInterfacesExfiltration) {
         this.connectionInterfacesExfiltration = connectionInterfacesExfiltration;
     }
+
     @Override
     public void setCountTelephonyServicesAbuse(int telephonyServicesAbuse) {
         this.telephonyServicesAbuse = telephonyServicesAbuse;
     }
+
     @Override
     public void setCountAudioVideoEavesdroping(int audioVideoEavesdroping) {
         this.audioVideoEavesdroping = audioVideoEavesdroping;
     }
+
     @Override
     public void setCountSuspiciousConnectionEstablishment(int suspiciousConnectionEstablishment) {
         this.suspiciousConnectionEstablishment = suspiciousConnectionEstablishment;
     }
+
     @Override
     public void setCountPimDataLeakage(int pimDataLeakage) {
         this.pimDataLeakage = pimDataLeakage;
     }
+
     @Override
     public void setCountCodeExecution(int codeExecution) {
         this.codeExecution = codeExecution;
     }
+
     @Override
     public void setCountClassesList(int classesList) {
         this.classesList = classesList;
     }
+
     @Override
     public void setCountInternalClassesList(int internalClassesList) {
         this.internalClassesList = internalClassesList;
     }
+
     @Override
     public void setCountIntentsSent(int intentsSent) {
         this.intentsSent = intentsSent;

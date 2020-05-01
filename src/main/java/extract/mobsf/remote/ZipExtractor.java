@@ -52,7 +52,8 @@ class ZipExtractor {
                 }
             }
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.err.println("Extraction error");
+            System.err.println(e.getMessage());
             return false;
         }
         return true;

@@ -117,9 +117,7 @@ public class PropertiesExtractor {
             return false;
         }
 
-        Path sourcesDir = apkPath.resolveSibling(
-                MobSfApkPropertiesParser.DIR_PREFIX + apkPath.getFileName().toString()
-        );
+        Path sourcesDir = Path.of(MobSfApkPropertiesParser.DIR_PREFIX + apkPath.getFileName().toString());
         if (!SourcesParser.parseSources(sourcesDir, propertyStorage)) {
             System.err.println("Could not parse apk decompiled source files");
             return false;
@@ -134,14 +132,15 @@ public class PropertiesExtractor {
             System.err.println("Error: could not save properties");
             return false;
         }
-        cleanUp(apkFilePath + MobSfLocalPropertiesExtractor.JSON_PROPERTIES_EXTENSION, sourcesDir);
+        cleanUp(apkPath.getFileName().toString() +
+                MobSfLocalPropertiesExtractor.JSON_PROPERTIES_EXTENSION, sourcesDir);
         System.out.println("[+]" + apkFilePath);
         return true;
     }
 
     private static void cleanUp(String jsonReport, Path sourceFilesDir) {
         try {
-            Files.delete(Path.of(jsonReport));
+            Files.deleteIfExists(Path.of(jsonReport));
             Files.walkFileTree(sourceFilesDir, new SimpleFileVisitor<>() {
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {

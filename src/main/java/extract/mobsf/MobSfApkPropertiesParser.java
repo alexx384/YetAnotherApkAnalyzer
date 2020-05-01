@@ -28,21 +28,21 @@ public class MobSfApkPropertiesParser {
 
     private static JSONObject init(Path filePath, String mobsfAddress, String mobsfApiKey) {
         MobSfLocalPropertiesExtractor localExtractor = new MobSfLocalPropertiesExtractor(filePath);
-        JSONObject object = localExtractor.getJsonObject();
+        JSONObject jsonReport = localExtractor.getJsonObject();
 
-        if (object == null) {
+        if (jsonReport == null || localExtractor.isSourceDirNotPresent()) {
+            jsonReport = null;
             MobSfRemotePropertiesExtractor remoteExtractor = MobSfRemotePropertiesExtractor
                     .build(mobsfAddress, mobsfApiKey);
             if (remoteExtractor != null) {
-                String strJsonObject = remoteExtractor.extract(filePath,
-                        DIR_PREFIX + filePath.getFileName().toString());
-                if (strJsonObject != null) {
-                    localExtractor.overrideFile(strJsonObject);
-                    object = new JSONObject(strJsonObject);
+                String apkSourceDir = DIR_PREFIX + filePath.getFileName().toString();
+                String jsonReportFile = remoteExtractor.extract(filePath, apkSourceDir);
+                if (jsonReportFile != null) {
+                    jsonReport = new JSONObject(jsonReportFile);
                 }
             }
         }
-        return object;
+        return jsonReport;
     }
 
     public static boolean parseTo(MobSfApkProperty property, Path filePath, String mobsfAddress, String mobsfApiKey,
@@ -78,9 +78,6 @@ public class MobSfApkPropertiesParser {
         property.setMobsfAverageCVSS((int) (jsonObject.getFloat("average_cvss") * 10));
         property.setSecurityScore(jsonObject.getInt("security_score"));
         return true;
-        // Permission provider
-        // TODO: And so on
-//        return true;
     }
 
     private static int getCountBrowsableActivities(JSONObject jsonObject) {
@@ -170,6 +167,7 @@ public class MobSfApkPropertiesParser {
         int warningIssues = 0;
         int infoIssues = 0;
         for (Map.Entry<String, Object> stringObjectEntry : jsonObject.toMap().entrySet()) {
+            //noinspection rawtypes
             HashMap objMap = (HashMap) stringObjectEntry.getValue();
             String level = (String) objMap.get("level");
             switch (level) {

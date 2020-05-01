@@ -1,5 +1,7 @@
 package extract.mobsf.remote;
 
+import extract.mobsf.local.MobSfLocalPropertiesExtractor;
+
 import java.io.IOException;
 import java.net.Socket;
 import java.nio.file.Files;
@@ -42,9 +44,11 @@ public class MobSfRemotePropertiesExtractor {
             if (isAddressReachable(ipAddress, port)) {
                 return new MobSfRemotePropertiesExtractor(mobsfAddress, mobsfApiKey);
             } else {
+                System.err.println("Error the MobSf ip address is unreachable");
                 return null;
             }
         } catch (NumberFormatException e) {
+            System.err.println(e.getMessage());
             return null;
         }
     }
@@ -56,27 +60,41 @@ public class MobSfRemotePropertiesExtractor {
         );
         String hash = processor.uploadFile(apkFilePath);
         if (hash == null) {
+            System.err.println("Could not upload file to MobSf");
             return null;
         }
 
+        String apkFileName = apkFilePath.getFileName().toString();
         String resultJsonMessage = processor.scanFile(apkFilePath.getFileName().toString(), hash, DEFAULT_SCAN_TYPE);
-        if (resultJsonMessage == null) {
-            return null;
-        }
-
-        String zipFilePath = apkFilePath.getFileName().toString() + ".zip";
-        if (!processor.downloadFile(hash, zipFilePath)) {
-            return null;
-        }
-
-        if (!zipExtractor.extractToFolder(zipFilePath, sourceDirName)) {
-            return null;
-        } else {
+        if (resultJsonMessage != null) {
             try {
-                Files.delete(Path.of(zipFilePath));
+                Files.writeString(Path.of(apkFileName + MobSfLocalPropertiesExtractor.JSON_PROPERTIES_EXTENSION),
+                        resultJsonMessage);
+            } catch (IOException e) {
+                System.err.println("Could not save json report file");
+                return null;
+            }
+        } else {
+            System.err.println("Could not get scan file json report");
+            return null;
+        }
+
+        String zipFileName = apkFilePath.getFileName().toString() + ".zip";
+        if (!processor.downloadFile(hash, zipFileName)) {
+            System.err.println("Could not download file with source files");
+            return null;
+        }
+
+        if (Files.isDirectory(Path.of(sourceDirName)) || zipExtractor.extractToFolder(zipFileName, sourceDirName)) {
+            try {
+                Files.delete(Path.of(zipFileName));
             } catch (IOException e) {
                 System.err.println(e.getMessage());
+                return null;
             }
+        } else {
+            System.out.println("Could not extract zip file");
+            return null;
         }
 
         if (processor.deleteScanResult(hash)) {

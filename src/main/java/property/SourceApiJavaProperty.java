@@ -56,4 +56,64 @@ public interface SourceApiJavaProperty {
     void setCountFileConstructor(int fileConstructor);
 
     void setCountStreamConstructor(int streamConstructor);
+
+    void setCountEnum(int enums);
+
+    void setCountInterface(int interfaces);
+
+    void setCountClass(int classes);
+
+    void setCountBodyDeclaration(int bodyDeclarations);
+
+    void setCountEnumConstant(int enumConstants);
+
+    void setCountMethod(int methods);
+
+    void setCountBody(int bodies);
+
+    void setCountClassField(int classFields);
+
+    void setCountParameter(int parameters);
+
+    void setCountStatement(int statements);
+
+    void setCountExpression(int expressions);
+
+    void setCountIfStatement(int ifStatements);
+
+    void setCountForStatement(int forStatements);
+
+    void setCountForEachStatement(int forEachStatements);
+
+    void setCountDoWhileStatement(int doWhileStatements);
+
+    void setCountTryStatement(int tryStatements);
+
+    void setCountAssertStatement(int assertStatements);
+
+    void setCountSwitchStatement(int switchStatements);
+
+    void setCountSynchronizedStatement(int synchronizedStatements);
+
+    void setCountConstructorInvocationStatement(int constructorInvocationStatements);
+
+    void setCountVariableStatement(int variableStatements);
+
+    void setCountLambdaExpression(int lambdaExpressions);
+
+    void setCountObjectCreationExpression(int objectCreationExpressions);
+
+    void setCountFieldAccessExpression(int fieldAccessExpressions);
+
+    void setCountArrayCreationExpression(int arrayCreationExpressions);
+
+    void setCountAssignExpression(int assignExpressions);
+
+    void setCountBinaryExpression(int binaryExpressions);
+
+    void setCountConditionalExpression(int conditionalExpressions);
+
+    void setCountCatchExpression(int catchExpressions);
+
+    void setCountArrayInitializedObjects(int arrayInitializedObjectss);
 }

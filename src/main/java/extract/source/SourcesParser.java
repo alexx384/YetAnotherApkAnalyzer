@@ -12,6 +12,8 @@ public class SourcesParser {
         try {
             Files.walkFileTree(directoryPath, new SourceJavaFileVisitor(javaParser, apiExtractor));
         } catch (IOException e) {
+            System.out.println("Error while sources parsing");
+            System.err.println(e.getMessage());
             return false;
         }
         javaParser.exportInProperties(property);

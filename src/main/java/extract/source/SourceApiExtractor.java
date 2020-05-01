@@ -18,6 +18,37 @@ public class SourceApiExtractor {
     private final List<Map<String, Map<String, MutableInteger>>> otherVariableMapList;
     private final Map<String, MutableInteger> apiClassConstructorMap;
 
+    private int enumCounter;
+    private int interfaceCounter;
+    private int classCounter;
+    private int bodyDeclarationCounter;
+    private int enumConstantsCounter;
+    private int methodCounter;
+    private int bodyCounter;
+    private int classFieldCounter;
+    private int parameterCounter;
+    private int statementCounter;
+    private int expressionCounter;
+    private int ifStatementCounter;
+    private int forStatementCounter;
+    private int forEachStatementCounter;
+    private int doWhileStatementCounter;
+    private int tryStatementCounter;
+    private int assertStatementCounter;
+    private int switchStatementCounter;
+    private int synchronizedStatementCounter;
+    private int constructorInvocationStatementCounter;
+    private int variableStatementCounter;
+    private int lambdaExpressionCounter;
+    private int objectCreationExpressionCounter;
+    private int fieldAccessExpressionCounter;
+    private int arrayCreationExpressionCounter;
+    private int assignExpressionCounter;
+    private int binaryExpressionCounter;
+    private int conditionalExpressionCounter;
+    private int catchExpressionCounter;
+    private int arrayInitializedObjectsCounter;
+
     public SourceApiExtractor() {
         apiClassConstructorMap = Map.ofEntries(
                 Map.entry("Intent", new MutableInteger()),
@@ -69,6 +100,37 @@ public class SourceApiExtractor {
         }
         instanceVariableMapList = new ArrayList<>();
         otherVariableMapList = new ArrayList<>();
+
+        this.enumCounter = 0;
+        this.interfaceCounter = 0;
+        this.classCounter = 0;
+        this.bodyDeclarationCounter = 0;
+        this.enumConstantsCounter = 0;
+        this.methodCounter = 0;
+        this.bodyCounter = 0;
+        this.classFieldCounter = 0;
+        this.parameterCounter = 0;
+        this.statementCounter = 0;
+        this.expressionCounter = 0;
+        this.ifStatementCounter = 0;
+        this.forStatementCounter = 0;
+        this.forEachStatementCounter = 0;
+        this.doWhileStatementCounter = 0;
+        this.tryStatementCounter = 0;
+        this.assertStatementCounter = 0;
+        this.switchStatementCounter = 0;
+        this.synchronizedStatementCounter = 0;
+        this.constructorInvocationStatementCounter = 0;
+        this.variableStatementCounter = 0;
+        this.lambdaExpressionCounter = 0;
+        this.objectCreationExpressionCounter = 0;
+        this.fieldAccessExpressionCounter = 0;
+        this.arrayCreationExpressionCounter = 0;
+        this.assignExpressionCounter = 0;
+        this.binaryExpressionCounter = 0;
+        this.conditionalExpressionCounter = 0;
+        this.catchExpressionCounter = 0;
+        this.arrayInitializedObjectsCounter = 0;
     }
 
     /**
@@ -144,6 +206,73 @@ public class SourceApiExtractor {
         }
     }
 
+    /**
+     * Export parameters in property object
+     *
+     * @param property object which receives properties
+     */
+    public void exportInProperties(SourceApiJavaProperty property) {
+        property.setCountIntentAddFlags(getMethodCallCountOfType("Intent", "addFlags"));
+        property.setCountIntentSetFlags(getMethodCallCountOfType("Intent", "setFlags"));
+        property.setCountIntentSetDataAndType(getMethodCallCountOfType("Intent", "setDataAndType"));
+        property.setCountIntentPutExtra(getMethodCallCountOfType("Intent", "putExtra"));
+        property.setCountIntentConstructor(apiClassConstructorMap.get("Intent").intValue());
+        property.setCountIntentFilterConstructor(apiClassConstructorMap.get("IntentFilter").intValue());
+        property.setCountDataInputStreamConstructor(apiClassConstructorMap.get("DataInputStream").intValue());
+        property.setCountDataOutputStreamWriteBytes(getMethodCallCountOfType("DataOutputStream", "writeBytes"));
+        property.setCountDataOutputStreamConstructor(apiClassConstructorMap.get("DataOutputStream").intValue());
+        property.setCountBufferedReaderConstructor(apiClassConstructorMap.get("BufferedReader").intValue());
+        property.setCountStringBuilderAppend(getMethodCallCountOfType("StringBuilder", "append"));
+        property.setCountStringBuilderIndexOf(getMethodCallCountOfType("StringBuilder", "indexOf"));
+        property.setCountStringBuilderSubstring(getMethodCallCountOfType("StringBuilder", "substring"));
+        property.setCountStringBuilderConstructor(apiClassConstructorMap.get("StringBuilder").intValue());
+        property.setCountStringBufferAppend(getMethodCallCountOfType("StringBuffer", "append"));
+        property.setCountStringBufferIndexOf(getMethodCallCountOfType("StringBuffer", "indexOf"));
+        property.setCountStringBufferSubstring(getMethodCallCountOfType("StringBuffer", "substring"));
+        property.setCountStringBufferConstructor(apiClassConstructorMap.get("StringBuffer").intValue());
+        property.setCountContentResolverQuery(getMethodCallCountOfType("ContentResolver", "query"));
+        property.setCountContentResolverInsert(getMethodCallCountOfType("ContentResolver", "insert"));
+        property.setCountContentResolverUpdate(getMethodCallCountOfType("ContentResolver", "update"));
+        property.setCountStringConstructor(apiClassConstructorMap.get("String").intValue());
+        property.setCountStringToLowerCase(getMethodCallCountOfType("String", "toLowerCase"));
+        property.setCountStringToUpperCase(getMethodCallCountOfType("String", "toUpperCase"));
+        property.setCountStringTrim(getMethodCallCountOfType("String", "trim"));
+        property.setCountStringCharAt(getMethodCallCountOfType("String", "charAt"));
+        property.setCountFileConstructor(apiClassConstructorMap.get("File").intValue());
+        property.setCountStreamConstructor(apiClassConstructorMap.get("Stream").intValue());
+
+        property.setCountEnum(enumCounter);
+        property.setCountInterface(interfaceCounter);
+        property.setCountClass(classCounter);
+        property.setCountBodyDeclaration(bodyDeclarationCounter);
+        property.setCountEnumConstant(enumConstantsCounter);
+        property.setCountMethod(methodCounter);
+        property.setCountBody(bodyCounter);
+        property.setCountClassField(classFieldCounter);
+        property.setCountParameter(parameterCounter);
+        property.setCountStatement(statementCounter);
+        property.setCountExpression(expressionCounter);
+        property.setCountIfStatement(ifStatementCounter);
+        property.setCountForStatement(forStatementCounter);
+        property.setCountForEachStatement(forEachStatementCounter);
+        property.setCountDoWhileStatement(doWhileStatementCounter);
+        property.setCountTryStatement(tryStatementCounter);
+        property.setCountAssertStatement(assertStatementCounter);
+        property.setCountSwitchStatement(switchStatementCounter);
+        property.setCountSynchronizedStatement(synchronizedStatementCounter);
+        property.setCountConstructorInvocationStatement(constructorInvocationStatementCounter);
+        property.setCountVariableStatement(variableStatementCounter);
+        property.setCountLambdaExpression(lambdaExpressionCounter);
+        property.setCountObjectCreationExpression(objectCreationExpressionCounter);
+        property.setCountFieldAccessExpression(fieldAccessExpressionCounter);
+        property.setCountArrayCreationExpression(arrayCreationExpressionCounter);
+        property.setCountAssignExpression(assignExpressionCounter);
+        property.setCountBinaryExpression(binaryExpressionCounter);
+        property.setCountConditionalExpression(conditionalExpressionCounter);
+        property.setCountCatchExpression(catchExpressionCounter);
+        property.setCountArrayInitializedObjects(arrayInitializedObjectsCounter);
+    }
+
     private void extractClassOrInterfaceDeclaration(ClassOrInterfaceDeclaration declaration) {
         if (declaration.isInterface()) {
             extractInterfaceDeclaration(declaration);
@@ -153,6 +282,7 @@ public class SourceApiExtractor {
     }
 
     private void extractEnumDeclaration(EnumDeclaration enumDeclaration) {
+        ++enumCounter;
         instanceVariableMapList.add(new HashMap<>());
         otherVariableMapList.add(new HashMap<>());
         for (BodyDeclaration<?> declaration : enumDeclaration.getMembers()) {
@@ -166,6 +296,7 @@ public class SourceApiExtractor {
     }
 
     private void extractInterfaceDeclaration(ClassOrInterfaceDeclaration interfaceDeclaration) {
+        ++interfaceCounter;
         otherVariableMapList.add(new HashMap<>());
         for (BodyDeclaration<?> declaration : interfaceDeclaration.getMembers()) {
             extractBodyDeclaration(declaration);
@@ -174,6 +305,7 @@ public class SourceApiExtractor {
     }
 
     private void extractClassDeclaration(ClassOrInterfaceDeclaration classDeclaration) {
+        ++classCounter;
         instanceVariableMapList.add(new HashMap<>());
         otherVariableMapList.add(new HashMap<>());
         for (BodyDeclaration<?> declaration : classDeclaration.getMembers()) {
@@ -184,6 +316,7 @@ public class SourceApiExtractor {
     }
 
     private void extractBodyDeclaration(BodyDeclaration<?> bodyDeclaration) {
+        ++bodyDeclarationCounter;
         if (bodyDeclaration.isMethodDeclaration()) {
             extractMethod(bodyDeclaration.asMethodDeclaration());
         } else if (bodyDeclaration.isClassOrInterfaceDeclaration()) {
@@ -200,6 +333,7 @@ public class SourceApiExtractor {
     }
 
     private void extractEnumConstantDeclaration(EnumConstantDeclaration constantDeclaration) {
+        ++enumConstantsCounter;
         otherVariableMapList.add(new HashMap<>());
         for (BodyDeclaration<?> bodyDeclaration : constantDeclaration.getClassBody()) {
             if (bodyDeclaration.isMethodDeclaration()) {
@@ -210,6 +344,7 @@ public class SourceApiExtractor {
     }
 
     private void extractMethod(MethodDeclaration method) {
+        ++methodCounter;
         Optional<BlockStmt> optionalBody = method.getBody();
         if (optionalBody.isEmpty()) {
             return;
@@ -222,6 +357,7 @@ public class SourceApiExtractor {
     }
 
     private void extractBody(BlockStmt body) {
+        ++bodyCounter;
         otherVariableMapList.add(new HashMap<>());
         for (Statement statement : body.getStatements()) {
             extractStatement(statement);
@@ -230,6 +366,7 @@ public class SourceApiExtractor {
     }
 
     private void extractClassField(FieldDeclaration fieldDeclaration) {
+        ++classFieldCounter;
         NodeList<VariableDeclarator> variables = fieldDeclaration.getVariables();
         if (fieldDeclaration.isStatic()) {
             Map<String, Map<String, MutableInteger>> classVariableMap = otherVariableMapList.get(
@@ -245,6 +382,7 @@ public class SourceApiExtractor {
     }
 
     private void extractParameters(List<Parameter> parameters) {
+        ++parameterCounter;
         Map<String, Map<String, MutableInteger>> variablesMap = otherVariableMapList.get(
                 otherVariableMapList.size() - 1
         );
@@ -254,6 +392,7 @@ public class SourceApiExtractor {
     }
 
     private void extractStatement(Statement statement) {
+        ++statementCounter;
         /* Out of scope: breakStatement, continueStatement, emptyStatement, unparsableStatement */
         if (statement.isExpressionStmt()) {
             extractExpression(statement.asExpressionStmt().getExpression());
@@ -306,6 +445,7 @@ public class SourceApiExtractor {
     }
 
     private void extractParameter(Parameter parameter, Map<String, Map<String, MutableInteger>> variablesMap) {
+        ++parameterCounter;
         String type = parameter.getTypeAsString();
         Map<String, MutableInteger> methodsInvocationMap = apiClassMethodMap.get(type);
         if (methodsInvocationMap != null) {
@@ -314,6 +454,7 @@ public class SourceApiExtractor {
     }
 
     private void extractExpression(Expression expression) {
+        ++expressionCounter;
         /* Out of scope: AnnotationExpr, NameExpr, UnaryExpr, ThisExpr, ArrayInitializerExpr, BooleanLiteralExpr,
             CharLiteralExpr, ClassExpr, DoubleLiteralExpr, InstanceOfExpr, IntegerLiteralExpr, LiteralExpr,
             LiteralStringValueExpr, LongLiteralExpr, MarkerAnnotationExpr, MethodReferenceExpr, NormalAnnotationExpr,
@@ -349,6 +490,7 @@ public class SourceApiExtractor {
     }
 
     private void extractIfStatement(IfStmt ifStmt) {
+        ++ifStatementCounter;
         otherVariableMapList.add(new HashMap<>());
         extractExpression(ifStmt.getCondition());
         extractStatement(ifStmt.getThenStmt());
@@ -357,6 +499,7 @@ public class SourceApiExtractor {
     }
 
     private void extractForStatement(ForStmt forStmt) {
+        ++forStatementCounter;
         otherVariableMapList.add(new HashMap<>());
         for (Expression expression : forStmt.getInitialization()) {
             if (expression.isVariableDeclarationExpr()) {
@@ -368,6 +511,7 @@ public class SourceApiExtractor {
     }
 
     private void extractForEachStatement(ForEachStmt forEachStmt) {
+        ++forEachStatementCounter;
         otherVariableMapList.add(new HashMap<>());
         extractVariableDeclaration(forEachStmt.getVariable());
         extractStatement(forEachStmt.getBody());
@@ -376,12 +520,14 @@ public class SourceApiExtractor {
 
     @SuppressWarnings("rawtypes")
     private <T extends NodeWithBody> void extractDoWhileStatement(T stmt) {
+        ++doWhileStatementCounter;
         otherVariableMapList.add(new HashMap<>());
         extractStatement(stmt.getBody());
         otherVariableMapList.remove(otherVariableMapList.size() - 1);
     }
 
     private void extractTryStatement(TryStmt tryStmt) {
+        ++tryStatementCounter;
         otherVariableMapList.add(new HashMap<>());
         for (Expression expression : tryStmt.getResources()) {
             extractExpression(expression);
@@ -396,6 +542,7 @@ public class SourceApiExtractor {
     }
 
     private void extractAssertStatement(AssertStmt assertStmt) {
+        ++assertStatementCounter;
         otherVariableMapList.add(new HashMap<>());
         extractExpression(assertStmt.getCheck());
         assertStmt.getMessage().ifPresent(this::extractExpression);
@@ -403,6 +550,7 @@ public class SourceApiExtractor {
     }
 
     private void extractSwitchStatement(SwitchStmt switchStmt) {
+        ++switchStatementCounter;
         extractExpression(switchStmt.getSelector());
         for (SwitchEntry switchEntry : switchStmt.getEntries()) {
             otherVariableMapList.add(new HashMap<>());
@@ -414,6 +562,7 @@ public class SourceApiExtractor {
     }
 
     private void extractSynchronizedStatement(SynchronizedStmt synchronizedStmt) {
+        ++synchronizedStatementCounter;
         otherVariableMapList.add(new HashMap<>());
         extractExpression(synchronizedStmt.getExpression());
         extractBody(synchronizedStmt.getBody());
@@ -421,12 +570,14 @@ public class SourceApiExtractor {
     }
 
     private void extractExplicitConstructorInvocationStatement(ExplicitConstructorInvocationStmt statement) {
+        ++constructorInvocationStatementCounter;
         for (Expression expression : statement.asExplicitConstructorInvocationStmt().getArguments()) {
             extractExpression(expression);
         }
     }
 
     private void extractVariableDeclaration(VariableDeclarationExpr variableDeclarationExpr) {
+        ++variableStatementCounter;
         Map<String, Map<String, MutableInteger>> variablesMap = otherVariableMapList.get(
                 otherVariableMapList.size() - 1
         );
@@ -434,6 +585,7 @@ public class SourceApiExtractor {
     }
 
     private void extractLambdaExpression(LambdaExpr lambdaExpression) {
+        ++lambdaExpressionCounter;
         otherVariableMapList.add(new HashMap<>());
         extractParameters(lambdaExpression.getParameters());
         Statement body = lambdaExpression.getBody();
@@ -446,6 +598,7 @@ public class SourceApiExtractor {
     }
 
     private void extractObjectCreationExpression(ObjectCreationExpr expr) {
+        ++objectCreationExpressionCounter;
         for (Expression argument : expr.getArguments()) {
             extractExpression(argument);
         }
@@ -464,10 +617,12 @@ public class SourceApiExtractor {
     }
 
     private void extractFieldAccessExpression(FieldAccessExpr fieldAccessExpr) {
+        ++fieldAccessExpressionCounter;
         extractExpression(fieldAccessExpr.getScope());
     }
 
     private void extractMethodCallExpression(MethodCallExpr expr) {
+        // TODO
         String methodName = expr.getNameAsString();
         for (Expression argument : expr.getArguments()) {
             extractExpression(argument);
@@ -501,11 +656,13 @@ public class SourceApiExtractor {
     }
 
     private void extractArrayAccessExpression(ArrayAccessExpr arrayAccessExpr) {
+        // TODO
         extractExpression(arrayAccessExpr.getName());
         extractExpression(arrayAccessExpr.getIndex());
     }
 
     private void extractArrayCreationExpression(ArrayCreationExpr arrayCreationExpr) {
+        ++arrayCreationExpressionCounter;
         Optional<ArrayInitializerExpr> optionalArrayInitializerExpr = arrayCreationExpr.getInitializer();
         if (optionalArrayInitializerExpr.isEmpty()) {
             return;
@@ -519,22 +676,26 @@ public class SourceApiExtractor {
     }
 
     private void extractAssignExpression(AssignExpr assignExpr) {
+        ++assignExpressionCounter;
         extractExpression(assignExpr.getTarget());
         extractExpression(assignExpr.getValue());
     }
 
     private void extractBinaryExpression(BinaryExpr binaryExpr) {
+        ++binaryExpressionCounter;
         extractExpression(binaryExpr.getLeft());
         extractExpression(binaryExpr.getRight());
     }
 
     private void extractConditionalExpression(ConditionalExpr conditionalExpr) {
+        ++conditionalExpressionCounter;
         extractExpression(conditionalExpr.getCondition());
         extractExpression(conditionalExpr.getElseExpr());
         extractExpression(conditionalExpr.getThenExpr());
     }
 
     private void extractCatchClause(CatchClause catchClause) {
+        ++catchExpressionCounter;
         Map<String, Map<String, MutableInteger>> variablesMap = otherVariableMapList.get(
                 otherVariableMapList.size() - 1
         );
@@ -559,6 +720,7 @@ public class SourceApiExtractor {
     }
 
     private int getCountInitializedObjects(ArrayInitializerExpr arrayInitializerExpr) {
+        ++arrayInitializedObjectsCounter;
         int counter = 0;
         for (Expression value : arrayInitializerExpr.getValues()) {
             if (value.isArrayInitializerExpr()) {
@@ -567,36 +729,5 @@ public class SourceApiExtractor {
             counter += 1;
         }
         return counter;
-    }
-    
-    public void exportInProperties(SourceApiJavaProperty property) {
-        property.setCountIntentAddFlags(getMethodCallCountOfType("Intent", "addFlags"));
-        property.setCountIntentSetFlags(getMethodCallCountOfType("Intent", "setFlags"));
-        property.setCountIntentSetDataAndType(getMethodCallCountOfType("Intent", "setDataAndType"));
-        property.setCountIntentPutExtra(getMethodCallCountOfType("Intent", "putExtra"));
-        property.setCountIntentConstructor(apiClassConstructorMap.get("Intent").intValue());
-        property.setCountIntentFilterConstructor(apiClassConstructorMap.get("IntentFilter").intValue());
-        property.setCountDataInputStreamConstructor(apiClassConstructorMap.get("DataInputStream").intValue());
-        property.setCountDataOutputStreamWriteBytes(getMethodCallCountOfType("DataOutputStream", "writeBytes"));
-        property.setCountDataOutputStreamConstructor(apiClassConstructorMap.get("DataOutputStream").intValue());
-        property.setCountBufferedReaderConstructor(apiClassConstructorMap.get("BufferedReader").intValue());
-        property.setCountStringBuilderAppend(getMethodCallCountOfType("StringBuilder", "append"));
-        property.setCountStringBuilderIndexOf(getMethodCallCountOfType("StringBuilder", "indexOf"));
-        property.setCountStringBuilderSubstring(getMethodCallCountOfType("StringBuilder", "substring"));
-        property.setCountStringBuilderConstructor(apiClassConstructorMap.get("StringBuilder").intValue());
-        property.setCountStringBufferAppend(getMethodCallCountOfType("StringBuffer", "append"));
-        property.setCountStringBufferIndexOf(getMethodCallCountOfType("StringBuffer", "indexOf"));
-        property.setCountStringBufferSubstring(getMethodCallCountOfType("StringBuffer", "substring"));
-        property.setCountStringBufferConstructor(apiClassConstructorMap.get("StringBuffer").intValue());
-        property.setCountContentResolverQuery(getMethodCallCountOfType("ContentResolver", "query"));
-        property.setCountContentResolverInsert(getMethodCallCountOfType("ContentResolver", "insert"));
-        property.setCountContentResolverUpdate(getMethodCallCountOfType("ContentResolver", "update"));
-        property.setCountStringConstructor(apiClassConstructorMap.get("String").intValue());
-        property.setCountStringToLowerCase(getMethodCallCountOfType("String", "toLowerCase"));
-        property.setCountStringToUpperCase(getMethodCallCountOfType("String", "toUpperCase"));
-        property.setCountStringTrim(getMethodCallCountOfType("String", "trim"));
-        property.setCountStringCharAt(getMethodCallCountOfType("String", "charAt"));
-        property.setCountFileConstructor(apiClassConstructorMap.get("File").intValue());
-        property.setCountStreamConstructor(apiClassConstructorMap.get("Stream").intValue());
     }
 }
