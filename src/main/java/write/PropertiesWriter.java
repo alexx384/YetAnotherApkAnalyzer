@@ -7,14 +7,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class PropertiesWriter {
+public class PropertiesWriter implements AutoCloseable {
     private static final String DEFAULT_RESULT_FILE_PATH = "result.csv";
 
-    private final Path outputPath;
+    private final FileWriter writer;
 
-    private PropertiesWriter(Path outputPath) {
-
-        this.outputPath = outputPath;
+    private PropertiesWriter(FileWriter writer) {
+        this.writer = writer;
     }
 
     public static PropertiesWriter build() {
@@ -27,7 +26,13 @@ public class PropertiesWriter {
         if (!checkResultFile(resultPath)) {
             return null;
         }
-        return new PropertiesWriter(resultPath);
+        FileWriter fileWriter;
+        try {
+            fileWriter = new FileWriter(resultPath.toFile());
+        } catch (IOException e) {
+            return null;
+        }
+        return new PropertiesWriter(fileWriter);
     }
 
     private static boolean checkResultFile(Path resultPath) {
@@ -50,14 +55,18 @@ public class PropertiesWriter {
     }
 
     public boolean saveProperties(ApkPropertyStorage propertyStorage) {
-        try (FileWriter fileWriter = new FileWriter(outputPath.toFile())) {
-            fileWriter.write(propertyStorage.getCSVRepresentation());
-            fileWriter.write('\n');
+        try {
+            writer.write(propertyStorage.getCSVRepresentation());
+            writer.write('\n');
+            writer.flush();
         } catch (IOException e) {
-            System.out.println(e.getMessage());
             return false;
         }
-
         return true;
+    }
+
+    @Override
+    public void close() throws IOException {
+        writer.close();
     }
 }

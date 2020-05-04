@@ -79,6 +79,20 @@ public class ApkPropertyStorage implements MobSfApkProperty, SourceJavaProperty,
     private int connectivityManagerImports;
     private int logImports;
 
+    /* === AndrowarnApkProperty */
+    private int telephonyIdentifiersLeakage;
+    private int deviseSettingsHarvesting;
+    private int locationLookup;
+    private int connectionInterfacesExfiltration;
+    private int telephonyServicesAbuse;
+    private int audioVideoEavesdroping;
+    private int suspiciousConnectionEstablishment;
+    private int pimDataLeakage;
+    private int codeExecution;
+    private int classesList;
+    private int internalClassesList;
+    private int intentsSent;
+
     /* === SourceApiJavaProperty === */
     private int intentAddFlags;
     private int intentSetFlags;
@@ -138,167 +152,183 @@ public class ApkPropertyStorage implements MobSfApkProperty, SourceJavaProperty,
     private int conditionalExpressions;
     private int catchExpressions;
     private int arrayInitializedObjectss;
-
-    /* === AndrowarnApkProperty */
-    private int telephonyIdentifiersLeakage;
-    private int deviseSettingsHarvesting;
-    private int locationLookup;
-    private int connectionInterfacesExfiltration;
-    private int telephonyServicesAbuse;
-    private int audioVideoEavesdroping;
-    private int suspiciousConnectionEstablishment;
-    private int pimDataLeakage;
-    private int codeExecution;
-    private int classesList;
-    private int internalClassesList;
-    private int intentsSent;
+    private int initializedDeclarations;
+    private int constructorDeclarations;
+    private int returnStatements;
+    private int yieldStatements;
+    private int localClassDeclarations;
+    private int thrownStatements;
+    private int labeledStatements;
+    private int castExpressions;
+    private int enclosedExpressions;
+    private int unaryExpressions;
+    private int arrayAccessExpressions;
+    private int methodCallExpressions;
 
     public String getCSVRepresentation() {
-        return exportedActivities + ","
-                + browsableActivities + ","
-                + activities + ","
-                + receivers + ","
-                + providers + ","
-                + services + ","
-                + libraries + ","
-                + targetSDK + ","
-                + maxSDK + ","
-                + minSDK + ","
-                + versionCode + ","
-                + dangerousPermission + ","
-                + signaturePermission + ","
-                + appopPermission + ","
-                + privilegedPermission + ","
-                + developmentPermission + ","
-                + normalPermission + ","
-                + instantPermission + ","
-                + preinstalledPermission + ","
-                + retailDemoPermission + ","
-                + installerPermission + ","
-                + pre23Permission + ","
-                + unusedPermission + ","
-                + deprecatedPermission + ","
-                + totalPermissions + ","
-                + manifestIssues + ","
-                + codeIssues + ","
-                + codeHighIssues + ","
-                + codeWarningIssues + ","
-                + codeInfoIssues + ","
-                + codeWarningIssues + ","
-                + activitiesWithUrl + ","
-                + domains + ","
-                + emails + ","
-                + firebaseUrls + ","
-                + files + ","
-                + xmlFiles + ","
-                + pngFiles + ","
-                + kotlinMetadataFiles + ","
-                + versionFiles + ","
-                + kotlinBuiltinsFiles + ","
-                + proFiles + ","
-                + ttfFiles + ","
-                + dexFiles + ","
-                + gifFiles + ","
-                + otherFiles + ","
-                + exportedServices + ","
-                + exportedReceivers + ","
-                + exportedProviders + ","
-                + detectedTrackers + ","
-                + mobsfAverageCVSS + ","
-                + securityScore + ","
-                + activityImports + ","
-                + intentImports + ","
-                + intentFilterImports + ","
-                + contentResolverImports + ","
-                + dataInputStreamImports + ","
-                + bufferedReaderImports + ","
-                + dataOutputStreamImports + ","
-                + inetSocketAddressImports + ","
-                + fileImports + ","
-                + streamImports + ","
-                + telephonyManagerImports + ","
-                + serviceImports + ","
-                + contextImports + ","
-                + packageManagerImports + ","
-                + smsManagerImports + ","
-                + timerImports + ","
-                + bundleImports + ","
-                + applicationInfoImports + ","
-                + timerTaskImports + ","
-                + fileOutputStreamImports + ","
-                + networkInfoImports + ","
-                + connectivityManagerImports + ","
-                + logImports + ","
-                + intentAddFlags + ","
-                + intentSetFlags + ","
-                + intentSetDataAndType + ","
-                + intentPutExtra + ","
-                + dataInputStreamWriteBytes + ","
-                + stringBuilderAppend + ","
-                + stringBuilderIndexOf + ","
-                + stringBuilderSubstring + ","
-                + stringBufferAppend + ","
-                + stringBufferIndexOf + ","
-                + stringBufferSubstring + ","
-                + contentResolverQuery + ","
-                + contentResolverInsert + ","
-                + contentResolverUpdate + ","
-                + intentConstructor + ","
-                + intentFilterConstructor + ","
-                + dataInputStreamConstructor + ","
-                + dataOutputStreamConstructor + ","
-                + bufferedReaderConstructor + ","
-                + stringBuilderConstructor + ","
-                + stringBufferConstructor + ","
-                + stringConstructor + ","
-                + stringToLowerCase + ","
-                + stringToUpperCase + ","
-                + stringStrip + ","
-                + stringCharAt + ","
-                + fileConstructor + ","
-                + streamConstructor + ","
-                + enums + ","
-                + interfaces + ","
-                + classes + ","
-                + bodyDeclarations + ","
-                + enumConstants + ","
-                + methods + ","
-                + bodies + ","
-                + classFields + ","
-                + parameters + ","
-                + statements + ","
-                + expressions + ","
-                + ifStatements + ","
-                + forStatements + ","
-                + forEachStatements + ","
-                + doWhileStatements + ","
-                + tryStatements + ","
-                + assertStatements + ","
-                + switchStatements + ","
-                + synchronizedStatements + ","
-                + constructorInvocationStatements + ","
-                + variableStatements + ","
-                + lambdaExpressions + ","
-                + objectCreationExpressions + ","
-                + fieldAccessExpressions + ","
-                + arrayCreationExpressions + ","
-                + assignExpressions + ","
-                + binaryExpressions + ","
-                + conditionalExpressions + ","
-                + catchExpressions + ","
-                + arrayInitializedObjectss + ","
-                + telephonyIdentifiersLeakage + ","
-                + deviseSettingsHarvesting + ","
-                + locationLookup + ","
-                + connectionInterfacesExfiltration + ","
-                + telephonyServicesAbuse + ","
-                + audioVideoEavesdroping + ","
-                + suspiciousConnectionEstablishment + ","
-                + pimDataLeakage + ","
-                + codeExecution + ","
-                + classesList + ","
-                + internalClassesList + ","
-                + intentsSent;
+        return ""
+                /* === MobSfApkProperty === */
+                + exportedActivities + ','
+                + browsableActivities + ','
+                + activities + ','
+                + receivers + ','
+                + providers + ','
+                + services + ','
+                + libraries + ','
+                + targetSDK + ','
+                + maxSDK + ','
+                + minSDK + ','
+                + versionCode + ','
+                + dangerousPermission + ','
+                + signaturePermission + ','
+                + appopPermission + ','
+                + privilegedPermission + ','
+                + developmentPermission + ','
+                + normalPermission + ','
+                + instantPermission + ','
+                + preinstalledPermission + ','
+                + retailDemoPermission + ','
+                + installerPermission + ','
+                + pre23Permission + ','
+                + unusedPermission + ','
+                + deprecatedPermission + ','
+                + totalPermissions + ','
+                + manifestIssues + ','
+                + codeIssues + ','
+                + codeHighIssues + ','
+                + codeWarningIssues + ','
+                + codeInfoIssues + ','
+                + codeWarningIssues + ','
+                + activitiesWithUrl + ','
+                + domains + ','
+                + emails + ','
+                + firebaseUrls + ','
+                + files + ','
+                + xmlFiles + ','
+                + pngFiles + ','
+                + kotlinMetadataFiles + ','
+                + versionFiles + ','
+                + kotlinBuiltinsFiles + ','
+                + proFiles + ','
+                + ttfFiles + ','
+                + dexFiles + ','
+                + gifFiles + ','
+                + otherFiles + ','
+                + exportedServices + ','
+                + exportedReceivers + ','
+                + exportedProviders + ','
+                + detectedTrackers + ','
+                + mobsfAverageCVSS + ','
+                + securityScore + ','
+                + activityImports + ','
+                + intentImports + ','
+                + intentFilterImports + ','
+                + contentResolverImports + ','
+                + dataInputStreamImports + ','
+                + bufferedReaderImports + ','
+                + dataOutputStreamImports + ','
+                + inetSocketAddressImports + ','
+                + fileImports + ','
+                + streamImports + ','
+                + telephonyManagerImports + ','
+                + serviceImports + ','
+                + contextImports + ','
+                + packageManagerImports + ','
+                + smsManagerImports + ','
+                + timerImports + ','
+                + bundleImports + ','
+                + applicationInfoImports + ','
+                + timerTaskImports + ','
+                + fileOutputStreamImports + ','
+                + networkInfoImports + ','
+                + connectivityManagerImports + ','
+                + logImports + ','
+
+                /* === SourceImportJavaProperty === */
+                + telephonyIdentifiersLeakage + ','
+                + deviseSettingsHarvesting + ','
+                + locationLookup + ','
+                + connectionInterfacesExfiltration + ','
+                + telephonyServicesAbuse + ','
+                + audioVideoEavesdroping + ','
+                + suspiciousConnectionEstablishment + ','
+                + pimDataLeakage + ','
+                + codeExecution + ','
+                + classesList + ','
+                + internalClassesList + ','
+                + intentsSent + ','
+
+                /* === SourceApiJavaProperty === */
+                + intentAddFlags + ','
+                + intentSetFlags + ','
+                + intentSetDataAndType + ','
+                + intentPutExtra + ','
+                + dataInputStreamWriteBytes + ','
+                + stringBuilderAppend + ','
+                + stringBuilderIndexOf + ','
+                + stringBuilderSubstring + ','
+                + stringBufferAppend + ','
+                + stringBufferIndexOf + ','
+                + stringBufferSubstring + ','
+                + contentResolverQuery + ','
+                + contentResolverInsert + ','
+                + contentResolverUpdate + ','
+                + intentConstructor + ','
+                + intentFilterConstructor + ','
+                + dataInputStreamConstructor + ','
+                + dataOutputStreamConstructor + ','
+                + bufferedReaderConstructor + ','
+                + stringBuilderConstructor + ','
+                + stringBufferConstructor + ','
+                + stringConstructor + ','
+                + stringToLowerCase + ','
+                + stringToUpperCase + ','
+                + stringStrip + ','
+                + stringCharAt + ','
+                + fileConstructor + ','
+                + streamConstructor + ','
+                + enums + ','
+                + interfaces + ','
+                + classes + ','
+                + bodyDeclarations + ','
+                + enumConstants + ','
+                + methods + ','
+                + bodies + ','
+                + classFields + ','
+                + parameters + ','
+                + statements + ','
+                + expressions + ','
+                + ifStatements + ','
+                + forStatements + ','
+                + forEachStatements + ','
+                + doWhileStatements + ','
+                + tryStatements + ','
+                + assertStatements + ','
+                + switchStatements + ','
+                + synchronizedStatements + ','
+                + constructorInvocationStatements + ','
+                + variableStatements + ','
+                + lambdaExpressions + ','
+                + objectCreationExpressions + ','
+                + fieldAccessExpressions + ','
+                + arrayCreationExpressions + ','
+                + assignExpressions + ','
+                + binaryExpressions + ','
+                + conditionalExpressions + ','
+                + catchExpressions + ','
+                + arrayInitializedObjectss + ','
+                + initializedDeclarations + ','
+                + constructorDeclarations + ','
+                + returnStatements + ','
+                + yieldStatements + ','
+                + localClassDeclarations + ','
+                + thrownStatements + ','
+                + labeledStatements + ','
+                + castExpressions + ','
+                + enclosedExpressions + ','
+                + unaryExpressions + ','
+                + arrayAccessExpressions + ','
+                + methodCallExpressions;
     }
 
     @Override
@@ -672,6 +702,66 @@ public class ApkPropertyStorage implements MobSfApkProperty, SourceJavaProperty,
     }
 
     @Override
+    public void setCountTelephonyIdentifiersLeakage(int telephonyIdentifiersLeakage) {
+        this.telephonyIdentifiersLeakage = telephonyIdentifiersLeakage;
+    }
+
+    @Override
+    public void setCountDeviseSettingsHarvesting(int deviseSettingsHarvesting) {
+        this.deviseSettingsHarvesting = deviseSettingsHarvesting;
+    }
+
+    @Override
+    public void setCountLocationLookup(int locationLookup) {
+        this.locationLookup = locationLookup;
+    }
+
+    @Override
+    public void setCountConnectionInterfacesExfiltration(int connectionInterfacesExfiltration) {
+        this.connectionInterfacesExfiltration = connectionInterfacesExfiltration;
+    }
+
+    @Override
+    public void setCountTelephonyServicesAbuse(int telephonyServicesAbuse) {
+        this.telephonyServicesAbuse = telephonyServicesAbuse;
+    }
+
+    @Override
+    public void setCountAudioVideoEavesdroping(int audioVideoEavesdroping) {
+        this.audioVideoEavesdroping = audioVideoEavesdroping;
+    }
+
+    @Override
+    public void setCountSuspiciousConnectionEstablishment(int suspiciousConnectionEstablishment) {
+        this.suspiciousConnectionEstablishment = suspiciousConnectionEstablishment;
+    }
+
+    @Override
+    public void setCountPimDataLeakage(int pimDataLeakage) {
+        this.pimDataLeakage = pimDataLeakage;
+    }
+
+    @Override
+    public void setCountCodeExecution(int codeExecution) {
+        this.codeExecution = codeExecution;
+    }
+
+    @Override
+    public void setCountClassesList(int classesList) {
+        this.classesList = classesList;
+    }
+
+    @Override
+    public void setCountInternalClassesList(int internalClassesList) {
+        this.internalClassesList = internalClassesList;
+    }
+
+    @Override
+    public void setCountIntentsSent(int intentsSent) {
+        this.intentsSent = intentsSent;
+    }
+
+    @Override
     public void setCountIntentAddFlags(int intentAddFlags) {
         this.intentAddFlags = intentAddFlags;
     }
@@ -962,62 +1052,62 @@ public class ApkPropertyStorage implements MobSfApkProperty, SourceJavaProperty,
     }
 
     @Override
-    public void setCountTelephonyIdentifiersLeakage(int telephonyIdentifiersLeakage) {
-        this.telephonyIdentifiersLeakage = telephonyIdentifiersLeakage;
+    public void setCountInitializedDeclarations(int initializedDeclarations) {
+        this.initializedDeclarations = initializedDeclarations;
     }
 
     @Override
-    public void setCountDeviseSettingsHarvesting(int deviseSettingsHarvesting) {
-        this.deviseSettingsHarvesting = deviseSettingsHarvesting;
+    public void setCountConstructorDeclarations(int constructorDeclarations) {
+        this.constructorDeclarations = constructorDeclarations;
     }
 
     @Override
-    public void setCountLocationLookup(int locationLookup) {
-        this.locationLookup = locationLookup;
+    public void setCountReturnStatements(int returnStatements) {
+        this.returnStatements = returnStatements;
     }
 
     @Override
-    public void setCountConnectionInterfacesExfiltration(int connectionInterfacesExfiltration) {
-        this.connectionInterfacesExfiltration = connectionInterfacesExfiltration;
+    public void setCountYieldStatements(int yieldStatements) {
+        this.yieldStatements = yieldStatements;
     }
 
     @Override
-    public void setCountTelephonyServicesAbuse(int telephonyServicesAbuse) {
-        this.telephonyServicesAbuse = telephonyServicesAbuse;
+    public void setCountLocalClassDeclarations(int localClassDeclarations) {
+        this.localClassDeclarations = localClassDeclarations;
     }
 
     @Override
-    public void setCountAudioVideoEavesdroping(int audioVideoEavesdroping) {
-        this.audioVideoEavesdroping = audioVideoEavesdroping;
+    public void setCountThrownStatements(int thrownStatements) {
+        this.thrownStatements = thrownStatements;
     }
 
     @Override
-    public void setCountSuspiciousConnectionEstablishment(int suspiciousConnectionEstablishment) {
-        this.suspiciousConnectionEstablishment = suspiciousConnectionEstablishment;
+    public void setCountLabeledStatements(int labeledStatements) {
+        this.labeledStatements = labeledStatements;
     }
 
     @Override
-    public void setCountPimDataLeakage(int pimDataLeakage) {
-        this.pimDataLeakage = pimDataLeakage;
+    public void setCountCastExpressions(int castExpressions) {
+        this.castExpressions = castExpressions;
     }
 
     @Override
-    public void setCountCodeExecution(int codeExecution) {
-        this.codeExecution = codeExecution;
+    public void setCountEnclosedExpressions(int enclosedExpressions) {
+        this.enclosedExpressions = enclosedExpressions;
     }
 
     @Override
-    public void setCountClassesList(int classesList) {
-        this.classesList = classesList;
+    public void setCountUnaryExpressions(int unaryExpressions) {
+        this.unaryExpressions = unaryExpressions;
     }
 
     @Override
-    public void setCountInternalClassesList(int internalClassesList) {
-        this.internalClassesList = internalClassesList;
+    public void setCountArrayAccessExpressions(int arrayAccessExpressions) {
+        this.arrayAccessExpressions = arrayAccessExpressions;
     }
 
     @Override
-    public void setCountIntentsSent(int intentsSent) {
-        this.intentsSent = intentsSent;
+    public void setCountMethodCallExpressions(int methodCallExpressions) {
+        this.methodCallExpressions = methodCallExpressions;
     }
 }

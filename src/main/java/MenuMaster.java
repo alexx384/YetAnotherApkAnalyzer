@@ -57,6 +57,10 @@ public class MenuMaster {
                 .argName("androwarn/androwarn.py")
                 .desc("path to Androwarn framework startup file")
                 .build();
+        Option notDeleteCache = Option.builder()
+                .longOpt("notDeleteCache")
+                .desc("do not delete cache after successful parameters extraction")
+                .build();
 
         cmdOptions.addOption(help);
         cmdOptions.addOption(apkFilePath);
@@ -66,6 +70,7 @@ public class MenuMaster {
         cmdOptions.addOption(pythonPath);
         cmdOptions.addOption(permissionDB);
         cmdOptions.addOption(androwarnPath);
+        cmdOptions.addOption(notDeleteCache);
     }
 
     public static int processArgs(String[] args) throws ParseException {
@@ -81,26 +86,17 @@ public class MenuMaster {
             String pythonPath = cmd.getOptionValue("pythonPath");
             String permissionDB = cmd.getOptionValue("permissionDB");
             String androwarnPath = cmd.getOptionValue("androwarnPath");
+            boolean isNotDeleteCache = cmd.hasOption("notDeleteCache");
 
             if (apkFilePath == null || mobsfAddress == null || mobsfApiKey == null || permissionDB == null) {
                 formatter.printHelp(PROGRAM_NAME, cmdOptions, true);
             } else {
-                PropertiesWriter writer;
-                if (resultFilePath == null) {
-                    writer = PropertiesWriter.build();
-                } else {
-                    writer = PropertiesWriter.build(resultFilePath);
-                }
-                if (writer == null) {
-                    return EXIT_ERROR;
-                }
-
-                PropertiesExtractor extractor = PropertiesExtractor.build(writer, mobsfAddress, mobsfApiKey, pythonPath,
+                PropertiesExtractor extractor = PropertiesExtractor.build(mobsfAddress, mobsfApiKey, pythonPath,
                         androwarnPath, permissionDB);
                 if (extractor == null) {
                     return EXIT_ERROR;
                 }
-                if (!extractor.extract(apkFilePath)) {
+                if (!extractor.extract(apkFilePath, resultFilePath, isNotDeleteCache)) {
                     return EXIT_ERROR;
                 }
             }

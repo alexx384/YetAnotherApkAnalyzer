@@ -48,6 +48,18 @@ public class SourceApiExtractor {
     private int conditionalExpressionCounter;
     private int catchExpressionCounter;
     private int arrayInitializedObjectsCounter;
+    private int initializedDeclarationCounter;
+    private int constructorDeclarationCounter;
+    private int returnStatementCounter;
+    private int yieldStatementCounter;
+    private int localClassDeclarationCounter;
+    private int thrownStatementCounter;
+    private int labeledStatementCounter;
+    private int castExpressionCounter;
+    private int enclosedExpressionCounter;
+    private int unaryExpressionCounter;
+    private int arrayAccessExpressionCounter;
+    private int methodCallExpressionCounter;
 
     public SourceApiExtractor() {
         apiClassConstructorMap = Map.ofEntries(
@@ -131,6 +143,18 @@ public class SourceApiExtractor {
         this.conditionalExpressionCounter = 0;
         this.catchExpressionCounter = 0;
         this.arrayInitializedObjectsCounter = 0;
+        this.initializedDeclarationCounter = 0;
+        this.constructorDeclarationCounter = 0;
+        this.returnStatementCounter = 0;
+        this.yieldStatementCounter = 0;
+        this.localClassDeclarationCounter = 0;
+        this.thrownStatementCounter = 0;
+        this.labeledStatementCounter = 0;
+        this.castExpressionCounter = 0;
+        this.enclosedExpressionCounter = 0;
+        this.unaryExpressionCounter = 0;
+        this.arrayAccessExpressionCounter = 0;
+        this.methodCallExpressionCounter = 0;
     }
 
     /**
@@ -271,6 +295,18 @@ public class SourceApiExtractor {
         property.setCountConditionalExpression(conditionalExpressionCounter);
         property.setCountCatchExpression(catchExpressionCounter);
         property.setCountArrayInitializedObjects(arrayInitializedObjectsCounter);
+        property.setCountInitializedDeclarations(initializedDeclarationCounter);
+        property.setCountConstructorDeclarations(constructorDeclarationCounter);
+        property.setCountReturnStatements(returnStatementCounter);
+        property.setCountYieldStatements(yieldStatementCounter);
+        property.setCountLocalClassDeclarations(localClassDeclarationCounter);
+        property.setCountThrownStatements(thrownStatementCounter);
+        property.setCountLabeledStatements(labeledStatementCounter);
+        property.setCountCastExpressions(castExpressionCounter);
+        property.setCountEnclosedExpressions(enclosedExpressionCounter);
+        property.setCountUnaryExpressions(unaryExpressionCounter);
+        property.setCountArrayAccessExpressions(arrayAccessExpressionCounter);
+        property.setCountMethodCallExpressions(methodCallExpressionCounter);
     }
 
     private void extractClassOrInterfaceDeclaration(ClassOrInterfaceDeclaration declaration) {
@@ -324,10 +360,12 @@ public class SourceApiExtractor {
         } else if (bodyDeclaration.isEnumDeclaration()) {
             extractEnumDeclaration(bodyDeclaration.asEnumDeclaration());
         } else if (bodyDeclaration.isConstructorDeclaration()) {
+            ++constructorDeclarationCounter;
             extractBody(bodyDeclaration.asConstructorDeclaration().getBody());
         } else if (bodyDeclaration.isFieldDeclaration()) {
             extractClassField(bodyDeclaration.asFieldDeclaration());
         } else if (bodyDeclaration.isInitializerDeclaration()) {
+            ++initializedDeclarationCounter;
             extractBody(bodyDeclaration.asInitializerDeclaration().getBody());
         }
     }
@@ -413,20 +451,25 @@ public class SourceApiExtractor {
         } else if (statement.isAssertStmt()) {
             extractAssertStatement(statement.asAssertStmt());
         } else if (statement.isLabeledStmt()) {
+            ++labeledStatementCounter;
             extractStatement(statement.asLabeledStmt().getStatement());
         } else if (statement.isReturnStmt()) {
+            ++returnStatementCounter;
             statement.asReturnStmt().getExpression().ifPresent(this::extractExpression);
         } else if (statement.isSwitchStmt()) {
             extractSwitchStatement(statement.asSwitchStmt());
         } else if (statement.isSynchronizedStmt()) {
             extractSynchronizedStatement(statement.asSynchronizedStmt());
         } else if (statement.isThrowStmt()) {
+            ++thrownStatementCounter;
             extractExpression(statement.asThrowStmt().getExpression());
         } else if (statement.isExplicitConstructorInvocationStmt()) {
             extractExplicitConstructorInvocationStatement(statement.asExplicitConstructorInvocationStmt());
         } else if (statement.isLocalClassDeclarationStmt()) {
+            ++localClassDeclarationCounter;
             extractClassDeclaration(statement.asLocalClassDeclarationStmt().getClassDeclaration());
         } else if (statement.isYieldStmt()) {
+            ++yieldStatementCounter;
             extractExpression(statement.asYieldStmt().getExpression());
         }
     }
@@ -479,12 +522,15 @@ public class SourceApiExtractor {
         } else if (expression.isBinaryExpr()) {
             extractBinaryExpression(expression.asBinaryExpr());
         } else if (expression.isCastExpr()) {
+            ++castExpressionCounter;
             extractExpression(expression.asCastExpr().getExpression());
         } else if (expression.isConditionalExpr()) {
             extractConditionalExpression(expression.asConditionalExpr());
         } else if (expression.isEnclosedExpr()) {
+            ++enclosedExpressionCounter;
             extractExpression(expression.asEnclosedExpr().getInner());
         } else if (expression.isUnaryExpr()) {
+            ++unaryExpressionCounter;
             extractExpression(expression.asUnaryExpr().getExpression());
         }
     }
@@ -622,7 +668,7 @@ public class SourceApiExtractor {
     }
 
     private void extractMethodCallExpression(MethodCallExpr expr) {
-        // TODO
+        ++methodCallExpressionCounter;
         String methodName = expr.getNameAsString();
         for (Expression argument : expr.getArguments()) {
             extractExpression(argument);
@@ -656,7 +702,7 @@ public class SourceApiExtractor {
     }
 
     private void extractArrayAccessExpression(ArrayAccessExpr arrayAccessExpr) {
-        // TODO
+        ++arrayAccessExpressionCounter;
         extractExpression(arrayAccessExpr.getName());
         extractExpression(arrayAccessExpr.getIndex());
     }

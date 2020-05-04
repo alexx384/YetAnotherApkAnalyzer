@@ -116,4 +116,28 @@ public interface SourceApiJavaProperty {
     void setCountCatchExpression(int catchExpressions);
 
     void setCountArrayInitializedObjects(int arrayInitializedObjectss);
+
+    void setCountInitializedDeclarations(int initializedDeclarations);
+
+    void setCountConstructorDeclarations(int constructorDeclarations);
+
+    void setCountReturnStatements(int returnStatements);
+
+    void setCountYieldStatements(int yieldStatements);
+
+    void setCountLocalClassDeclarations(int localClassDeclarations);
+
+    void setCountThrownStatements(int thrownStatements);
+
+    void setCountLabeledStatements(int labeledStatements);
+
+    void setCountCastExpressions(int castExpressions);
+
+    void setCountEnclosedExpressions(int enclosedExpressions);
+
+    void setCountUnaryExpressions(int unaryExpressions);
+
+    void setCountArrayAccessExpressions(int arrayAccessExpressions);
+
+    void setCountMethodCallExpressions(int methodCallExpressions);
 }

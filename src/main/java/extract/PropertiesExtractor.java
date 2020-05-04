@@ -2,7 +2,6 @@ package extract;
 
 import extract.androwarn.AndrowarnPropertyExtractor;
 import extract.mobsf.MobSfApkPropertiesParser;
-import extract.mobsf.local.MobSfLocalPropertiesExtractor;
 import extract.source.SourcesParser;
 import property.ApkPropertyStorage;
 import write.PropertiesWriter;
@@ -18,6 +17,8 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
 
+import static extract.mobsf.local.MobSfLocalPropertiesExtractor.JSON_PROPERTIES_EXTENSION;
+
 public class PropertiesExtractor {
 
     private static final String DEFAULT_PYTHON_PATH = "python";
@@ -26,12 +27,11 @@ public class PropertiesExtractor {
     private static final byte[] APK_MAGIC = new byte[]{0x50, 0x4B, 0x03, 0x04};
     private final String mobsfAddress;
     private final String mobsfApiKey;
-    private final PropertiesWriter writer;
     private final AndrowarnPropertyExtractor androwarnPropertyExtractor;
     private final String permissionDbPath;
 
-    public static PropertiesExtractor build(PropertiesWriter writer, String mobsfAddress, String mobsfApiKey,
-                                     String pythonPath, String androwarnPath, String permissionDbPath) {
+    public static PropertiesExtractor build(String mobsfAddress, String mobsfApiKey, String pythonPath,
+                                            String androwarnPath, String permissionDbPath) {
         if (pythonPath == null) {
             System.out.println("Failed to read pythonPath. Use default: " + DEFAULT_PYTHON_PATH);
             pythonPath = DEFAULT_PYTHON_PATH;
@@ -47,10 +47,6 @@ public class PropertiesExtractor {
                     "path or could not run androwarn");
             return null;
         }
-        if (writer == null) {
-            System.err.println("The PropertiesWriter object is null");
-            return null;
-        }
         if (mobsfAddress == null) {
             System.err.println("The MobSf ip address is null");
             return null;
@@ -62,31 +58,47 @@ public class PropertiesExtractor {
         if (permissionDbPath == null) {
             System.err.println("The permissionDB path is null");
         }
-        return new PropertiesExtractor(writer, mobsfAddress, mobsfApiKey, androwarnPropertyExtractor, permissionDbPath);
+        return new PropertiesExtractor(mobsfAddress, mobsfApiKey, androwarnPropertyExtractor, permissionDbPath);
     }
 
-    public PropertiesExtractor(PropertiesWriter writer, String mobsfAddress, String mobsfApiKey,
+    public PropertiesExtractor(String mobsfAddress, String mobsfApiKey,
                                AndrowarnPropertyExtractor androwarnPropertyExtractor, String permissionDbPath) {
-        this.writer = writer;
         this.mobsfAddress = mobsfAddress;
         this.mobsfApiKey = mobsfApiKey;
         this.androwarnPropertyExtractor = androwarnPropertyExtractor;
         this.permissionDbPath = permissionDbPath;
     }
 
-    public boolean extract(String apkFileObject) {
+    public boolean extract(String apkFileObject, String resultFilePath, boolean isNotDeleteCache) {
+        PropertiesWriter writer;
+        if (resultFilePath == null) {
+            writer = PropertiesWriter.build();
+        } else {
+            writer = PropertiesWriter.build(resultFilePath);
+        }
+        if (writer == null) {
+            return false;
+        }
+
         Path apkPathObject = Path.of(apkFileObject);
         if (!Files.exists(apkPathObject)) {
             return false;
         }
+        boolean result;
         if (Files.isDirectory(Path.of(apkFileObject))) {
-            return extractDirectory(apkFileObject);
+            result = extractDirectory(apkFileObject, writer, isNotDeleteCache);
         } else {
-            return extractApkFile(apkFileObject);
+            result = extractApkFile(apkFileObject, writer, isNotDeleteCache);
         }
+        try {
+            writer.close();
+        } catch (IOException e) {
+            return false;
+        }
+        return result;
     }
 
-    private boolean extractDirectory(String apkDirPath) {
+    private boolean extractDirectory(String apkDirPath, PropertiesWriter writer, boolean isNotDeleteCache) {
         FilenameFilter filenameFilter = (dir, name) ->
                 !Files.isDirectory(
                         Path.of(dir.getPath() + File.separatorChar + name)
@@ -99,12 +111,12 @@ public class PropertiesExtractor {
             return false;
         }
         for (File file : files) {
-            result &= extractApkFile(file.getPath());
+            result &= extractApkFile(file.getPath(), writer, isNotDeleteCache);
         }
         return result;
     }
 
-    private boolean extractApkFile(String apkFilePath) {
+    private boolean extractApkFile(String apkFilePath, PropertiesWriter writer, boolean isNotDeleteCache) {
         Path apkPath = Path.of(apkFilePath);
         if (!checkApkFile(apkPath)) {
             System.err.println("Failed apk file: " + apkFilePath);
@@ -132,8 +144,10 @@ public class PropertiesExtractor {
             System.err.println("Error: could not save properties");
             return false;
         }
-        cleanUp(apkPath.getFileName().toString() +
-                MobSfLocalPropertiesExtractor.JSON_PROPERTIES_EXTENSION, sourcesDir);
+        if (!isNotDeleteCache) {
+            cleanUp(apkPath.getFileName().toString() +
+                    JSON_PROPERTIES_EXTENSION, sourcesDir);
+        }
         System.out.println("[+]" + apkFilePath);
         return true;
     }
