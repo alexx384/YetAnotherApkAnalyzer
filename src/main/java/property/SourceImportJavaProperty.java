@@ -26,6 +26,8 @@ public class SourceImportJavaProperty implements ApkProperty {
     @Setter private int networkInfoImports;
     @Setter private int connectivityManagerImports;
     @Setter private int logImports;
+    @Setter private int fileInputStreamImports;
+    @Setter private int bufferedWriterImports;
 
     @Override
     public StringBuilder toBuilder(StringBuilder builder) {
@@ -51,6 +53,8 @@ public class SourceImportJavaProperty implements ApkProperty {
                 .append(fileOutputStreamImports).append(',')
                 .append(networkInfoImports).append(',')
                 .append(connectivityManagerImports).append(',')
-                .append(logImports);
+                .append(logImports).append(',')
+                .append(fileInputStreamImports).append(',')
+                .append(bufferedWriterImports);
     }
 }

@@ -7,6 +7,7 @@ public class SourceApiJavaProperty implements ApkProperty {
     @Setter private int intentSetFlags;
     @Setter private int intentSetDataAndType;
     @Setter private int intentPutExtra;
+    @Setter private int intentAddCategory;
     @Setter private int dataOutputStreamWriteBytes;
     @Setter private int stringBuilderAppend;
     @Setter private int stringBuilderIndexOf;
@@ -31,6 +32,23 @@ public class SourceApiJavaProperty implements ApkProperty {
     @Setter private int stringCharAt;
     @Setter private int fileConstructor;
     @Setter private int streamConstructor;
+    @Setter private int bufferedWriterConstructor;
+    @Setter private int fileOutputStreamConstructor;
+    @Setter private int fileInputStreamConstructor;
+    @Setter private int inetSocketAddressConstructor;
+    @Setter private int timerConstructor;
+    @Setter private int timerTaskConstructor;
+    @Setter private int activityConstructor;
+    @Setter private int serviceConstructor;
+    @Setter private int contentResolverConstructor;
+    @Setter private int contextConstructor;
+    @Setter private int packageManagerConstructor;
+    @Setter private int applicationInfoConstructor;
+    @Setter private int networkInfoConstructor;
+    @Setter private int connectivityManagerConstructor;
+    @Setter private int bundleConstructor;
+    @Setter private int telephonyManagerConstructor;
+    @Setter private int smsManagerConstructor;
 
     @Override
     public StringBuilder toBuilder(StringBuilder builder) {
@@ -38,6 +56,7 @@ public class SourceApiJavaProperty implements ApkProperty {
                 .append(intentSetFlags).append(',')
                 .append(intentSetDataAndType).append(',')
                 .append(intentPutExtra).append(',')
+                .append(intentAddCategory).append(',')
                 .append(dataOutputStreamWriteBytes).append(',')
                 .append(stringBuilderAppend).append(',')
                 .append(stringBuilderIndexOf).append(',')
@@ -61,6 +80,23 @@ public class SourceApiJavaProperty implements ApkProperty {
                 .append(stringTrim).append(',')
                 .append(stringCharAt).append(',')
                 .append(fileConstructor).append(',')
-                .append(streamConstructor);
+                .append(streamConstructor).append(',')
+                .append(bufferedWriterConstructor).append(',')
+                .append(fileOutputStreamConstructor).append(',')
+                .append(fileInputStreamConstructor).append(',')
+                .append(inetSocketAddressConstructor).append(',')
+                .append(timerConstructor).append(',')
+                .append(timerTaskConstructor).append(',')
+                .append(activityConstructor).append(',')
+                .append(serviceConstructor).append(',')
+                .append(contentResolverConstructor).append(',')
+                .append(contextConstructor).append(',')
+                .append(packageManagerConstructor).append(',')
+                .append(applicationInfoConstructor).append(',')
+                .append(networkInfoConstructor).append(',')
+                .append(connectivityManagerConstructor).append(',')
+                .append(bundleConstructor).append(',')
+                .append(telephonyManagerConstructor).append(',')
+                .append(smsManagerConstructor);
     }
 }

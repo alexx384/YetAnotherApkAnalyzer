@@ -64,23 +64,41 @@ public class SourceApiExtractor {
 
     public SourceApiExtractor() {
         apiClassConstructorMap = Map.ofEntries(
-                Map.entry("Intent", new MutableInteger()),
-                Map.entry("IntentFilter", new MutableInteger()),
-                Map.entry("DataInputStream", new MutableInteger()),
-                Map.entry("DataOutputStream", new MutableInteger()),
-                Map.entry("BufferedReader", new MutableInteger()),
+                Map.entry("String", new MutableInteger()),
                 Map.entry("StringBuilder", new MutableInteger()),
                 Map.entry("StringBuffer", new MutableInteger()),
                 Map.entry("File", new MutableInteger()),
+                Map.entry("DataInputStream", new MutableInteger()),
+                Map.entry("DataOutputStream", new MutableInteger()),
+                Map.entry("FileInputStream", new MutableInteger()),
+                Map.entry("FileOutputStream", new MutableInteger()),
+                Map.entry("BufferedReader", new MutableInteger()),
+                Map.entry("BufferedWriter", new MutableInteger()),
+                Map.entry("InetSocketAddress", new MutableInteger()),
                 Map.entry("Stream", new MutableInteger()),
-                Map.entry("String", new MutableInteger())
+                Map.entry("Timer", new MutableInteger()),
+                Map.entry("TimerTask", new MutableInteger()),
+                Map.entry("Activity", new MutableInteger()),
+                Map.entry("Service", new MutableInteger()),
+                Map.entry("Intent", new MutableInteger()),
+                Map.entry("IntentFilter", new MutableInteger()),
+                Map.entry("ContentResolver", new MutableInteger()),
+                Map.entry("Context", new MutableInteger()),
+                Map.entry("PackageManager", new MutableInteger()),
+                Map.entry("ApplicationInfo", new MutableInteger()),
+                Map.entry("NetworkInfo", new MutableInteger()),
+                Map.entry("ConnectivityManager", new MutableInteger()),
+                Map.entry("Bundle", new MutableInteger()),
+                Map.entry("TelephonyManager", new MutableInteger()),
+                Map.entry("SmsManager", new MutableInteger())
         );
         apiClassMethodMap = Map.ofEntries(
                 Map.entry("Intent", Map.ofEntries(
                         Map.entry("addFlags", new MutableInteger()),
                         Map.entry("setFlags", new MutableInteger()),
                         Map.entry("setDataAndType", new MutableInteger()),
-                        Map.entry("putExtra", new MutableInteger())
+                        Map.entry("putExtra", new MutableInteger()),
+                        Map.entry("addCategory", new MutableInteger())
                 )),
                 Map.entry("DataOutputStream", Map.ofEntries(
                         Map.entry("writeBytes", new MutableInteger())
@@ -242,34 +260,53 @@ public class SourceApiExtractor {
     }
 
     private void exportInApiProperty(SourceApiJavaProperty apiProperty) {
+        apiProperty.setStringConstructor(apiClassConstructorMap.get("String").intValue());
+        apiProperty.setStringBuilderConstructor(apiClassConstructorMap.get("StringBuilder").intValue());
+        apiProperty.setStringBufferConstructor(apiClassConstructorMap.get("StringBuffer").intValue());
+        apiProperty.setFileConstructor(apiClassConstructorMap.get("File").intValue());
+        apiProperty.setDataInputStreamConstructor(apiClassConstructorMap.get("DataInputStream").intValue());
+        apiProperty.setDataOutputStreamConstructor(apiClassConstructorMap.get("DataOutputStream").intValue());
+        apiProperty.setFileInputStreamConstructor(apiClassConstructorMap.get("FileInputStream").intValue());
+        apiProperty.setFileOutputStreamConstructor(apiClassConstructorMap.get("FileOutputStream").intValue());
+        apiProperty.setBufferedReaderConstructor(apiClassConstructorMap.get("BufferedReader").intValue());
+        apiProperty.setBufferedWriterConstructor(apiClassConstructorMap.get("BufferedWriter").intValue());
+        apiProperty.setInetSocketAddressConstructor(apiClassConstructorMap.get("InetSocketAddress").intValue());
+        apiProperty.setStreamConstructor(apiClassConstructorMap.get("Stream").intValue());
+        apiProperty.setTimerConstructor(apiClassConstructorMap.get("Timer").intValue());
+        apiProperty.setTimerTaskConstructor(apiClassConstructorMap.get("TimerTask").intValue());
+        apiProperty.setActivityConstructor(apiClassConstructorMap.get("Activity").intValue());
+        apiProperty.setServiceConstructor(apiClassConstructorMap.get("Service").intValue());
+        apiProperty.setIntentConstructor(apiClassConstructorMap.get("Intent").intValue());
+        apiProperty.setIntentFilterConstructor(apiClassConstructorMap.get("IntentFilter").intValue());
+        apiProperty.setContentResolverConstructor(apiClassConstructorMap.get("ContentResolver").intValue());
+        apiProperty.setContextConstructor(apiClassConstructorMap.get("Context").intValue());
+        apiProperty.setPackageManagerConstructor(apiClassConstructorMap.get("PackageManager").intValue());
+        apiProperty.setApplicationInfoConstructor(apiClassConstructorMap.get("ApplicationInfo").intValue());
+        apiProperty.setNetworkInfoConstructor(apiClassConstructorMap.get("NetworkInfo").intValue());
+        apiProperty.setConnectivityManagerConstructor(apiClassConstructorMap.get("ConnectivityManager").intValue());
+        apiProperty.setBundleConstructor(apiClassConstructorMap.get("Bundle").intValue());
+        apiProperty.setTelephonyManagerConstructor(apiClassConstructorMap.get("TelephonyManager").intValue());
+        apiProperty.setSmsManagerConstructor(apiClassConstructorMap.get("SmsManager").intValue());
+
         apiProperty.setIntentAddFlags(getMethodCallCountOfType("Intent", "addFlags"));
         apiProperty.setIntentSetFlags(getMethodCallCountOfType("Intent", "setFlags"));
         apiProperty.setIntentSetDataAndType(getMethodCallCountOfType("Intent", "setDataAndType"));
         apiProperty.setIntentPutExtra(getMethodCallCountOfType("Intent", "putExtra"));
-        apiProperty.setIntentConstructor(apiClassConstructorMap.get("Intent").intValue());
-        apiProperty.setIntentFilterConstructor(apiClassConstructorMap.get("IntentFilter").intValue());
-        apiProperty.setDataInputStreamConstructor(apiClassConstructorMap.get("DataInputStream").intValue());
+        apiProperty.setIntentPutExtra(getMethodCallCountOfType("Intent", "addCategory"));
         apiProperty.setDataOutputStreamWriteBytes(getMethodCallCountOfType("DataOutputStream", "writeBytes"));
-        apiProperty.setDataOutputStreamConstructor(apiClassConstructorMap.get("DataOutputStream").intValue());
-        apiProperty.setBufferedReaderConstructor(apiClassConstructorMap.get("BufferedReader").intValue());
         apiProperty.setStringBuilderAppend(getMethodCallCountOfType("StringBuilder", "append"));
         apiProperty.setStringBuilderIndexOf(getMethodCallCountOfType("StringBuilder", "indexOf"));
         apiProperty.setStringBuilderSubstring(getMethodCallCountOfType("StringBuilder", "substring"));
-        apiProperty.setStringBuilderConstructor(apiClassConstructorMap.get("StringBuilder").intValue());
         apiProperty.setStringBufferAppend(getMethodCallCountOfType("StringBuffer", "append"));
         apiProperty.setStringBufferIndexOf(getMethodCallCountOfType("StringBuffer", "indexOf"));
         apiProperty.setStringBufferSubstring(getMethodCallCountOfType("StringBuffer", "substring"));
-        apiProperty.setStringBufferConstructor(apiClassConstructorMap.get("StringBuffer").intValue());
         apiProperty.setContentResolverQuery(getMethodCallCountOfType("ContentResolver", "query"));
         apiProperty.setContentResolverInsert(getMethodCallCountOfType("ContentResolver", "insert"));
         apiProperty.setContentResolverUpdate(getMethodCallCountOfType("ContentResolver", "update"));
-        apiProperty.setStringConstructor(apiClassConstructorMap.get("String").intValue());
         apiProperty.setStringToLowerCase(getMethodCallCountOfType("String", "toLowerCase"));
         apiProperty.setStringToUpperCase(getMethodCallCountOfType("String", "toUpperCase"));
         apiProperty.setStringTrim(getMethodCallCountOfType("String", "trim"));
         apiProperty.setStringCharAt(getMethodCallCountOfType("String", "charAt"));
-        apiProperty.setFileConstructor(apiClassConstructorMap.get("File").intValue());
-        apiProperty.setStreamConstructor(apiClassConstructorMap.get("Stream").intValue());
     }
 
     private void exportInCodeProperty(SourceCodeJavaProperty codeProperty) {
