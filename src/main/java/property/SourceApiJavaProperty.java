@@ -1,143 +1,66 @@
 package property;
 
-public interface SourceApiJavaProperty {
-    void setCountIntentAddFlags(int intentAddFlags);
-
-    void setCountIntentSetFlags(int intentSetFlags);
-
-    void setCountIntentSetDataAndType(int intentSetDataAndType);
-
-    void setCountIntentPutExtra(int intentPutExtra);
-
-    void setCountDataOutputStreamWriteBytes(int dataOutputStreamWriteBytes);
-
-    void setCountStringBuilderAppend(int stringBuilderAppend);
-
-    void setCountStringBuilderIndexOf(int stringBuilderIndexOf);
-
-    void setCountStringBuilderSubstring(int stringBuilderSubstring);
-
-    void setCountStringBufferAppend(int stringBufferAppend);
-
-    void setCountStringBufferIndexOf(int stringBufferIndexOf);
-
-    void setCountStringBufferSubstring(int stringBufferSubstring);
-
-    void setCountContentResolverQuery(int contentResolverQuery);
-
-    void setCountContentResolverInsert(int contentResolverInsert);
-
-    void setCountContentResolverUpdate(int contentResolverUpdate);
-
-    void setCountIntentConstructor(int intentConstructor);
-
-    void setCountIntentFilterConstructor(int intentFilterConstructor);
-
-    void setCountDataInputStreamConstructor(int dataInputStreamConstructor);
-
-    void setCountDataOutputStreamConstructor(int dataOutputStreamConstructor);
-
-    void setCountBufferedReaderConstructor(int bufferedReaderConstructor);
-
-    void setCountStringBuilderConstructor(int stringBuilderConstructor);
-
-    void setCountStringBufferConstructor(int stringBufferConstructor);
-
-    void setCountStringConstructor(int stringConstructor);
-
-    void setCountStringToLowerCase(int stringToLowerCase);
-
-    void setCountStringToUpperCase(int stringToUpperCase);
-
-    void setCountStringTrim(int stringTrim);
-
-    void setCountStringCharAt(int stringCharAt);
-
-    void setCountFileConstructor(int fileConstructor);
-
-    void setCountStreamConstructor(int streamConstructor);
-
-    void setCountEnum(int enums);
-
-    void setCountInterface(int interfaces);
-
-    void setCountClass(int classes);
-
-    void setCountBodyDeclaration(int bodyDeclarations);
-
-    void setCountEnumConstant(int enumConstants);
-
-    void setCountMethod(int methods);
-
-    void setCountBody(int bodies);
-
-    void setCountClassField(int classFields);
-
-    void setCountParameter(int parameters);
-
-    void setCountStatement(int statements);
-
-    void setCountExpression(int expressions);
-
-    void setCountIfStatement(int ifStatements);
-
-    void setCountForStatement(int forStatements);
-
-    void setCountForEachStatement(int forEachStatements);
-
-    void setCountDoWhileStatement(int doWhileStatements);
-
-    void setCountTryStatement(int tryStatements);
-
-    void setCountAssertStatement(int assertStatements);
-
-    void setCountSwitchStatement(int switchStatements);
-
-    void setCountSynchronizedStatement(int synchronizedStatements);
-
-    void setCountConstructorInvocationStatement(int constructorInvocationStatements);
-
-    void setCountVariableStatement(int variableStatements);
-
-    void setCountLambdaExpression(int lambdaExpressions);
-
-    void setCountObjectCreationExpression(int objectCreationExpressions);
-
-    void setCountFieldAccessExpression(int fieldAccessExpressions);
-
-    void setCountArrayCreationExpression(int arrayCreationExpressions);
-
-    void setCountAssignExpression(int assignExpressions);
-
-    void setCountBinaryExpression(int binaryExpressions);
-
-    void setCountConditionalExpression(int conditionalExpressions);
-
-    void setCountCatchExpression(int catchExpressions);
-
-    void setCountArrayInitializedObjects(int arrayInitializedObjectss);
-
-    void setCountInitializedDeclarations(int initializedDeclarations);
-
-    void setCountConstructorDeclarations(int constructorDeclarations);
-
-    void setCountReturnStatements(int returnStatements);
-
-    void setCountYieldStatements(int yieldStatements);
-
-    void setCountLocalClassDeclarations(int localClassDeclarations);
-
-    void setCountThrownStatements(int thrownStatements);
-
-    void setCountLabeledStatements(int labeledStatements);
-
-    void setCountCastExpressions(int castExpressions);
-
-    void setCountEnclosedExpressions(int enclosedExpressions);
-
-    void setCountUnaryExpressions(int unaryExpressions);
-
-    void setCountArrayAccessExpressions(int arrayAccessExpressions);
-
-    void setCountMethodCallExpressions(int methodCallExpressions);
+import lombok.Setter;
+
+public class SourceApiJavaProperty implements ApkProperty {
+    @Setter private int intentAddFlags;
+    @Setter private int intentSetFlags;
+    @Setter private int intentSetDataAndType;
+    @Setter private int intentPutExtra;
+    @Setter private int dataOutputStreamWriteBytes;
+    @Setter private int stringBuilderAppend;
+    @Setter private int stringBuilderIndexOf;
+    @Setter private int stringBuilderSubstring;
+    @Setter private int stringBufferAppend;
+    @Setter private int stringBufferIndexOf;
+    @Setter private int stringBufferSubstring;
+    @Setter private int contentResolverQuery;
+    @Setter private int contentResolverInsert;
+    @Setter private int contentResolverUpdate;
+    @Setter private int intentConstructor;
+    @Setter private int intentFilterConstructor;
+    @Setter private int dataInputStreamConstructor;
+    @Setter private int dataOutputStreamConstructor;
+    @Setter private int bufferedReaderConstructor;
+    @Setter private int stringBuilderConstructor;
+    @Setter private int stringBufferConstructor;
+    @Setter private int stringConstructor;
+    @Setter private int stringToLowerCase;
+    @Setter private int stringToUpperCase;
+    @Setter private int stringTrim;
+    @Setter private int stringCharAt;
+    @Setter private int fileConstructor;
+    @Setter private int streamConstructor;
+
+    @Override
+    public StringBuilder toBuilder(StringBuilder builder) {
+        return builder.append(intentAddFlags).append(',')
+                .append(intentSetFlags).append(',')
+                .append(intentSetDataAndType).append(',')
+                .append(intentPutExtra).append(',')
+                .append(dataOutputStreamWriteBytes).append(',')
+                .append(stringBuilderAppend).append(',')
+                .append(stringBuilderIndexOf).append(',')
+                .append(stringBuilderSubstring).append(',')
+                .append(stringBufferAppend).append(',')
+                .append(stringBufferIndexOf).append(',')
+                .append(stringBufferSubstring).append(',')
+                .append(contentResolverQuery).append(',')
+                .append(contentResolverInsert).append(',')
+                .append(contentResolverUpdate).append(',')
+                .append(intentConstructor).append(',')
+                .append(intentFilterConstructor).append(',')
+                .append(dataInputStreamConstructor).append(',')
+                .append(dataOutputStreamConstructor).append(',')
+                .append(bufferedReaderConstructor).append(',')
+                .append(stringBuilderConstructor).append(',')
+                .append(stringBufferConstructor).append(',')
+                .append(stringConstructor).append(',')
+                .append(stringToLowerCase).append(',')
+                .append(stringToUpperCase).append(',')
+                .append(stringTrim).append(',')
+                .append(stringCharAt).append(',')
+                .append(fileConstructor).append(',')
+                .append(streamConstructor);
+    }
 }

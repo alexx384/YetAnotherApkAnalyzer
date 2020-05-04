@@ -1,27 +1,34 @@
 package property;
 
-public interface AndrowarnApkProperty {
-    void setCountTelephonyIdentifiersLeakage(int telephonyIdentifiersLeakage);
+import lombok.Setter;
 
-    void setCountDeviseSettingsHarvesting(int deviseSettingsHarvesting);
+public class AndrowarnApkProperty implements ApkProperty {
+    @Setter private int telephonyIdentifiersLeakage;
+    @Setter private int deviseSettingsHarvesting;
+    @Setter private int locationLookup;
+    @Setter private int connectionInterfacesExfiltration;
+    @Setter private int telephonyServicesAbuse;
+    @Setter private int audioVideoEavesdroping;
+    @Setter private int suspiciousConnectionEstablishment;
+    @Setter private int pimDataLeakage;
+    @Setter private int codeExecution;
+    @Setter private int classesList;
+    @Setter private int internalClassesList;
+    @Setter private int intentsSent;
 
-    void setCountLocationLookup(int locationLookup);
-
-    void setCountConnectionInterfacesExfiltration(int connectionInterfacesExfiltration);
-
-    void setCountTelephonyServicesAbuse(int telephonyServicesAbuse);
-
-    void setCountAudioVideoEavesdroping(int audioVideoEavesdroping);
-
-    void setCountSuspiciousConnectionEstablishment(int suspiciousConnectionEstablishment);
-
-    void setCountPimDataLeakage(int pimDataLeakage);
-
-    void setCountCodeExecution(int codeExecution);
-
-    void setCountClassesList(int classesList);
-
-    void setCountInternalClassesList(int internalClassesList);
-
-    void setCountIntentsSent(int intentsSent);
+    @Override
+    public StringBuilder toBuilder(StringBuilder builder) {
+        return builder.append(telephonyIdentifiersLeakage).append(',')
+                .append(deviseSettingsHarvesting).append(',')
+                .append(locationLookup).append(',')
+                .append(connectionInterfacesExfiltration).append(',')
+                .append(telephonyServicesAbuse).append(',')
+                .append(audioVideoEavesdroping).append(',')
+                .append(suspiciousConnectionEstablishment).append(',')
+                .append(pimDataLeakage).append(',')
+                .append(codeExecution).append(',')
+                .append(classesList).append(',')
+                .append(internalClassesList).append(',')
+                .append(intentsSent);
+    }
 }

@@ -112,28 +112,28 @@ class SourceJavaParser {
     }
 
     public void exportInProperties(SourceImportJavaProperty property) {
-        property.setCountActivityImports(values[importActivity]);
-        property.setCountIntentImports(values[importIntent]);
-        property.setCountIntentFilterImports(values[importIntentFilter]);
-        property.setCountContentResolverImports(values[importContentResolver]);
-        property.setCountDataInputStreamImports(values[importDataInputStream]);
-        property.setCountBufferedReaderImports(values[importBufferedReader]);
-        property.setCountDataOutputStreamImports(values[importDataOutputStream]);
-        property.setCountInetSocketAddressImports(values[importInetSocketAddress]);
-        property.setCountFileImports(values[importFile]);
-        property.setCountStreamImports(values[importStream]);
-        property.setCountTelephonyManagerImports(values[importTelephonyManager]);
-        property.setCountServiceImports(values[importService]);
-        property.setCountContextImports(values[importContext]);
-        property.setCountPackageManagerImports(values[importPackageManager]);
-        property.setCountSmsManagerImports(values[importSmsManager]);
-        property.setCountTimerImports(values[importTimer]);
-        property.setCountBundleImports(values[importBundle]);
-        property.setCountApplicationInfoImports(values[importApplicationInfo]);
-        property.setCountTimerTaskImports(values[importTimerTask]);
-        property.setCountFileOutputStreamImports(values[importFileOutputStream]);
-        property.setCountNetworkInfoImports(values[importNetworkInfo]);
-        property.setCountConnectivityManagerImports(values[importConnectivityManager]);
-        property.setCountLogImports(values[importLog]);
+        property.setActivityImports(values[importActivity]);
+        property.setIntentImports(values[importIntent]);
+        property.setIntentFilterImports(values[importIntentFilter]);
+        property.setContentResolverImports(values[importContentResolver]);
+        property.setDataInputStreamImports(values[importDataInputStream]);
+        property.setBufferedReaderImports(values[importBufferedReader]);
+        property.setDataOutputStreamImports(values[importDataOutputStream]);
+        property.setInetSocketAddressImports(values[importInetSocketAddress]);
+        property.setFileImports(values[importFile]);
+        property.setStreamImports(values[importStream]);
+        property.setTelephonyManagerImports(values[importTelephonyManager]);
+        property.setServiceImports(values[importService]);
+        property.setContextImports(values[importContext]);
+        property.setPackageManagerImports(values[importPackageManager]);
+        property.setSmsManagerImports(values[importSmsManager]);
+        property.setTimerImports(values[importTimer]);
+        property.setBundleImports(values[importBundle]);
+        property.setApplicationInfoImports(values[importApplicationInfo]);
+        property.setTimerTaskImports(values[importTimerTask]);
+        property.setFileOutputStreamImports(values[importFileOutputStream]);
+        property.setNetworkInfoImports(values[importNetworkInfo]);
+        property.setConnectivityManagerImports(values[importConnectivityManager]);
+        property.setLogImports(values[importLog]);
     }
 }

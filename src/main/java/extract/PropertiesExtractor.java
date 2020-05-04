@@ -124,18 +124,20 @@ public class PropertiesExtractor {
         }
 
         ApkPropertyStorage propertyStorage = new ApkPropertyStorage();
-        if (!MobSfApkPropertiesParser.parseTo(propertyStorage, apkPath, mobsfAddress, mobsfApiKey, permissionDbPath)) {
+        if (!MobSfApkPropertiesParser.parseTo(propertyStorage.getMobSfApkProperty(), apkPath, mobsfAddress, mobsfApiKey,
+                permissionDbPath)) {
             System.err.println("Could not get scan parameters from MobSf");
             return false;
         }
 
         Path sourcesDir = Path.of(MobSfApkPropertiesParser.DIR_PREFIX + apkPath.getFileName().toString());
-        if (!SourcesParser.parseSources(sourcesDir, propertyStorage)) {
+        if (!SourcesParser.parseSources(sourcesDir, propertyStorage.getSourceImportJavaProperty(),
+                propertyStorage.getSourceApiJavaProperty(), propertyStorage.getSourceCodeJavaProperty())) {
             System.err.println("Could not parse apk decompiled source files");
             return false;
         }
 
-        if (!androwarnPropertyExtractor.processApk(apkFilePath, propertyStorage)) {
+        if (!androwarnPropertyExtractor.processApk(apkFilePath, propertyStorage.getAndrowarnApkProperty())) {
             System.err.println("Error: Androwarn could not process apk");
             return false;
         }

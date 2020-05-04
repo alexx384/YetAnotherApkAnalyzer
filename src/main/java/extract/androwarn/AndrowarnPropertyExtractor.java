@@ -104,18 +104,18 @@ public class AndrowarnPropertyExtractor {
     }
 
     private void exportInProperties(AndrowarnApkProperty property) {
-        property.setCountTelephonyIdentifiersLeakage(countTelephonyIdentifiersLeakage);
-        property.setCountDeviseSettingsHarvesting(countDeviseSettingsHarvesting);
-        property.setCountLocationLookup(countLocationLookup);
-        property.setCountConnectionInterfacesExfiltration(countConnectionInterfacesExfiltration);
-        property.setCountTelephonyServicesAbuse(countTelephonyServicesAbuse);
-        property.setCountAudioVideoEavesdroping(countAudioVideoEavesdroping);
-        property.setCountSuspiciousConnectionEstablishment(countSuspiciousConnectionEstablishment);
-        property.setCountPimDataLeakage(countPimDataLeakage);
-        property.setCountCodeExecution(countCodeExecution);
-        property.setCountClassesList(countClassesList);
-        property.setCountInternalClassesList(countInternalClassesList);
-        property.setCountIntentsSent(countIntentsSent);
+        property.setTelephonyIdentifiersLeakage(countTelephonyIdentifiersLeakage);
+        property.setDeviseSettingsHarvesting(countDeviseSettingsHarvesting);
+        property.setLocationLookup(countLocationLookup);
+        property.setConnectionInterfacesExfiltration(countConnectionInterfacesExfiltration);
+        property.setTelephonyServicesAbuse(countTelephonyServicesAbuse);
+        property.setAudioVideoEavesdroping(countAudioVideoEavesdroping);
+        property.setSuspiciousConnectionEstablishment(countSuspiciousConnectionEstablishment);
+        property.setPimDataLeakage(countPimDataLeakage);
+        property.setCodeExecution(countCodeExecution);
+        property.setClassesList(countClassesList);
+        property.setInternalClassesList(countInternalClassesList);
+        property.setIntentsSent(countIntentsSent);
 
         resetCounters();
     }

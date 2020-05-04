@@ -1,12 +1,15 @@
 package extract.source;
 
-import property.SourceJavaProperty;
+import property.SourceApiJavaProperty;
+import property.SourceCodeJavaProperty;
+import property.SourceImportJavaProperty;
 
 import java.io.IOException;
 import java.nio.file.*;
 
 public class SourcesParser {
-    public static boolean parseSources(Path directoryPath, SourceJavaProperty property) {
+    public static boolean parseSources(Path directoryPath, SourceImportJavaProperty importProperty,
+                                       SourceApiJavaProperty apiProperty, SourceCodeJavaProperty codeProperty) {
         SourceJavaParser javaParser = new SourceJavaParser();
         SourceApiExtractor apiExtractor = new SourceApiExtractor();
         try {
@@ -16,8 +19,8 @@ public class SourcesParser {
             System.err.println(e.getMessage());
             return false;
         }
-        javaParser.exportInProperties(property);
-        apiExtractor.exportInProperties(property);
+        javaParser.exportInProperties(importProperty);
+        apiExtractor.exportInProperties(apiProperty, codeProperty);
         return true;
     }
 }

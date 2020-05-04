@@ -7,6 +7,7 @@ import com.github.javaparser.ast.expr.*;
 import com.github.javaparser.ast.nodeTypes.NodeWithBody;
 import com.github.javaparser.ast.stmt.*;
 import property.SourceApiJavaProperty;
+import property.SourceCodeJavaProperty;
 
 import java.util.*;
 
@@ -233,80 +234,87 @@ public class SourceApiExtractor {
     /**
      * Export parameters in property object
      *
-     * @param property object which receives properties
+     * @param apiProperty object which receives properties
      */
-    public void exportInProperties(SourceApiJavaProperty property) {
-        property.setCountIntentAddFlags(getMethodCallCountOfType("Intent", "addFlags"));
-        property.setCountIntentSetFlags(getMethodCallCountOfType("Intent", "setFlags"));
-        property.setCountIntentSetDataAndType(getMethodCallCountOfType("Intent", "setDataAndType"));
-        property.setCountIntentPutExtra(getMethodCallCountOfType("Intent", "putExtra"));
-        property.setCountIntentConstructor(apiClassConstructorMap.get("Intent").intValue());
-        property.setCountIntentFilterConstructor(apiClassConstructorMap.get("IntentFilter").intValue());
-        property.setCountDataInputStreamConstructor(apiClassConstructorMap.get("DataInputStream").intValue());
-        property.setCountDataOutputStreamWriteBytes(getMethodCallCountOfType("DataOutputStream", "writeBytes"));
-        property.setCountDataOutputStreamConstructor(apiClassConstructorMap.get("DataOutputStream").intValue());
-        property.setCountBufferedReaderConstructor(apiClassConstructorMap.get("BufferedReader").intValue());
-        property.setCountStringBuilderAppend(getMethodCallCountOfType("StringBuilder", "append"));
-        property.setCountStringBuilderIndexOf(getMethodCallCountOfType("StringBuilder", "indexOf"));
-        property.setCountStringBuilderSubstring(getMethodCallCountOfType("StringBuilder", "substring"));
-        property.setCountStringBuilderConstructor(apiClassConstructorMap.get("StringBuilder").intValue());
-        property.setCountStringBufferAppend(getMethodCallCountOfType("StringBuffer", "append"));
-        property.setCountStringBufferIndexOf(getMethodCallCountOfType("StringBuffer", "indexOf"));
-        property.setCountStringBufferSubstring(getMethodCallCountOfType("StringBuffer", "substring"));
-        property.setCountStringBufferConstructor(apiClassConstructorMap.get("StringBuffer").intValue());
-        property.setCountContentResolverQuery(getMethodCallCountOfType("ContentResolver", "query"));
-        property.setCountContentResolverInsert(getMethodCallCountOfType("ContentResolver", "insert"));
-        property.setCountContentResolverUpdate(getMethodCallCountOfType("ContentResolver", "update"));
-        property.setCountStringConstructor(apiClassConstructorMap.get("String").intValue());
-        property.setCountStringToLowerCase(getMethodCallCountOfType("String", "toLowerCase"));
-        property.setCountStringToUpperCase(getMethodCallCountOfType("String", "toUpperCase"));
-        property.setCountStringTrim(getMethodCallCountOfType("String", "trim"));
-        property.setCountStringCharAt(getMethodCallCountOfType("String", "charAt"));
-        property.setCountFileConstructor(apiClassConstructorMap.get("File").intValue());
-        property.setCountStreamConstructor(apiClassConstructorMap.get("Stream").intValue());
+    public void exportInProperties(SourceApiJavaProperty apiProperty, SourceCodeJavaProperty codeProperty) {
+        exportInApiProperty(apiProperty);
+        exportInCodeProperty(codeProperty);
+    }
 
-        property.setCountEnum(enumCounter);
-        property.setCountInterface(interfaceCounter);
-        property.setCountClass(classCounter);
-        property.setCountBodyDeclaration(bodyDeclarationCounter);
-        property.setCountEnumConstant(enumConstantsCounter);
-        property.setCountMethod(methodCounter);
-        property.setCountBody(bodyCounter);
-        property.setCountClassField(classFieldCounter);
-        property.setCountParameter(parameterCounter);
-        property.setCountStatement(statementCounter);
-        property.setCountExpression(expressionCounter);
-        property.setCountIfStatement(ifStatementCounter);
-        property.setCountForStatement(forStatementCounter);
-        property.setCountForEachStatement(forEachStatementCounter);
-        property.setCountDoWhileStatement(doWhileStatementCounter);
-        property.setCountTryStatement(tryStatementCounter);
-        property.setCountAssertStatement(assertStatementCounter);
-        property.setCountSwitchStatement(switchStatementCounter);
-        property.setCountSynchronizedStatement(synchronizedStatementCounter);
-        property.setCountConstructorInvocationStatement(constructorInvocationStatementCounter);
-        property.setCountVariableStatement(variableStatementCounter);
-        property.setCountLambdaExpression(lambdaExpressionCounter);
-        property.setCountObjectCreationExpression(objectCreationExpressionCounter);
-        property.setCountFieldAccessExpression(fieldAccessExpressionCounter);
-        property.setCountArrayCreationExpression(arrayCreationExpressionCounter);
-        property.setCountAssignExpression(assignExpressionCounter);
-        property.setCountBinaryExpression(binaryExpressionCounter);
-        property.setCountConditionalExpression(conditionalExpressionCounter);
-        property.setCountCatchExpression(catchExpressionCounter);
-        property.setCountArrayInitializedObjects(arrayInitializedObjectsCounter);
-        property.setCountInitializedDeclarations(initializedDeclarationCounter);
-        property.setCountConstructorDeclarations(constructorDeclarationCounter);
-        property.setCountReturnStatements(returnStatementCounter);
-        property.setCountYieldStatements(yieldStatementCounter);
-        property.setCountLocalClassDeclarations(localClassDeclarationCounter);
-        property.setCountThrownStatements(thrownStatementCounter);
-        property.setCountLabeledStatements(labeledStatementCounter);
-        property.setCountCastExpressions(castExpressionCounter);
-        property.setCountEnclosedExpressions(enclosedExpressionCounter);
-        property.setCountUnaryExpressions(unaryExpressionCounter);
-        property.setCountArrayAccessExpressions(arrayAccessExpressionCounter);
-        property.setCountMethodCallExpressions(methodCallExpressionCounter);
+    private void exportInApiProperty(SourceApiJavaProperty apiProperty) {
+        apiProperty.setIntentAddFlags(getMethodCallCountOfType("Intent", "addFlags"));
+        apiProperty.setIntentSetFlags(getMethodCallCountOfType("Intent", "setFlags"));
+        apiProperty.setIntentSetDataAndType(getMethodCallCountOfType("Intent", "setDataAndType"));
+        apiProperty.setIntentPutExtra(getMethodCallCountOfType("Intent", "putExtra"));
+        apiProperty.setIntentConstructor(apiClassConstructorMap.get("Intent").intValue());
+        apiProperty.setIntentFilterConstructor(apiClassConstructorMap.get("IntentFilter").intValue());
+        apiProperty.setDataInputStreamConstructor(apiClassConstructorMap.get("DataInputStream").intValue());
+        apiProperty.setDataOutputStreamWriteBytes(getMethodCallCountOfType("DataOutputStream", "writeBytes"));
+        apiProperty.setDataOutputStreamConstructor(apiClassConstructorMap.get("DataOutputStream").intValue());
+        apiProperty.setBufferedReaderConstructor(apiClassConstructorMap.get("BufferedReader").intValue());
+        apiProperty.setStringBuilderAppend(getMethodCallCountOfType("StringBuilder", "append"));
+        apiProperty.setStringBuilderIndexOf(getMethodCallCountOfType("StringBuilder", "indexOf"));
+        apiProperty.setStringBuilderSubstring(getMethodCallCountOfType("StringBuilder", "substring"));
+        apiProperty.setStringBuilderConstructor(apiClassConstructorMap.get("StringBuilder").intValue());
+        apiProperty.setStringBufferAppend(getMethodCallCountOfType("StringBuffer", "append"));
+        apiProperty.setStringBufferIndexOf(getMethodCallCountOfType("StringBuffer", "indexOf"));
+        apiProperty.setStringBufferSubstring(getMethodCallCountOfType("StringBuffer", "substring"));
+        apiProperty.setStringBufferConstructor(apiClassConstructorMap.get("StringBuffer").intValue());
+        apiProperty.setContentResolverQuery(getMethodCallCountOfType("ContentResolver", "query"));
+        apiProperty.setContentResolverInsert(getMethodCallCountOfType("ContentResolver", "insert"));
+        apiProperty.setContentResolverUpdate(getMethodCallCountOfType("ContentResolver", "update"));
+        apiProperty.setStringConstructor(apiClassConstructorMap.get("String").intValue());
+        apiProperty.setStringToLowerCase(getMethodCallCountOfType("String", "toLowerCase"));
+        apiProperty.setStringToUpperCase(getMethodCallCountOfType("String", "toUpperCase"));
+        apiProperty.setStringTrim(getMethodCallCountOfType("String", "trim"));
+        apiProperty.setStringCharAt(getMethodCallCountOfType("String", "charAt"));
+        apiProperty.setFileConstructor(apiClassConstructorMap.get("File").intValue());
+        apiProperty.setStreamConstructor(apiClassConstructorMap.get("Stream").intValue());
+    }
+
+    private void exportInCodeProperty(SourceCodeJavaProperty codeProperty) {
+        codeProperty.setEnums(enumCounter);
+        codeProperty.setInterfaces(interfaceCounter);
+        codeProperty.setClasses(classCounter);
+        codeProperty.setBodyDeclarations(bodyDeclarationCounter);
+        codeProperty.setEnumConstants(enumConstantsCounter);
+        codeProperty.setMethods(methodCounter);
+        codeProperty.setBodies(bodyCounter);
+        codeProperty.setClassFields(classFieldCounter);
+        codeProperty.setParameters(parameterCounter);
+        codeProperty.setStatements(statementCounter);
+        codeProperty.setExpressions(expressionCounter);
+        codeProperty.setIfStatements(ifStatementCounter);
+        codeProperty.setForStatements(forStatementCounter);
+        codeProperty.setForEachStatements(forEachStatementCounter);
+        codeProperty.setDoWhileStatements(doWhileStatementCounter);
+        codeProperty.setTryStatements(tryStatementCounter);
+        codeProperty.setAssertStatements(assertStatementCounter);
+        codeProperty.setSwitchStatements(switchStatementCounter);
+        codeProperty.setSynchronizedStatements(synchronizedStatementCounter);
+        codeProperty.setConstructorInvocationStatements(constructorInvocationStatementCounter);
+        codeProperty.setVariableStatements(variableStatementCounter);
+        codeProperty.setLambdaExpressions(lambdaExpressionCounter);
+        codeProperty.setObjectCreationExpressions(objectCreationExpressionCounter);
+        codeProperty.setFieldAccessExpressions(fieldAccessExpressionCounter);
+        codeProperty.setArrayCreationExpressions(arrayCreationExpressionCounter);
+        codeProperty.setAssignExpressions(assignExpressionCounter);
+        codeProperty.setBinaryExpressions(binaryExpressionCounter);
+        codeProperty.setConditionalExpressions(conditionalExpressionCounter);
+        codeProperty.setCatchExpressions(catchExpressionCounter);
+        codeProperty.setArrayInitializedObjects(arrayInitializedObjectsCounter);
+        codeProperty.setInitializedDeclarations(initializedDeclarationCounter);
+        codeProperty.setConstructorDeclarations(constructorDeclarationCounter);
+        codeProperty.setReturnStatements(returnStatementCounter);
+        codeProperty.setYieldStatements(yieldStatementCounter);
+        codeProperty.setLocalClassDeclarations(localClassDeclarationCounter);
+        codeProperty.setThrownStatements(thrownStatementCounter);
+        codeProperty.setLabeledStatements(labeledStatementCounter);
+        codeProperty.setCastExpressions(castExpressionCounter);
+        codeProperty.setEnclosedExpressions(enclosedExpressionCounter);
+        codeProperty.setUnaryExpressions(unaryExpressionCounter);
+        codeProperty.setArrayAccessExpressions(arrayAccessExpressionCounter);
+        codeProperty.setMethodCallExpressions(methodCallExpressionCounter);
     }
 
     private void extractClassOrInterfaceDeclaration(ClassOrInterfaceDeclaration declaration) {

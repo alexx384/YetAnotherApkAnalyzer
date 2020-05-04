@@ -52,13 +52,13 @@ public class MobSfApkPropertiesParser {
             return false;
         }
 
-        property.setCountBrowsableActivities(
+        property.setBrowsableActivities(
                 getCountBrowsableActivities(jsonObject.getJSONObject("browsable_activities")));
-        property.setCountActivities(jsonObject.getJSONArray("activities").length());
-        property.setCountReceivers(jsonObject.getJSONArray("receivers").length());
-        property.setCountProviders(jsonObject.getJSONArray("providers").length());
-        property.setCountServices(jsonObject.getJSONArray("services").length());
-        property.setCountLibraries(jsonObject.getJSONArray("libraries").length());
+        property.setActivities(jsonObject.getJSONArray("activities").length());
+        property.setReceivers(jsonObject.getJSONArray("receivers").length());
+        property.setProviders(jsonObject.getJSONArray("providers").length());
+        property.setServices(jsonObject.getJSONArray("services").length());
+        property.setLibraries(jsonObject.getJSONArray("libraries").length());
         property.setTargetSDK(jsonObject.getInt("target_sdk"));
         property.setMaxSDK(parseMaxSDK(jsonObject.getString("max_sdk")));
         property.setMinSDK(jsonObject.getInt("min_sdk"));
@@ -66,12 +66,12 @@ public class MobSfApkPropertiesParser {
         if (!parsePermissionsTo(permissionDbPath, property, jsonObject.getJSONObject("permissions"))) {
             return false;
         }
-        property.setCountManifestIssues(jsonObject.getJSONArray("manifest_analysis").length());
+        property.setManifestIssues(jsonObject.getJSONArray("manifest_analysis").length());
         parseCodeIssues(jsonObject.getJSONObject("code_analysis"), property);
-        property.setCountActivitiesWithUrl(jsonObject.getJSONArray("urls").length());
-        property.setCountDomains(getJSONObjectElements(jsonObject.getJSONObject("domains")));
-        property.setCountEmails(jsonObject.getJSONArray("emails").length());
-        property.setCountFirebaseUrls(jsonObject.getJSONArray("firebase_urls").length());
+        property.setActivitiesWithUrl(jsonObject.getJSONArray("urls").length());
+        property.setDomains(getJSONObjectElements(jsonObject.getJSONObject("domains")));
+        property.setEmails(jsonObject.getJSONArray("emails").length());
+        property.setFirebaseUrls(jsonObject.getJSONArray("firebase_urls").length());
         parseFilesInfo(jsonObject.getJSONArray("files"), property);
         parseExported(jsonObject.getJSONObject("exported_count"), property);
         parseTrackers(jsonObject.getJSONObject("trackers"), property);
@@ -118,33 +118,33 @@ public class MobSfApkPropertiesParser {
                     }
                 }
             }
-            property.setCountDangerousPermissions(
+            property.setDangerousPermissions(
                     permissionGroupElements[AndroidPermissionGroup.DANGEROUS.ordinal()]);
-            property.setCountSignaturePermissions(
+            property.setSignaturePermissions(
                     permissionGroupElements[AndroidPermissionGroup.SIGNATURE.ordinal()]);
-            property.setCountAppopPermissions(
+            property.setAppopPermissions(
                     permissionGroupElements[AndroidPermissionGroup.APPOP.ordinal()]);
-            property.setCountPrivilegedPermissions(
+            property.setPrivilegedPermissions(
                     permissionGroupElements[AndroidPermissionGroup.PRIVILEGED.ordinal()]);
-            property.setCountDevelopmentPermissions(
+            property.setDevelopmentPermissions(
                     permissionGroupElements[AndroidPermissionGroup.DEVELOPMENT.ordinal()]);
-            property.setCountNormalPermissions(
+            property.setNormalPermissions(
                     permissionGroupElements[AndroidPermissionGroup.NORMAL.ordinal()]);
-            property.setCountInstantPermissions(
+            property.setInstantPermissions(
                     permissionGroupElements[AndroidPermissionGroup.INSTANT.ordinal()]);
-            property.setCountPreinstalledPermissions(
+            property.setPreinstalledPermissions(
                     permissionGroupElements[AndroidPermissionGroup.PREINSTALLED.ordinal()]);
-            property.setCountRetailDemoPermissions(
+            property.setRetailDemoPermissions(
                     permissionGroupElements[AndroidPermissionGroup.RETAILDEMO.ordinal()]);
-            property.setCountInstallerPermissions(
+            property.setInstallerPermissions(
                     permissionGroupElements[AndroidPermissionGroup.INSTALLER.ordinal()]);
-            property.setCountPre23Permissions(
+            property.setPre23Permissions(
                     permissionGroupElements[AndroidPermissionGroup.PRE23.ordinal()]);
-            property.setCountUnusedPermissions(
+            property.setUnusedPermissions(
                     permissionGroupElements[AndroidPermissionGroup.UNUSED.ordinal()]);
-            property.setCountDeprecatedPermissions(
+            property.setDeprecatedPermissions(
                     permissionGroupElements[AndroidPermissionGroup.DEPRECATED.ordinal()]);
-            property.setCountTotalPermissions(totalPermissions);
+            property.setTotalPermissions(totalPermissions);
             return true;
         } catch (Exception e) {
             System.err.println(e.getMessage());
@@ -183,10 +183,10 @@ public class MobSfApkPropertiesParser {
             }
         }
 
-        property.setCountCodeIssues(highIssues + warningIssues + infoIssues);
-        property.setCountCodeHighIssues(highIssues);
-        property.setCountCodeWarningIssues(warningIssues);
-        property.setCountCodeInfoIssues(infoIssues);
+        property.setCodeIssues(highIssues + warningIssues + infoIssues);
+        property.setCodeHighIssues(highIssues);
+        property.setCodeWarningIssues(warningIssues);
+        property.setCodeInfoIssues(infoIssues);
     }
 
     private static void fileInfo(String filename) {
@@ -208,27 +208,27 @@ public class MobSfApkPropertiesParser {
             fileInfo((String) o);
         }
 
-        property.setCountFiles(jsonArray.length());
-        property.setCountXmlFiles(countFileTypes[FileType.XML.ordinal()]);
-        property.setCountPngFiles(countFileTypes[FileType.PNG.ordinal()]);
-        property.setCountKotlinMetadataFiles(countFileTypes[FileType.KOTLIN_METADATA.ordinal()]);
-        property.setCountVersionFiles(countFileTypes[FileType.VERSION.ordinal()]);
-        property.setCountKotlinBuiltinsFiles(countFileTypes[FileType.KOTLIN_BUILTINS.ordinal()]);
-        property.setCountProFiles(countFileTypes[FileType.PRO.ordinal()]);
-        property.setCountTtfFiles(countFileTypes[FileType.TTF.ordinal()]);
-        property.setCountDexFiles(countFileTypes[FileType.DEX.ordinal()]);
-        property.setCountGifFiles(countFileTypes[FileType.GIF.ordinal()]);
-        property.setCountOtherFiles(countFileTypes[FileType.OTHER.ordinal()]);
+        property.setFiles(jsonArray.length());
+        property.setXmlFiles(countFileTypes[FileType.XML.ordinal()]);
+        property.setPngFiles(countFileTypes[FileType.PNG.ordinal()]);
+        property.setKotlinMetadataFiles(countFileTypes[FileType.KOTLIN_METADATA.ordinal()]);
+        property.setVersionFiles(countFileTypes[FileType.VERSION.ordinal()]);
+        property.setKotlinBuiltinsFiles(countFileTypes[FileType.KOTLIN_BUILTINS.ordinal()]);
+        property.setProFiles(countFileTypes[FileType.PRO.ordinal()]);
+        property.setTtfFiles(countFileTypes[FileType.TTF.ordinal()]);
+        property.setDexFiles(countFileTypes[FileType.DEX.ordinal()]);
+        property.setGifFiles(countFileTypes[FileType.GIF.ordinal()]);
+        property.setOtherFiles(countFileTypes[FileType.OTHER.ordinal()]);
     }
 
     private static void parseExported(JSONObject jsonObject, MobSfApkProperty property) {
-        property.setCountExportedActivities(jsonObject.getInt("exported_activities"));
-        property.setCountExportedServices(jsonObject.getInt("exported_services"));
-        property.setCountExportedReceivers(jsonObject.getInt("exported_receivers"));
-        property.setCountExportedProviders(jsonObject.getInt("exported_providers"));
+        property.setExportedActivities(jsonObject.getInt("exported_activities"));
+        property.setExportedServices(jsonObject.getInt("exported_services"));
+        property.setExportedReceivers(jsonObject.getInt("exported_receivers"));
+        property.setExportedProviders(jsonObject.getInt("exported_providers"));
     }
 
     private static void parseTrackers(JSONObject jsonObject, MobSfApkProperty property) {
-        property.setCountDetectedTrackers(jsonObject.getInt("detected_trackers"));
+        property.setDetectedTrackers(jsonObject.getInt("detected_trackers"));
     }
 }
