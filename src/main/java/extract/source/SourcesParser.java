@@ -1,26 +1,21 @@
 package extract.source;
 
-import property.SourceApiJavaProperty;
-import property.SourceCodeJavaProperty;
-import property.SourceImportJavaProperty;
+import property.SourceProperty;
 
 import java.io.IOException;
 import java.nio.file.*;
 
 public class SourcesParser {
-    public static boolean parseSources(Path directoryPath, SourceImportJavaProperty importProperty,
-                                       SourceApiJavaProperty apiProperty, SourceCodeJavaProperty codeProperty) {
-        SourceJavaParser javaParser = new SourceJavaParser();
-        SourceApiExtractor apiExtractor = new SourceApiExtractor();
+    public static boolean parseSources(Path directoryPath, SourceProperty sourceProperty) {
+        SourcePropertyExtractor extractor = new SourcePropertyExtractor();
         try {
-            Files.walkFileTree(directoryPath, new SourceJavaFileVisitor(javaParser, apiExtractor));
+            Files.walkFileTree(directoryPath, new SourceJavaFileVisitor(extractor));
         } catch (IOException e) {
             System.out.println("Error while sources parsing");
             System.err.println(e.getMessage());
             return false;
         }
-        javaParser.exportInProperties(importProperty);
-        apiExtractor.exportInProperties(apiProperty, codeProperty);
+        extractor.exportInProperties(sourceProperty);
         return true;
     }
 }

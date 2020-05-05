@@ -1,6 +1,5 @@
 import extract.PropertiesExtractor;
 import org.apache.commons.cli.*;
-import write.PropertiesWriter;
 
 public class MenuMaster {
 
@@ -45,12 +44,6 @@ public class MenuMaster {
                 .argName("venv/bin/python")
                 .desc("path to python interpreter")
                 .build();
-        Option permissionDB = Option.builder("d")
-                .longOpt("permissionDB")
-                .hasArg()
-                .argName("path/to/permission.db")
-                .desc("path to db with permissions")
-                .build();
         Option androwarnPath = Option.builder("w")
                 .longOpt("androwarnPath")
                 .hasArg()
@@ -68,7 +61,6 @@ public class MenuMaster {
         cmdOptions.addOption(mobsfAddress);
         cmdOptions.addOption(mobsfApiKey);
         cmdOptions.addOption(pythonPath);
-        cmdOptions.addOption(permissionDB);
         cmdOptions.addOption(androwarnPath);
         cmdOptions.addOption(notDeleteCache);
     }
@@ -84,15 +76,14 @@ public class MenuMaster {
             String mobsfAddress = cmd.getOptionValue("mobsfAddress");
             String mobsfApiKey = cmd.getOptionValue("mobsfApiKey");
             String pythonPath = cmd.getOptionValue("pythonPath");
-            String permissionDB = cmd.getOptionValue("permissionDB");
             String androwarnPath = cmd.getOptionValue("androwarnPath");
             boolean isNotDeleteCache = cmd.hasOption("notDeleteCache");
 
-            if (apkFilePath == null || mobsfAddress == null || mobsfApiKey == null || permissionDB == null) {
+            if (apkFilePath == null || mobsfAddress == null || mobsfApiKey == null) {
                 formatter.printHelp(PROGRAM_NAME, cmdOptions, true);
             } else {
                 PropertiesExtractor extractor = PropertiesExtractor.build(mobsfAddress, mobsfApiKey, pythonPath,
-                        androwarnPath, permissionDB);
+                        androwarnPath);
                 if (extractor == null) {
                     return EXIT_ERROR;
                 }

@@ -2,28 +2,75 @@ package property;
 
 import lombok.Getter;
 
-public class ApkPropertyStorage {
-    @Getter private final MobSfApkProperty mobSfApkProperty;
-    @Getter private final SourceImportJavaProperty sourceImportJavaProperty;
-    @Getter private final AndrowarnApkProperty androwarnApkProperty;
-    @Getter private final SourceApiJavaProperty sourceApiJavaProperty;
-    @Getter private final SourceCodeJavaProperty sourceCodeJavaProperty;
-
-    public ApkPropertyStorage() {
-        androwarnApkProperty = new AndrowarnApkProperty();
-        mobSfApkProperty = new MobSfApkProperty();
-        sourceImportJavaProperty = new SourceImportJavaProperty();
-        sourceApiJavaProperty = new SourceApiJavaProperty();
-        sourceCodeJavaProperty = new SourceCodeJavaProperty();
-    }
+public class ApkPropertyStorage implements MobSfApkProperty, AndrowarnApkProperty, SourceProperty {
+    @Getter private int[] mobSfApkProperty;
+    @Getter private int[] sourceImportProperty;
+    @Getter private int[] androwarnApkProperty;
+    @Getter private int[] sourceConstructorProperty;
+    @Getter private int[] sourceMethodProperty;
+    @Getter private int[] sourceCodeProperty;
 
     public String getCSVRepresentation() {
+        if (mobSfApkProperty == null || sourceImportProperty == null || androwarnApkProperty == null
+                || sourceConstructorProperty == null || sourceMethodProperty == null || sourceCodeProperty == null) {
+            return null;
+        }
+
         StringBuilder builder = new StringBuilder(512);
-        mobSfApkProperty.toBuilder(builder).append(',');
-        sourceImportJavaProperty.toBuilder(builder).append(',');
-        androwarnApkProperty.toBuilder(builder).append(',');
-        sourceApiJavaProperty.toBuilder(builder).append(',');
-        sourceCodeJavaProperty.toBuilder(builder);
+        for (int property : mobSfApkProperty) {
+            builder.append(property).append(',');
+        }
+
+        for (int property : sourceImportProperty) {
+            builder.append(property).append(',');
+        }
+
+        for (int property : androwarnApkProperty) {
+            builder.append(property).append(',');
+        }
+
+        for (int property : sourceConstructorProperty) {
+            builder.append(property).append(',');
+        }
+
+        for (int property : sourceMethodProperty) {
+            builder.append(property).append(',');
+        }
+
+        for (int i = 0; i < (sourceCodeProperty.length - 1); ++i) {
+            builder.append(sourceCodeProperty[i]).append(',');
+        }
+        builder.append(sourceCodeProperty[sourceCodeProperty.length - 1]);
         return builder.toString();
+    }
+
+    @Override
+    public void setMobSfProperties(int[] properties) {
+        mobSfApkProperty = properties;
+    }
+
+    @Override
+    public void setImportProperties(int[] properties) {
+        sourceImportProperty = properties;
+    }
+
+    @Override
+    public void setCodeProperties(int[] properties) {
+        sourceCodeProperty = properties;
+    }
+
+    @Override
+    public void setConstructorProperties(int[] properties) {
+        sourceConstructorProperty = properties;
+    }
+
+    @Override
+    public void setMethodProperties(int[] properties) {
+        sourceMethodProperty = properties;
+    }
+
+    @Override
+    public void setAndrowarnProperties(int[] properties) {
+        androwarnApkProperty = properties;
     }
 }

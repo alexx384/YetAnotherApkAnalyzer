@@ -1,6 +1,7 @@
 package extract.androwarn;
 
 import org.json.JSONArray;
+import property.AndrowarnApkProperties;
 import property.AndrowarnApkProperty;
 
 import java.io.BufferedReader;
@@ -8,42 +9,30 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 
 public class AndrowarnPropertyExtractor {
     private static final int ANALYSIS_RESULTS_IDX = 1;
     private static final String ANALYSIS_RESULTS = "analysis_results";
-    private static final String TELEPHONY_IDENTIFIERS_LEAKAGE = "telephony_identifiers_leakage";
-    private static final String DEVICE_SETTINGS_HARVESTING = "device_settings_harvesting";
-    private static final String LOCATION_LOOKUP = "location_lookup";
-    private static final String CONNECTION_INTERFACES_EXFILTRATION = "connection_interfaces_exfiltration";
-    private static final String TELEPHONY_SERVICES_ABUSE = "telephony_services_abuse";
-    private static final String AUDIO_VIDEO_EAVESDROPPING = "audio_video_eavesdropping";
-    private static final String SUSPICIOUS_CONNECTION_ESTABLISHMENT = "suspicious_connection_establishment";
-    private static final String PIM_DATA_LEAKAGE = "PIM_data_leakage";
-    private static final String CODE_EXECUTION = "code_execution";
-
     private static final int APIS_USED_IDX = 4;
     private static final String APIS_USED = "apis_used";
-    private static final String CLASSES_LIST = "classes_list";
-    private static final String INTERNAL_CLASSES_LIST = "internal_classes_list";
-    private static final String INTENTS_SENT = "intents_sent";
+    private static final Map<String, Integer> propertiesMap;
+
+    static {
+        AndrowarnApkProperties[] properties = AndrowarnApkProperties.values();
+        propertiesMap = new HashMap<>(properties.length);
+        for (AndrowarnApkProperties property : properties) {
+            propertiesMap.put(property.name, property.ordinal());
+        }
+    }
 
     private final String pythonPath;
     private final String androwarnPath;
-    private int countTelephonyIdentifiersLeakage;
-    private int countDeviseSettingsHarvesting;
-    private int countLocationLookup;
-    private int countConnectionInterfacesExfiltration;
-    private int countTelephonyServicesAbuse;
-    private int countAudioVideoEavesdroping;
-    private int countSuspiciousConnectionEstablishment;
-    private int countPimDataLeakage;
-    private int countCodeExecution;
-    private int countClassesList;
-    private int countInternalClassesList;
-    private int countIntentsSent;
+
+    private int[] properties;
 
     /**
      * Builds AndrowarnParametersExtractor instance
@@ -74,16 +63,17 @@ public class AndrowarnPropertyExtractor {
     private AndrowarnPropertyExtractor(String pythonPath, String androwarnPath) {
         this.pythonPath = pythonPath;
         this.androwarnPath = androwarnPath;
+        properties = new int[AndrowarnApkProperties.length];
     }
 
     /**
      * Process apk and fill property values
      *
      * @param apkPath path to apk which needed to process
-     * @param androwarnApkProperty property values to fill
+     * @param property property values to fill
      * @return true if process successful, otherwise - false
      */
-    public boolean processApk(String apkPath, AndrowarnApkProperty androwarnApkProperty) {
+    public boolean processApk(String apkPath, AndrowarnApkProperty property) {
         Objects.requireNonNull(apkPath);
         String jsonResultFile = getResultJsonFromAndrowarn(apkPath);
         if (jsonResultFile == null) {
@@ -96,43 +86,16 @@ public class AndrowarnPropertyExtractor {
             } catch (IOException e) {
                 return false;
             }
-            exportInProperties(androwarnApkProperty);
+            property.setAndrowarnProperties(properties);
+            resetCounters();
             return true;
         } else {
             return false;
         }
     }
 
-    private void exportInProperties(AndrowarnApkProperty property) {
-        property.setTelephonyIdentifiersLeakage(countTelephonyIdentifiersLeakage);
-        property.setDeviseSettingsHarvesting(countDeviseSettingsHarvesting);
-        property.setLocationLookup(countLocationLookup);
-        property.setConnectionInterfacesExfiltration(countConnectionInterfacesExfiltration);
-        property.setTelephonyServicesAbuse(countTelephonyServicesAbuse);
-        property.setAudioVideoEavesdroping(countAudioVideoEavesdroping);
-        property.setSuspiciousConnectionEstablishment(countSuspiciousConnectionEstablishment);
-        property.setPimDataLeakage(countPimDataLeakage);
-        property.setCodeExecution(countCodeExecution);
-        property.setClassesList(countClassesList);
-        property.setInternalClassesList(countInternalClassesList);
-        property.setIntentsSent(countIntentsSent);
-
-        resetCounters();
-    }
-
     private void resetCounters() {
-        countTelephonyIdentifiersLeakage = 0;
-        countDeviseSettingsHarvesting = 0;
-        countLocationLookup = 0;
-        countConnectionInterfacesExfiltration = 0;
-        countTelephonyServicesAbuse = 0;
-        countAudioVideoEavesdroping = 0;
-        countSuspiciousConnectionEstablishment = 0;
-        countPimDataLeakage = 0;
-        countCodeExecution = 0;
-        countClassesList = 0;
-        countInternalClassesList = 0;
-        countIntentsSent = 0;
+        properties = new int[AndrowarnApkProperties.length];
     }
 
     private String getResultJsonFromAndrowarn(String apkPath) {
@@ -179,8 +142,8 @@ public class AndrowarnPropertyExtractor {
         } catch (IOException e) {
             return false;
         }
-        fillParameters(jsonArray.getJSONObject(ANALYSIS_RESULTS_IDX).getJSONArray(ANALYSIS_RESULTS), this::fillAnalysisResult);
-        fillParameters(jsonArray.getJSONObject(APIS_USED_IDX).getJSONArray(APIS_USED), this::fillApisUsed);
+        fillParameters(jsonArray.getJSONObject(ANALYSIS_RESULTS_IDX).getJSONArray(ANALYSIS_RESULTS), this::fillResult);
+        fillParameters(jsonArray.getJSONObject(APIS_USED_IDX).getJSONArray(APIS_USED), this::fillResult);
         return true;
     }
 
@@ -193,49 +156,10 @@ public class AndrowarnPropertyExtractor {
         }
     }
 
-    private void fillAnalysisResult(String entityName, Integer value) {
-        switch (entityName) {
-            case TELEPHONY_IDENTIFIERS_LEAKAGE: {
-                countTelephonyIdentifiersLeakage = value;
-            } break;
-            case DEVICE_SETTINGS_HARVESTING: {
-                countDeviseSettingsHarvesting = value;
-            } break;
-            case LOCATION_LOOKUP: {
-                countLocationLookup = value;
-            } break;
-            case CONNECTION_INTERFACES_EXFILTRATION: {
-                countConnectionInterfacesExfiltration = value;
-            } break;
-            case TELEPHONY_SERVICES_ABUSE: {
-                countTelephonyServicesAbuse = value;
-            } break;
-            case AUDIO_VIDEO_EAVESDROPPING: {
-                countAudioVideoEavesdroping = value;
-            } break;
-            case SUSPICIOUS_CONNECTION_ESTABLISHMENT: {
-                countSuspiciousConnectionEstablishment = value;
-            } break;
-            case PIM_DATA_LEAKAGE: {
-                countPimDataLeakage = value;
-            } break;
-            case CODE_EXECUTION: {
-                countCodeExecution = value;
-            } break;
-        }
-    }
-
-    private void fillApisUsed(String entityName, Integer value) {
-        switch (entityName) {
-            case CLASSES_LIST: {
-                countClassesList = value;
-            } break;
-            case INTERNAL_CLASSES_LIST: {
-                countInternalClassesList = value;
-            } break;
-            case INTENTS_SENT: {
-                countIntentsSent = value;
-            } break;
+    private void fillResult(String entityName, Integer value) {
+        Integer counterIdx = propertiesMap.get(entityName);
+        if (counterIdx != null) {
+            properties[counterIdx] = value;
         }
     }
 }

@@ -1,6 +1,6 @@
 package extract.mobsf.local;
 
-import extract.mobsf.MobSfApkPropertiesParser;
+import extract.mobsf.MobSfApkPropertiesExtractor;
 import org.json.JSONObject;
 
 import java.io.*;
@@ -35,7 +35,7 @@ public class MobSfLocalPropertiesExtractor {
     }
 
     public boolean isSourceDirNotPresent() {
-        String dirName = MobSfApkPropertiesParser.DIR_PREFIX + filePath.getFileName().toString();
+        String dirName = MobSfApkPropertiesExtractor.DIR_PREFIX + filePath.getFileName().toString();
         return !Files.isDirectory(Path.of(dirName));
     }
 }

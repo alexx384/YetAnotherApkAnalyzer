@@ -3,7 +3,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParserConfiguration;
 import com.github.javaparser.ast.CompilationUnit;
-import extract.source.SourceApiExtractor;
+import extract.source.SourcePropertyExtractor;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,9 +12,9 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Optional;
 
-class TestSourceApiExtractor {
+class TestSourcePropertyExtractor {
 
-    private static final SourceApiExtractor extractor = new SourceApiExtractor();
+    private static final SourcePropertyExtractor extractor = new SourcePropertyExtractor();
     private static Path whileStatementPath;
     private static Path doStatementPath;
     private static Path ifStatementPath;
@@ -31,21 +31,21 @@ class TestSourceApiExtractor {
 
     @BeforeAll
     static void init() {
-        whileStatementPath = Path.of(TestSourceApiExtractor.class.getResource("WhileStatement.java").getFile());
-        doStatementPath = Path.of(TestSourceApiExtractor.class.getResource("DoStatement.java").getFile());
-        ifStatementPath = Path.of(TestSourceApiExtractor.class.getResource("IfStatement.java").getFile());
-        assertStatementPath = Path.of(TestSourceApiExtractor.class.getResource("AssertStatement.java").getFile());
-        switchStatementPath = Path.of(TestSourceApiExtractor.class.getResource("SwitchStatement.java").getFile());
-        enumStatementPath = Path.of(TestSourceApiExtractor.class.getResource("EnumStatement.java").getFile());
-        innerClassStatementPath = Path.of(TestSourceApiExtractor.class.getResource("InnerClassStatement.java")
+        whileStatementPath = Path.of(TestSourcePropertyExtractor.class.getResource("WhileStatement.java").getFile());
+        doStatementPath = Path.of(TestSourcePropertyExtractor.class.getResource("DoStatement.java").getFile());
+        ifStatementPath = Path.of(TestSourcePropertyExtractor.class.getResource("IfStatement.java").getFile());
+        assertStatementPath = Path.of(TestSourcePropertyExtractor.class.getResource("AssertStatement.java").getFile());
+        switchStatementPath = Path.of(TestSourcePropertyExtractor.class.getResource("SwitchStatement.java").getFile());
+        enumStatementPath = Path.of(TestSourcePropertyExtractor.class.getResource("EnumStatement.java").getFile());
+        innerClassStatementPath = Path.of(TestSourcePropertyExtractor.class.getResource("InnerClassStatement.java")
                 .getFile());
-        blockStatementPath = Path.of(TestSourceApiExtractor.class.getResource("BlockStatement.java").getFile());
-        lambdaExpressionPath = Path.of(TestSourceApiExtractor.class.getResource("LambdaExpression.java")
+        blockStatementPath = Path.of(TestSourcePropertyExtractor.class.getResource("BlockStatement.java").getFile());
+        lambdaExpressionPath = Path.of(TestSourcePropertyExtractor.class.getResource("LambdaExpression.java")
                 .getFile());
-        ternaryExpressionPath = Path.of(TestSourceApiExtractor.class.getResource("TernaryExpression.java").getFile());
-        annotationMethodPath = Path.of(TestSourceApiExtractor.class.getResource("AnnotationMethod.java")
+        ternaryExpressionPath = Path.of(TestSourcePropertyExtractor.class.getResource("TernaryExpression.java").getFile());
+        annotationMethodPath = Path.of(TestSourcePropertyExtractor.class.getResource("AnnotationMethod.java")
                 .getFile());
-        constructorDeclarationPath = Path.of(TestSourceApiExtractor.class.getResource("ConstructorDeclaration.java")
+        constructorDeclarationPath = Path.of(TestSourcePropertyExtractor.class.getResource("ConstructorDeclaration.java")
                 .getFile());
         ParserConfiguration parserConfiguration = new ParserConfiguration();
         parserConfiguration.setAttributeComments(false);

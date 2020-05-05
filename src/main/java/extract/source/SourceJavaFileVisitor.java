@@ -12,12 +12,10 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Optional;
 
 class SourceJavaFileVisitor extends SimpleFileVisitor<Path> {
-    private final SourceJavaParser javaParser;
-    private final SourceApiExtractor apiExtractor;
+    private final SourcePropertyExtractor extractor;
 
-    public SourceJavaFileVisitor(SourceJavaParser javaParser, SourceApiExtractor apiExtractor) {
-        this.javaParser = javaParser;
-        this.apiExtractor = apiExtractor;
+    public SourceJavaFileVisitor(SourcePropertyExtractor extractor) {
+        this.extractor = extractor;
     }
 
     public CompilationUnit parseFile(Path filePath) throws IOException {
@@ -39,8 +37,7 @@ class SourceJavaFileVisitor extends SimpleFileVisitor<Path> {
         if (file.toString().endsWith(".java")) {
             CompilationUnit cu = parseFile(file);
             if (cu != null) {
-                javaParser.extractInfo(cu);
-                apiExtractor.extractInfo(cu);
+                extractor.extractInfo(cu);
             }
         }
         return FileVisitResult.CONTINUE;
