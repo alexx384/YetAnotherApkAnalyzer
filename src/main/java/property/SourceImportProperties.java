@@ -27,6 +27,7 @@ public enum SourceImportProperties {
     ANDROID_TELEPHONY_SMSMANAGER("android.telephony.SmsManager"),
     ANDROID_UTIL_LOG("android.util.Log");
 
+
     public static final int length = SourceImportProperties.values().length;
 
     public final String name;
