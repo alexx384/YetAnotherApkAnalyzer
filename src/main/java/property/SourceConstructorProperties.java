@@ -27,7 +27,14 @@ public enum SourceConstructorProperties {
     CONNECTIVITYMANAGER("ConnectivityManager"),
     BUNDLE("Bundle"),
     TELEPHONYMANAGER("TelephonyManager"),
-    SMSMANAGER("SmsManager");
+    SMSMANAGER("SmsManager"),
+    BROWSER("Browser"),
+    GOOGLEACCOUNTLOGIN("GoogleAccountLogin"),
+    PATHPERMISSIONSHELPER("PathPermissionsHelper"),
+    DAYVIEW("DayView"),
+    VIDEOVIEW("VideoView"),
+    WEBVIEW("WebView"),
+    FRAGMENT("Fragment");
 
     public static final int length = SourceConstructorProperties.values().length;
 

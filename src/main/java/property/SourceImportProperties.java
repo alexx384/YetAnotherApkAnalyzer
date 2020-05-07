@@ -25,8 +25,19 @@ public enum SourceImportProperties {
     ANDROID_OS_BUNDLE("android.os.Bundle"),
     ANDROID_TELEPHONY_TELEPHONYMANAGER("android.telephony.TelephonyManager"),
     ANDROID_TELEPHONY_SMSMANAGER("android.telephony.SmsManager"),
-    ANDROID_UTIL_LOG("android.util.Log");
-
+    ANDROID_UTIL_LOG("android.util.Log"),
+    ANDROID_PROVIDER_BROWSER("android.provider.Browser"),
+    COM_ANDROID_BROWSER_GOOGLEACCOUNTLOGIN("com.android.browser.GoogleAccountLogin"),
+    COM_ANDROID_PROVIDERS_MEDIA_MEDIAPROVIDER("com.android.providers.media.MediaProvider"),
+    ANDROID_ACCOUNTS_ACCOUNTMANAGERSERVICE("android.accounts.AccountManagerService"),
+    ANDROID_CONTENT_CONTENTSERVICE("android.content.ContentService"),
+    COM_ANDROID_CONTACTS_ACTIVITIES_CONTACTDETAILACTIVITY("com.android.contacts.activities.ContactDetailActivity"),
+    COM_ANDROID_CALENDAR_DAYVIEW("com.android.calendar.DayView"),
+    ANDROID_WIDGET_VIDEOVIEW("android.widget.VideoView"),
+    ANDROID_WEBKIT_WEBVIEWCLASSIC("android.webkit.WebViewClassic"),
+    ANDROID_WEBKIT_WEBVIEW("android.webkit.WebView"),
+    ANDROID_APP_FRAGMENT("android.app.Fragment"),
+    ANDROID_ACCOUNTS_ACCOUNTMANAGER("android.accounts.AccountManager");
 
     public static final int length = SourceImportProperties.values().length;
 
