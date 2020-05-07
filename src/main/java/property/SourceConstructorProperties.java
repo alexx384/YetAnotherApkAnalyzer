@@ -34,7 +34,14 @@ public enum SourceConstructorProperties {
     DAYVIEW("DayView"),
     VIDEOVIEW("VideoView"),
     WEBVIEW("WebView"),
-    FRAGMENT("Fragment");
+    FRAGMENT("Fragment"),
+    PROCESS("Process"),
+    MODIFIER("Modifier"),
+    REFLECTPERMISSION("ReflectPermission"),
+    CAMERACAPTURESESSION("CameraCaptureSession"),
+    DNGCREATOR("DngCreator"),
+    CALLBACK("Callback"),
+    ADDRESS("Address");
 
     public static final int length = SourceConstructorProperties.values().length;
 
