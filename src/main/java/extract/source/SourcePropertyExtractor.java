@@ -14,30 +14,22 @@ import java.util.*;
 public class SourcePropertyExtractor {
     private static final Map<String, Integer> importMap;
     private static final Map<String, Integer> constructorMap;
-    private static final Map<String, Map<String, Integer>> methodMap;
+    private static final Map<String, Map<String, Integer>> classMethodMap;
     private static final Set<String> methodNameSet;
+    private static final int TOTAL_METHOD_PROPERTIES;
+    private static final int TOTAL_IMPORT_PROPERTIES;
+    private static final int TOTAL_CONSTRUCTOR_PROPERTIES;
 
     static {
-        SourceImportProperties[] importProperties = SourceImportProperties.values();
-        importMap = new HashMap<>(importProperties.length);
-        for (SourceImportProperties property : importProperties) {
-            importMap.put(property.name, property.ordinal());
-        }
+        importMap = new HashMap<>();
+        TOTAL_IMPORT_PROPERTIES = SourcePropertiesLoader.loadImportProperties(importMap);
 
-        SourceConstructorProperties[] constructorProperties = SourceConstructorProperties.values();
-        constructorMap = new HashMap<>(constructorProperties.length);
-        for (SourceConstructorProperties property : constructorProperties) {
-            constructorMap.put(property.name, property.ordinal());
-        }
+        constructorMap = new HashMap<>();
+        TOTAL_CONSTRUCTOR_PROPERTIES = SourcePropertiesLoader.loadConstructorProperties(constructorMap);
 
-        SourceMethodProperties[] methodProperties = SourceMethodProperties.values();
-        methodMap = new HashMap<>(methodProperties.length);
-        methodNameSet = new HashSet<>(methodProperties.length);
-        for (SourceMethodProperties property : methodProperties) {
-            Map<String, Integer> value = methodMap.computeIfAbsent(property.type, k -> new HashMap<>());
-            value.put(property.method, property.ordinal());
-            methodNameSet.add(property.method);
-        }
+        classMethodMap = new HashMap<>();
+        methodNameSet = new HashSet<>();
+        TOTAL_METHOD_PROPERTIES = SourcePropertiesLoader.loadMethodProperties(classMethodMap, methodNameSet);
     }
 
     private final List<Map<String, Map<String, Integer>>> instanceVariableMapList;
@@ -49,10 +41,10 @@ public class SourcePropertyExtractor {
     private int[] methodProperties;
 
     public SourcePropertyExtractor() {
-        importProperties = new int[SourceImportProperties.length];
+        importProperties = new int[TOTAL_IMPORT_PROPERTIES];
         codeProperties = new int[SourceCodeProperties.length];
-        constructorProperties = new int[SourceConstructorProperties.length];
-        methodProperties = new int[SourceMethodProperties.length];
+        constructorProperties = new int[TOTAL_CONSTRUCTOR_PROPERTIES];
+        methodProperties = new int[TOTAL_METHOD_PROPERTIES];
 
         instanceVariableMapList = new ArrayList<>();
         otherVariableMapList = new ArrayList<>();
@@ -66,7 +58,7 @@ public class SourcePropertyExtractor {
      * @return count of calls is we are track them, otherwise returns -1
      */
     public int getMethodCallCountOfType(String type, String method) {
-        Map<String, Integer> methodNameMap = methodMap.get(type);
+        Map<String, Integer> methodNameMap = classMethodMap.get(type);
         if (methodNameMap == null) {
             return -1;
         }
@@ -125,10 +117,10 @@ public class SourcePropertyExtractor {
      * Clears counters value that parsed before
      */
     public void clearCounters() {
-        importProperties = new int[SourceImportProperties.length];
+        importProperties = new int[TOTAL_IMPORT_PROPERTIES];
         codeProperties = new int[SourceCodeProperties.length];
-        constructorProperties = new int[SourceConstructorProperties.length];
-        methodProperties = new int[SourceMethodProperties.length];
+        constructorProperties = new int[TOTAL_CONSTRUCTOR_PROPERTIES];
+        methodProperties = new int[TOTAL_METHOD_PROPERTIES];
     }
 
     /**
@@ -322,7 +314,7 @@ public class SourcePropertyExtractor {
         for (VariableDeclarator variable : variables) {
 
             String type = variable.getTypeAsString();
-            Map<String, Integer> methodsNameMap = methodMap.get(type);
+            Map<String, Integer> methodsNameMap = classMethodMap.get(type);
             if (methodsNameMap != null) {
                 variablesMap.put(variable.getNameAsString(), methodsNameMap);
             }
@@ -333,7 +325,7 @@ public class SourcePropertyExtractor {
     private void extractParameter(Parameter parameter, Map<String, Map<String, Integer>> variablesMap) {
         incremenetCodeProperty(SourceCodeProperties.PARAMETER_COUNTER);
         String type = parameter.getTypeAsString();
-        Map<String, Integer> methodsNameMap = methodMap.get(type);
+        Map<String, Integer> methodsNameMap = classMethodMap.get(type);
         if (methodsNameMap != null) {
             variablesMap.put(parameter.getNameAsString(), methodsNameMap);
         }
