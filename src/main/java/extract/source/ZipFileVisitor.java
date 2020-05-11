@@ -25,7 +25,7 @@ class ZipFileVisitor {
                             System.err.println("Warning could not process source " + currentEntry);
                         }
                     } catch (Exception e) {
-                        System.err.println(e.getMessage());
+                        System.err.println("Error: " + e.getMessage() + ". In " + currentEntry);
                     }
                 }
             }

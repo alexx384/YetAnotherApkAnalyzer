@@ -478,9 +478,13 @@ public class SourcePropertyExtractor {
         }
         Optional<NodeList<BodyDeclaration<?>>> optionalBodyDeclarations = expr.getAnonymousClassBody();
         if (optionalBodyDeclarations.isPresent()) {
+            instanceVariableMapList.add(new HashMap<>());
+            otherVariableMapList.add(new HashMap<>());
             for (BodyDeclaration<?> declaration : optionalBodyDeclarations.get()) {
                 extractBodyDeclaration(declaration);
             }
+            otherVariableMapList.remove(otherVariableMapList.size() - 1);
+            instanceVariableMapList.remove(instanceVariableMapList.size() - 1);
         }
         expr.getScope().ifPresent(this::extractExpression);
         String type = expr.getTypeAsString();
