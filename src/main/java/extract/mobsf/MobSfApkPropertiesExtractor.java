@@ -59,10 +59,10 @@ public class MobSfApkPropertiesExtractor {
         properties[MobSfApkProperties.PROVIDERS.ordinal()] = json.getJSONArray("providers").length();
         properties[MobSfApkProperties.SERVICES.ordinal()] = json.getJSONArray("services").length();
         properties[MobSfApkProperties.LIBRARIES.ordinal()] = json.getJSONArray("libraries").length();
-        properties[MobSfApkProperties.TARGET_SDK.ordinal()] = json.getInt("target_sdk");
-        properties[MobSfApkProperties.MAX_SDK.ordinal()] = parseMaxSDK(json.getString("max_sdk"));
-        properties[MobSfApkProperties.MIN_SDK.ordinal()] = json.getInt("min_sdk");
-        properties[MobSfApkProperties.VERSION_CODE.ordinal()] = json.getInt("version_code");
+        properties[MobSfApkProperties.TARGET_SDK.ordinal()] = json.optInt("target_sdk");
+        properties[MobSfApkProperties.MAX_SDK.ordinal()] = json.optInt("max_sdk");
+        properties[MobSfApkProperties.MIN_SDK.ordinal()] = json.optInt("min_sdk");
+        properties[MobSfApkProperties.VERSION_CODE.ordinal()] = json.optInt("version_code");
         properties[MobSfApkProperties.MANIFEST_ISSUES.ordinal()] = json.getJSONArray("manifest_analysis").length();
         properties[MobSfApkProperties.ACTIVITIES_WITH_URL.ordinal()] = json.getJSONArray("urls").length();
         properties[MobSfApkProperties.DOMAINS.ordinal()] = getJSONObjectElements(json.getJSONObject("domains"));
@@ -85,14 +85,6 @@ public class MobSfApkPropertiesExtractor {
             totalBrowsableActivities += 1;
         }
         return totalBrowsableActivities;
-    }
-
-    private static int parseMaxSDK(String value) {
-        if (value == null || value.length() == 0) {
-            return 0;
-        } else {
-            return Integer.parseInt(value);
-        }
     }
 
     private static void parsePermissionsTo(int[] properties, JSONObject permissions) {
