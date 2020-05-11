@@ -97,19 +97,12 @@ public class SourcePropertyExtractor {
             return;
         }
         processImports(cu.getImports());
-        Optional<String> name = cu.getPrimaryTypeName();
-        if (name.isEmpty()) {
-            return;
-        }
-        Optional<TypeDeclaration<?>> optionalTypeDeclaration = cu.getPrimaryType();
-        if (optionalTypeDeclaration.isEmpty()) {
-            return;
-        }
-        TypeDeclaration<?> typeDeclaration = optionalTypeDeclaration.get();
-        if (typeDeclaration.isClassOrInterfaceDeclaration()) {
-            extractClassOrInterfaceDeclaration(typeDeclaration.asClassOrInterfaceDeclaration());
-        } else if (typeDeclaration.isEnumDeclaration()) {
-            extractEnumDeclaration(typeDeclaration.asEnumDeclaration());
+        for (TypeDeclaration<?> typeDeclaration : cu.getTypes()) {
+            if (typeDeclaration.isClassOrInterfaceDeclaration()) {
+                extractClassOrInterfaceDeclaration(typeDeclaration.asClassOrInterfaceDeclaration());
+            } else if (typeDeclaration.isEnumDeclaration()) {
+                extractEnumDeclaration(typeDeclaration.asEnumDeclaration());
+            }
         }
     }
 

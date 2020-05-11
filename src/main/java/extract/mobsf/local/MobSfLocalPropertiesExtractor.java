@@ -1,6 +1,5 @@
 package extract.mobsf.local;
 
-import extract.mobsf.MobSfApkPropertiesExtractor;
 import org.json.JSONObject;
 
 import java.io.*;
@@ -8,6 +7,8 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static extract.mobsf.remote.MobSfRemotePropertiesExtractor.ZIP_FILE_PREFIX;
 
 public class MobSfLocalPropertiesExtractor {
     public static final String JSON_PROPERTIES_EXTENSION = ".json";
@@ -34,8 +35,8 @@ public class MobSfLocalPropertiesExtractor {
         }
     }
 
-    public boolean isSourceDirNotPresent() {
-        String dirName = MobSfApkPropertiesExtractor.DIR_PREFIX + filePath.getFileName().toString();
-        return !Files.isDirectory(Path.of(dirName));
+    public boolean isSourceZipNotPresent() {
+        String zipFileName = filePath.getFileName().toString() + ZIP_FILE_PREFIX;
+        return !Files.exists(Path.of(zipFileName)) || Files.isDirectory(Path.of(zipFileName));
     }
 }

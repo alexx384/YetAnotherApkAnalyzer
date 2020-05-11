@@ -8,19 +8,18 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class MobSfRemotePropertiesExtractor {
+    public static final String ZIP_FILE_PREFIX = ".zip";
 
     private static final String HTTP_ADDRESS_HEADER = "http://";
     private static final String DEFAULT_SCAN_TYPE = "apk";
 
     private final String mobsfAddress;
     private final String mobsfApiKey;
-    private final ZipExtractor zipExtractor;
 
     private MobSfRemotePropertiesExtractor(String mobsfAddress, String mobsfApiKey) {
 
         this.mobsfAddress = mobsfAddress;
         this.mobsfApiKey = mobsfApiKey;
-        this.zipExtractor = new ZipExtractor();
     }
 
     public static boolean isAddressReachable(String host, int port) {
@@ -53,7 +52,7 @@ public class MobSfRemotePropertiesExtractor {
         }
     }
 
-    public String extract(Path apkFilePath, String sourceDirName) {
+    public String extract(Path apkFilePath) {
         MobSfRemoteApiProcessor processor = new MobSfRemoteApiProcessor(
                 HTTP_ADDRESS_HEADER + mobsfAddress,
                 mobsfApiKey
@@ -79,21 +78,9 @@ public class MobSfRemotePropertiesExtractor {
             return null;
         }
 
-        String zipFileName = apkFilePath.getFileName().toString() + ".zip";
+        String zipFileName = apkFilePath.getFileName().toString() + ZIP_FILE_PREFIX;
         if (!processor.downloadFile(hash, zipFileName)) {
             System.err.println("Could not download file with source files");
-            return null;
-        }
-
-        if (Files.isDirectory(Path.of(sourceDirName)) || zipExtractor.extractToFolder(zipFileName, sourceDirName)) {
-            try {
-                Files.delete(Path.of(zipFileName));
-            } catch (IOException e) {
-                System.err.println(e.getMessage());
-                return null;
-            }
-        } else {
-            System.out.println("Could not extract zip file");
             return null;
         }
 

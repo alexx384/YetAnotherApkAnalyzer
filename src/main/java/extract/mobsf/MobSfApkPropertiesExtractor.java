@@ -15,8 +15,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class MobSfApkPropertiesExtractor {
-    public static final String DIR_PREFIX = "dir.";
-
     private static final String STANDARD_PERMISSION_PREFIX = "android.permission.";
     private static final FileType[] enumFileTypes = FileType.values();
     private static final int[] countFileTypes = new int[enumFileTypes.length];
@@ -36,13 +34,12 @@ public class MobSfApkPropertiesExtractor {
         MobSfLocalPropertiesExtractor localExtractor = new MobSfLocalPropertiesExtractor(filePath);
         JSONObject jsonReport = localExtractor.getJsonObject();
 
-        if (jsonReport == null || localExtractor.isSourceDirNotPresent()) {
+        if (jsonReport == null || localExtractor.isSourceZipNotPresent()) {
             jsonReport = null;
             MobSfRemotePropertiesExtractor remoteExtractor = MobSfRemotePropertiesExtractor
                     .build(mobsfAddress, mobsfApiKey);
             if (remoteExtractor != null) {
-                String apkSourceDir = DIR_PREFIX + filePath.getFileName().toString();
-                String jsonReportFile = remoteExtractor.extract(filePath, apkSourceDir);
+                String jsonReportFile = remoteExtractor.extract(filePath);
                 if (jsonReportFile != null) {
                     jsonReport = new JSONObject(jsonReportFile);
                 }

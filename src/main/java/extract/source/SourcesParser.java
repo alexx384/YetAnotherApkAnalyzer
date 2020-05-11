@@ -1,20 +1,33 @@
 package extract.source;
 
+import com.github.javaparser.JavaParser;
+import com.github.javaparser.ParserConfiguration;
+import com.github.javaparser.ast.CompilationUnit;
 import property.SourceProperty;
 
-import java.io.IOException;
-import java.nio.file.*;
+import java.io.InputStream;
+import java.util.Optional;
 
 public class SourcesParser {
-    public static boolean parseSources(Path directoryPath, SourceProperty sourceProperty) {
+    public static boolean parseSources(String zipFileName, SourceProperty sourceProperty) {
+        ParserConfiguration configuration = new ParserConfiguration();
+        configuration.setAttributeComments(false);
+        JavaParser parser = new JavaParser(configuration);
         SourcePropertyExtractor extractor = new SourcePropertyExtractor();
-        try {
-            Files.walkFileTree(directoryPath, new SourceJavaFileVisitor(extractor));
-        } catch (IOException e) {
-            System.out.println("Error while sources parsing");
-            System.err.println(e.getMessage());
+
+        if (!ZipFileVisitor.walkZipFileTree(zipFileName, (InputStream is) -> {
+            Optional<CompilationUnit> cu = parser.parse(is).getResult();
+            if (cu.isPresent()) {
+                extractor.extractInfo(cu.get());
+                return true;
+            } else {
+                return false;
+            }
+        })) {
+            System.err.println("Error while sources parsing");
             return false;
         }
+
         extractor.exportInProperties(sourceProperty);
         return true;
     }

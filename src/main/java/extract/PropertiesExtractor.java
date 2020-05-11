@@ -10,14 +10,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
 
 import static extract.mobsf.local.MobSfLocalPropertiesExtractor.JSON_PROPERTIES_EXTENSION;
+import static extract.mobsf.remote.MobSfRemotePropertiesExtractor.ZIP_FILE_PREFIX;
 
 public class PropertiesExtractor {
 
@@ -112,6 +110,7 @@ public class PropertiesExtractor {
     }
 
     private boolean extractApkFile(String apkFilePath, PropertiesWriter writer, boolean isNotDeleteCache) {
+        System.out.println("[ ]" + apkFilePath);
         Path apkPath = Path.of(apkFilePath);
         if (!checkApkFile(apkPath)) {
             System.err.println("Failed apk file: " + apkFilePath);
@@ -124,8 +123,8 @@ public class PropertiesExtractor {
             return false;
         }
 
-        Path sourcesDir = Path.of(MobSfApkPropertiesExtractor.DIR_PREFIX + apkPath.getFileName().toString());
-        if (!SourcesParser.parseSources(sourcesDir, propertyStorage)) {
+        String zipFileName = apkPath.getFileName().toString() + ZIP_FILE_PREFIX;
+        if (!SourcesParser.parseSources(zipFileName, propertyStorage)) {
             System.err.println("Could not parse apk decompiled source files");
             return false;
         }
@@ -141,28 +140,16 @@ public class PropertiesExtractor {
         }
         if (!isNotDeleteCache) {
             cleanUp(apkPath.getFileName().toString() +
-                    JSON_PROPERTIES_EXTENSION, sourcesDir);
+                    JSON_PROPERTIES_EXTENSION, zipFileName);
         }
-        System.out.println("[+]" + apkFilePath);
+        System.out.println("\r[+]" + apkFilePath);
         return true;
     }
 
-    private static void cleanUp(String jsonReport, Path sourceFilesDir) {
+    private static void cleanUp(String jsonReport, String zipFileName) {
         try {
             Files.deleteIfExists(Path.of(jsonReport));
-            Files.walkFileTree(sourceFilesDir, new SimpleFileVisitor<>() {
-                @Override
-                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    Files.delete(file);
-                    return FileVisitResult.CONTINUE;
-                }
-
-                @Override
-                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-                    Files.delete(dir);
-                    return FileVisitResult.CONTINUE;
-                }
-            });
+            Files.deleteIfExists(Path.of(zipFileName));
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
