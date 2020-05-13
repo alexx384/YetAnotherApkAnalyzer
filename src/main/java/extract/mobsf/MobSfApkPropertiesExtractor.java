@@ -22,6 +22,7 @@ public class MobSfApkPropertiesExtractor {
     public static boolean extract(MobSfApkProperty property, Path filePath, String mobsfAddress, String mobsfApiKey) {
         JSONObject jsonReport = getJsonReport(filePath, mobsfAddress, mobsfApiKey);
         if (jsonReport == null) {
+            System.err.println("Error: the json report is null");
             return false;
         }
         int[] properties = new int[MobSfApkProperties.length];
@@ -42,7 +43,11 @@ public class MobSfApkPropertiesExtractor {
                 String jsonReportFile = remoteExtractor.extract(filePath);
                 if (jsonReportFile != null) {
                     jsonReport = new JSONObject(jsonReportFile);
+                } else {
+                    System.err.println("Error: Extracted json report is null");
                 }
+            } else {
+                System.err.println("Error: Could not create remote properties extractor");
             }
         }
         return jsonReport;

@@ -84,10 +84,9 @@ public class MobSfRemotePropertiesExtractor {
             return null;
         }
 
-        if (processor.deleteScanResult(hash)) {
-            return resultJsonMessage;
-        } else {
-            return null;
+        if (!processor.deleteScanResult(hash)) {
+            System.err.println("Warning: Could not delete scan result");
         }
+        return resultJsonMessage;
     }
 }
