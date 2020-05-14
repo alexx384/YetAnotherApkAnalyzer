@@ -161,11 +161,13 @@ public class SourcePropertyExtractor {
 
     private void extractInterfaceDeclaration(ClassOrInterfaceDeclaration interfaceDeclaration) {
         incremenetCodeProperty(SourceCodeProperties.INTERFACE_COUNTER);
+        instanceVariableMapList.add(new HashMap<>());
         otherVariableMapList.add(new HashMap<>());
         for (BodyDeclaration<?> declaration : interfaceDeclaration.getMembers()) {
             extractBodyDeclaration(declaration);
         }
         otherVariableMapList.remove(otherVariableMapList.size() - 1);
+        instanceVariableMapList.remove(instanceVariableMapList.size() - 1);
     }
 
     private void extractClassDeclaration(ClassOrInterfaceDeclaration classDeclaration) {

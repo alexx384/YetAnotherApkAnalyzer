@@ -67,9 +67,12 @@ def process(parser_stdout_filename: str, parser_result_csv_filename: str, total_
             processed_file = result.group(1)
             if processed_file is None:
                 continue
-            scan_line, _ = total_results[processed_file]
-            scan_line = scan_line[:1] + 'X' + scan_line[2:]
+            result = total_results[processed_file]
             result_line = result_file.readline()
+            if result is None:
+                continue
+            scan_line, _ = result
+            scan_line = scan_line[:1] + 'X' + scan_line[2:]
             total_results[processed_file] = (scan_line, result_line)
 
     if total_results_filename is None:

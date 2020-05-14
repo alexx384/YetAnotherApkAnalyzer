@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -77,19 +78,23 @@ public class AndrowarnPropertyExtractor {
         Objects.requireNonNull(apkPath);
         String jsonResultFile = getResultJsonFromAndrowarn(apkPath);
         if (jsonResultFile == null) {
+            property.setAndrowarnProperties(properties);
+            resetCounters();
             return false;
         }
 
         if (fillParametersFromJson(jsonResultFile)) {
+            property.setAndrowarnProperties(properties);
+            resetCounters();
             try {
                 Files.delete(Path.of(jsonResultFile));
             } catch (IOException e) {
                 return false;
             }
-            property.setAndrowarnProperties(properties);
-            resetCounters();
             return true;
         } else {
+            property.setAndrowarnProperties(properties);
+            resetCounters();
             return false;
         }
     }

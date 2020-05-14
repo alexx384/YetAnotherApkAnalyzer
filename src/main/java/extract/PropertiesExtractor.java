@@ -130,8 +130,7 @@ public class PropertiesExtractor {
         }
 
         if (!androwarnPropertyExtractor.processApk(apkFilePath, propertyStorage)) {
-            System.err.println("Error: Androwarn could not process apk");
-            return false;
+            System.err.println("Warning: Androwarn could not process apk");
         }
 
         if (!writer.saveProperties(propertyStorage)) {
