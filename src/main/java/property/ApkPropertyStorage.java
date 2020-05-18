@@ -3,6 +3,7 @@ package property;
 import lombok.Getter;
 
 public class ApkPropertyStorage implements MobSfApkProperty, AndrowarnApkProperty, SourceProperty {
+    private final StringBuilder builder = new StringBuilder(7000);
     @Getter private int[] mobSfApkProperty;
     @Getter private int[] sourceImportProperty;
     @Getter private int[] androwarnApkProperty;
@@ -16,7 +17,6 @@ public class ApkPropertyStorage implements MobSfApkProperty, AndrowarnApkPropert
             return null;
         }
 
-        StringBuilder builder = new StringBuilder(512);
         for (int property : mobSfApkProperty) {
             builder.append(property).append(',');
         }
