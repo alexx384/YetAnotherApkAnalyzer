@@ -36,8 +36,9 @@ deactivate
 
 <details>
     <summary>Click to expand!</summary>
+
 1. Browsable_activities
-2. Activities
+2. Activities    
 3. Receivers
 4. Providers
 5. Services
