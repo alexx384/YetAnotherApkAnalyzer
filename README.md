@@ -1,15 +1,14 @@
-# YetAnotherApkAnalyzer
+# YetAnotherApkAnalyzer also known as GIMCC Apk Analyzer
+
+It is a simple prototype of the powerful analyzer. Now it is outdated.
 
 The purpose of this project is to develop analyzer that does the following work:
 - extract properties from APK files to the CSV file;
 - reduce the properties space;
 - based on result properties, use machine-learning algorithms to classify Android apps as malware or benign.
 
-# TODO:
-[ ] Think about git-lfs for Gihub
-
 # To prepare on Ubuntu 18.04
-1. Download docker image of mobsf
+1. Download docker image of MobSF
 ```bash
 docker pull opensecurity/mobile-security-framework-mobsf:latest
 ```
@@ -31,6 +30,28 @@ pip install -r androwarn/requirements.txt
 ```dtd
 deactivate
 ```
+
+6. Example command to run
+Required java 11 to run
+```bash
+java -Xss200M -jar YetAnotherApkAnalyzer-1.0.jar -a ../testFiles/ -m 172.17.0.1:8000 -k bb11eb44a846da5e23388dadb3262c61e4f687e5b7e7f9bfb9b8ae00ae00cb17 -p venv/bin/python -w androwarn/androwarn.py -r ../testFiles/result.csv
+```
+- -Xss200M - sets stack size to 200 megabytes. It is required because I will used recursion instead of iteration for parsing .java files
+- -a path to test files with *.apk filename pattern
+- -m ip address MobSF server.
+- -k api key of MobSF server. Api key can be optained when you connect to MobSF server from browser by port 8000. Click "API DOCS". 
+- -p path to python in virtual environment
+- -w path to androwarn.py
+- -r path where to save CSV results of processed files
+
+Good luck!
+
+# Processed data
+outputData.zip contains processed data. 
+Files with *Result.csv contains vector of properties of processed APK files.
+Files with *Answer.csv contains value for each vector in *Result.csv. 
+0 means the analyzed file is benign.
+1 means the analyzed file is malware.
 
 ## Extracted properties
 
